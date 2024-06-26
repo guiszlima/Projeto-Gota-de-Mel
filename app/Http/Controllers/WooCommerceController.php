@@ -11,6 +11,9 @@ class WooCommerceController extends Controller
 
     public function __construct()
     {
+
+
+        # COLOCAR NO .ENV IMPORTANTE!!!
         $consumer_key = "ck_0ec7f6089720f4710bd073d5e44ac6e1ee3c5133";
         $consumer_secret = "cs_fe3a4dcbc9b14eebf6f43274c794b9ae959b80f5";
         $store_url = "http://localhost:10013";
