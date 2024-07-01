@@ -12,7 +12,7 @@ class PendingUser extends Model
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'CPF',
     ];
 
     protected $hidden = [
