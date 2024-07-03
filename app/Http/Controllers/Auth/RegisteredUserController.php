@@ -30,29 +30,24 @@ class RegisteredUserController extends Controller
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
-    {
+    {   
+        
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class . ',email', 'unique:' . PendingUser::class . ',email'],
-            'CPF' => ['required','cpf', 'string', 'unique:' . User::class . ',CPF', 'unique:' . PendingUser::class . ',CPF'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class . ',email', 'unique:' . User::class . ',email'],
+            'CPF' => ['required','cpf', 'string', 'unique:' . User::class . ',CPF', 'unique:' . User::class . ',CPF'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
-        $pendingUser = PendingUser::create([
+        
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'CPF' => $request->CPF,
             'password' => Hash::make($request->password),
         ]);
 
-        $message = "Suas informações foram enviadas para o administrador responsável pela Autorização, Favor Aguardar";
-
-        return redirect()->route("login")->with('wait',$message);
-    
-       /**  event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
-        **/
+        $message = "Olá! $request->name Suas informações foram enviadas para o administrador responsável pela Autorização, Favor Aguardar";
+        event(new Registered($user));
+        return redirect()->route("login")->with('status', $message);
     }
 }

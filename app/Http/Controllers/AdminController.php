@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\PendingUser;
+use App\Models\User;
+use App\Models\Role;
 class AdminController extends Controller
 {
     public function index(){
-        $pendingUsers = PendingUser::all();
-        return view('admin.admin')->with('usuarios_pendentes', $pendingUsers);
+        $usuarios_pendentes = User::where('is_pending', false)->get();
+        $roles = Role::all();
+        return view('admin.users-admin')
+        ->with('usuarios_pendentes', $usuarios_pendentes)
+        ->with('roles', $roles);
     }
-    public function registerUsers(){
+    public function acceptUsers(Request $requests){
+        dd($requests->all());
         
     }
 }

@@ -19,7 +19,7 @@
         <!-- CPF -->
         <div class="mt-4">
             <x-input-label for="CPF" :value="__('CPF')" />
-            <x-text-input id="CPF" class="block mt-1 w-full" type="text" name="text" :value="old('cpf')" required autocomplete="CPF" />
+            <x-text-input id="CPF" class="block mt-1 w-full" type="text" name="CPF" :value="old('cpf')" required autocomplete="CPF" />
             <x-input-error :messages="$errors->get('CPF')" class="mt-2" />
         </div>
 

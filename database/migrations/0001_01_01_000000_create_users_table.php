@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('role');
+            $table->string('CPF');
+            $table->boolean('is_pending')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
