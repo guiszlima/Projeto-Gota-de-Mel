@@ -50,7 +50,7 @@ class User extends Authenticatable
     {
         static::creating(function ($user) {
             // Definir is_pending como false por padrão durante a criação
-            $user->is_pending = false;
+            $user->is_pending = true;
         });
     }
 }

@@ -21,7 +21,7 @@ class CheckPending
         if (Auth::check()) {
             $user = Auth::user();
             // Verifica se o campo is_pending é false
-            if ($user->is_pending == false) {
+            if ($user->is_pending == true) {
                 // Redireciona para a rota 'autorizado'
                 return redirect()->route('autorizado');
             }

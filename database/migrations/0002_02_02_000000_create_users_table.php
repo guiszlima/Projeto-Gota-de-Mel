@@ -1,4 +1,4 @@
-<?php
+<?php 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,16 +12,15 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('role_id')->nullable()->constrained(); // tornando nullable
+            $table->foreignId('role_id')->nullable()->constrained();// Chave estrangeira que referencia a tabela roles
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
             $table->string('CPF');
-            $table->boolean('is_pending')->default(false);
+            $table->boolean('is_pending')->default(true);
             $table->rememberToken();
             $table->timestamps();
-        });
-
+        }); 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');

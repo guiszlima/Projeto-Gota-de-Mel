@@ -21,7 +21,7 @@
                         <td class="p-4 w-1/4">{{ $usuario->name }}</td>
                         <td class="p-4 w-1/4">{{ $usuario->email }}</td>
                         <td class="p-4 w-1/4">{{ $usuario->CPF }}</td>
-                        <td class="p-4 w-1/4">{{ $usuario->is_pending ? 'Autorizado'  : 'Pendente' }}</td>
+                        <td class="p-4 w-1/4">{{ $usuario->is_pending ? 'Pendente'  : 'Autorizado' }}</td>
                     <td>
                         <form action="{{route('admin')}}" method="POST" class="bg-sky-500 hover:bg-sky-700 rounded-lg">
                     @csrf
@@ -29,7 +29,7 @@
                     <label for="role">Escolha um papel:</label>
                     <select name="role" id="role">
                         @foreach ($roles as $role )
-                        <option value="{{$role->id}}">{{$role->name}}</option>
+                        <option value="{{$role->id,}}">{{$role->name}}</option>
                         @endforeach
                         
                     </select>
