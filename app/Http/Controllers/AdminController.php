@@ -10,6 +10,8 @@ class AdminController extends Controller
     public function index(){
         $usuarios_pendentes = User::where('is_pending', true)->get();
         $roles = Role::all();
+        
+
         return view('admin.users-admin')
         ->with('usuarios_pendentes', $usuarios_pendentes)
         ->with('roles', $roles);
@@ -20,6 +22,12 @@ class AdminController extends Controller
         $user->is_pending = false;
         $user->role_id = $requests->role;
         $user->save();
-        return redirect()->route('admin');
+        return redirect()->route('admin.index');
+    }
+    public function deleteUsers($id){
+
+        $user = User::findOrFail($id);
+        $user->delete();
+        return redirect()->route('admin.index');
     }
 }

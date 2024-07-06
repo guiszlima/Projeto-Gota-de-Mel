@@ -53,4 +53,31 @@ class User extends Authenticatable
             $user->is_pending = true;
         });
     }
+
+    public function isAdmin()
+    {
+        return $this->role_id === 3; // ID 3 representa o role de Administrador na tabela roles
+    }
+
+    /**
+     * Check if the user is a manager.
+     *
+     * @return bool
+     */
+    public function isManager()
+    {
+        return $this->role_id === 2; // ID 2 representa o role de Gerente na tabela roles
+    }
+
+    /**
+     * Check if the user is a salesperson.
+     *
+     * @return bool
+     */
+    public function isSalesperson()
+    {
+        return $this->role_id === 1; // ID 1 representa o role de Vendedor na tabela roles
+    }
+
+
 }
