@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WooCommerceController;
 use App\Http\Controllers\AdminController;
-
+use App\Http\Controllers\BarCodeMakerController;
 
 
 
@@ -30,8 +30,9 @@ Route::delete('admin/{id}',[AdminController::class, 'deleteUsers'])->name('admin
 
 
 # Sell routes
-Route::get('sell-product/{id}',[WooCommerceController::class,'sellProducts'])->name('sell.products');
-Route::put('update-product',[WooCommerceController::class,'updateProducts'])->name('update.products');
+Route::get('sell-product',[WooCommerceController::class,'sellProducts'])->name('products.sell');
+Route::put('update-product',[WooCommerceController::class,'updateProducts'])->name('products.update');
+Route::get('generate-bar-code',[BarCodeMakerController::class,"testing"])->name('barcode.get');
 
 
 
