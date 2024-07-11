@@ -23,5 +23,11 @@ class WooCommerceServiceProvider extends ServiceProvider
                 ]
             );
         });
+
+        
+
+
     }
+
+    
 }
