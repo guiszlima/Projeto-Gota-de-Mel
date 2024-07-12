@@ -9,7 +9,7 @@
 <body>
     
     <livewire:mostrar-produtos />
-    <button type="submit">Vender product</button>
+    
     @livewireScripts
 </body>
 </html>
