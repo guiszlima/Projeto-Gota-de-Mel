@@ -8,7 +8,7 @@ class MostrarProdutos extends Component
 {
     public $searchTerm;
     public $products = [];
-
+    public $contagem = [];
    
     public function fetchProducts(Client $woocommerce)
     {
@@ -17,11 +17,11 @@ class MostrarProdutos extends Component
         
         // Remove valores vazios e espaços
         $filteredArray = array_filter(array_map('trim', $id_array));
-        
+        $this->contagem = array_count_values($filteredArray);
         if (count($filteredArray) > 0) {
             $params = ['include' => $filteredArray];
             $this->products = $woocommerce->get('products', $params);
-            dd($this->products);
+            
             
         } else {
             $this->products = [];
@@ -29,6 +29,11 @@ class MostrarProdutos extends Component
     }
     public function render()
     {
-        return view('livewire.mostrar-produtos', ['products' => $this->products]);
+        $data = [
+            'quantidade' => $this->contagem,
+            'products' => $this->products,
+        ];
+    
+        return view('livewire.mostrar-produtos', compact("data"));
     }
 }

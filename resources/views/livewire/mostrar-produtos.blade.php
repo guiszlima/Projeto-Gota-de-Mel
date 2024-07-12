@@ -4,15 +4,20 @@
         <button type="submit">Search</button>
     </form>
     
-    @if (!empty($products))
+    @if (!empty($data))
         <div>
-            <h2>Products:</h2>
+            
+            <h2>Produtos:</h2>
             <ul>
                 
-                @foreach ($products as $product)
-                    
-                    <li>{{ $product->name }}</li>
-                @endforeach
+            @foreach ($data['products'] as $product)
+                @if (isset($data['quantidade'][$product->id]))
+                    <li>
+                        <strong>Produto:</strong> {{ $product->name }} <br>
+                        <strong>Quantidade:</strong> {{ $data['quantidade'][$product->id] }}
+                    </li>
+                @endif
+            @endforeach
             </ul>
         </div>
     @endif
