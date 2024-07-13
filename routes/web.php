@@ -31,8 +31,7 @@ Route::delete('admin/{id}',[AdminController::class, 'deleteUsers'])->name('admin
 
 # Sell routes
 Route::get('sell-product',[WooCommerceController::class,'sellProducts'])->name('products.sell');
-Route::put('update-product',[WooCommerceController::class,'updateProducts'])->name('products.update');
-Route::get('generate-bar-code',[BarCodeMakerController::class,"testing"])->name('barcode.get');
+Route::post('sell-product',[WooCommerceController::class,'makeSell'])->name('products.sell');
 
 
 

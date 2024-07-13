@@ -27,6 +27,22 @@ class MostrarProdutos extends Component
             $this->products = [];
         }
     }
+
+    public function increment($productId)
+    {
+        if (isset($this->contagem[$productId])) {
+            $this->contagem[$productId]++;
+        }
+    }
+
+    public function decrement($productId)
+    {
+        if (isset($this->contagem[$productId]) && $this->contagem[$productId] > 0) {
+            $this->contagem[$productId]--;
+        }
+    }
+
+
     public function render()
     {
         $data = [
