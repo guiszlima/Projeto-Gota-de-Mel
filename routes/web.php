@@ -33,7 +33,8 @@ Route::delete('admin/{id}',[AdminController::class, 'deleteUsers'])->name('admin
 Route::get('sell-product',[WooCommerceController::class,'sellProducts'])->name('products.sell');
 Route::post('sell-product',[WooCommerceController::class,'makeSell'])->name('products.sell');
 
-
+# BarCode Generator
+Route::get('barcode',[BarCodeMakerController::class,'index'])->name('barcode.index');
 
 
 require __DIR__.'/auth.php';
