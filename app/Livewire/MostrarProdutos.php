@@ -12,7 +12,9 @@ class MostrarProdutos extends Component
    
     public function fetchProducts(Client $woocommerce)
     {
-       
+       if ($this->searchTerm[-1] !== ','){
+        $this->searchTerm .= ',';
+       }
         $id_array = explode(",", $this->searchTerm);
         
         // Remove valores vazios e espaços
