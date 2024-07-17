@@ -29,14 +29,19 @@ class BarCodeMakerController extends Controller
       // Calculando o número total de páginas
       $totalPages = ceil($totalProducts / $nmbrPerPage);
       // Retornando a view com os produtos e informações de paginação
-      return view("barcode-gen", [
+      return view("barcode.barcode-gen", [
          'products' => $products,
          'currentPage' => $page,
          'totalPages' => $totalPages
       ]);
    }
 
-   public function generate(){
+   public function generate(Request $request){
       
+      $product = [
+         'id'=>$request->id,
+         'price'=> $request->price,
+      ];
+      return view('barcode.generate')->with('product', $product);
    }
 }

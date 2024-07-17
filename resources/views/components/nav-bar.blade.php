@@ -1,4 +1,4 @@
-<header class="bg-gray-800 text-white shadow">
+<header class="bg-gray-800 text-white shadow print:hidden">
     <div class="container mx-auto flex justify-between items-center py-4 px-6">
         <div class="text-lg font-semibold">
             <a href="#" class="hover:text-gray-300">My Logo</a>

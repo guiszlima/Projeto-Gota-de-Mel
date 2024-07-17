@@ -5,12 +5,38 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title class="print:hidden">{{ config('app.name', 'Gotas de Mel') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+
+
+        <style>
+            
+   
+            @media print {
+            body * {
+                @apply hidden;
+            }
+            .printable, .printable * {
+                @apply block;
+                visibility: visible;
+            }
+            .printable {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+            @page {
+                margin: 0;
+            }
+            body {
+                margin: 0;
+            }
+        }
+    </style>
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -19,12 +45,14 @@
             
 
             <!-- Page Heading -->
-            <x-nav-bar></x-nav-bar>
+            <x-nav-bar ></x-nav-bar>
 
             <!-- Page Content -->
             <main>
                 @yield('content')
             </main>
         </div>
+
+ 
     </body>
 </html>
