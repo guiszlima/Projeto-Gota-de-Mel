@@ -10,6 +10,7 @@
          <th>Nome</th>
 
          <th>Preço</th>
+         <th>Gerar Código de barras</th>
       </tr>
    </thead>
    <tbody>
@@ -18,18 +19,26 @@
             <td>{{ $product->id }}</td>
             <td>{{ $product->name }}</td>
             <td>{{ $product->price }}</td>
+            <td>
+                 <form action="{{ route('barcode.generate') }}">
+               @csrf
+               <input type="hidden" name="id" value="{{ $product->id }}">
+               <input type="text" name="name" value="{{ $product->name }}">
+               <input type="text" name="price" value="{{ $product->price }}">
+               <button type="submit">Gerar Código de Barras</button>
+            </form>
+            </td>
          </tr>
       @endforeach
    </tbody>
 </table>
-@dd($products)
 <div class="pagination">
    @if ($currentPage > 1)
       <a href="{{ url()->current() }}?page={{ $currentPage - 1 }}">Anterior</a>
    @endif
 
    @for ($i = 1; $i <= $totalPages; $i++)
-      <a href="{{ url()->current() }}?page={{ $i }}" class="{{ $i == $currentPage ? 'active' : '' }}">{{ $i }}</a>
+      <a  href="{{ url()->current() }}?page={{ $i }}" class="{{ $i == $currentPage ? 'text-orange-600' : '' }}">{{ $i }}</a>
    @endfor
 
    @if ($currentPage < $totalPages)

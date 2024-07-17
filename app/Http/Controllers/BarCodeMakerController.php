@@ -35,4 +35,8 @@ class BarCodeMakerController extends Controller
          'totalPages' => $totalPages
       ]);
    }
+
+   public function generate(){
+      
+   }
 }

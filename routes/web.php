@@ -35,6 +35,6 @@ Route::post('sell-product',[WooCommerceController::class,'makeSell'])->name('pro
 
 # BarCode Generator
 Route::get('barcode',[BarCodeMakerController::class,'index'])->name('barcode.index');
-
+Route::get('gerar-codigo',[BarCodeMakerController::class,'generate'])->name('barcode.generate');
 
 require __DIR__.'/auth.php';
