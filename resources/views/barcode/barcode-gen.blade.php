@@ -23,7 +23,8 @@
                  <form action="{{ route('barcode.generate') }}">
                @csrf
                <input type="hidden" name="id" value="{{ $product->id }}">
-               <input type="text" name="price" value="{{ $product->price }}">
+               <input type="hidden" name="price" value="{{ $product->price }}">
+               <input type="hidden" name="name" value="{{ $product->name }}">
                <button type="submit">Gerar Código de Barras</button>
             </form>
             </td>
