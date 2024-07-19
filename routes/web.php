@@ -20,12 +20,18 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('get-products', [WooCommerceController::class, 'getProducts'])->name('get.products');
-# Admin Routes
+
    
 
 });
+# Admin Routes
+
+
 Route::get('admin', [AdminController::class,'index'])->name('admin.index');
-Route::put('admin',[AdminController::class, 'acceptUsers'])->name('admin.accept');;
+
+# Accept users to get in system routes
+Route::get('admin-accept', [AdminController::class,'accept_index'])->name('admin.index.accept');
+Route::put('admin-accept',[AdminController::class, 'acceptUsers'])->name('admin.accept');;
 Route::delete('admin/{id}',[AdminController::class, 'deleteUsers'])->name('admin.delete');
 
 

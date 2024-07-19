@@ -1,9 +1,11 @@
 @extends('layouts.main')
-
 @section('content')
-<main>
+<div class="flex space-x-*">
 <x-admin-link text="Admin" route="admin.index" currentRoute="{{$currentRoute}}" />
 <x-admin-link text="Aceitar usuários" route="admin.index.accept" currentRoute="{{$currentRoute}}" />
+</div>
+
+
 <div class="w-10/12	ml-auto mr-auto  overflow-x-auto rounded-lg border border-gray-200">
     
         <table class="text-left w-full h-full table-auto">
@@ -12,17 +14,17 @@
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">CPF</th>
-                    <th scope="col">Status</th>
+
                     <th scope="col">Ações</th>
                 </tr>
             </thead>
             <tbody class='text-center divide-y divide-gray-200'>
-                @foreach($usuarios_pendentes as $usuario)
+                @foreach($users as $usuario)
                     <tr class="border-b dark:border-neutral-500"></tr>
                         <td class="whitespace-nowrap px-6 py-4">{{ $usuario->name }}</td>
                         <td class="whitespace-nowrap px-6 py-4" >{{ $usuario->email }}</td>
                         <td class="whitespace-nowrap px-6 py-4">{{ $usuario->CPF }}</td>
-                        <td>{{ $usuario->is_pending ? 'Pendente' : 'Autorizado' }}</td>
+
                        
                         <td class=" flex flex-row w-max  whitespace-nowrap px-6 py-4">
                             <form action="{{ route('admin.accept') }}" method="POST">
@@ -51,5 +53,4 @@
             </tbody>
         </table>
     </div>
-</main>
 @endsection
