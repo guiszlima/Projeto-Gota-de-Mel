@@ -2,9 +2,12 @@
 
 @section('content')
 <main>
+<div class="flex flex-row  justify-around w-1/3 my-10">
 <x-admin-link text="Admin" route="admin.index" currentRoute="{{$currentRoute}}" />
 <x-admin-link text="Aceitar usuários" route="admin.index.accept" currentRoute="{{$currentRoute}}" />
-<div class="w-10/12	ml-auto mr-auto  overflow-x-auto rounded-lg border border-gray-200">
+</div>
+<div class="w-full ml-auto mr-auto  overflow-x-auto rounded-lg border border-gray-200">
+    
     
         <table class="text-left w-full h-full table-auto">
             <thead class="text-center">

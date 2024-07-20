@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 class AdminController extends Controller
 {
 public function index(){
-    $users = User::all();
+    $users = $usuarios_pendentes = User::where('is_pending', false)->get();
     $currentRoute = Route::currentRouteName();
     $roles = Role::all();
     return view("admin.admin-index")
@@ -31,18 +31,33 @@ public function index(){
         ->with("currentRoute", $currentRoute);
 
     }
-    public function acceptUsers(Request $requests){
-        $user = User::findOrFail($requests->user_id);
+
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'role' => 'required|exists:roles,id', // Validação para role
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->role_id = $request->input('role');
+        $user->save();
+
+        return redirect()->route('admin.index')->with('success', 'Cargo atualizado com sucesso');
+    }
+    public function acceptUsers(Request $request){
+        dd($request->all());
+        $user = User::findOrFail($request->user_id);
         
         $user->is_pending = false;
-        $user->role_id = $requests->role;
+        $user->role_id = $request->role;
         $user->save();
-        return redirect()->route('admin.index.accept');
+        return redirect()->back();
     }
     public function deleteUsers($id){
 
         $user = User::findOrFail($id);
         $user->delete();
-        return redirect()->route('admin.index.accept');
+        return redirect()->back();
     }
 }

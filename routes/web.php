@@ -28,11 +28,15 @@ Route::middleware(['auth','check_pending'])->group(function () {
 
 
 Route::get('admin', [AdminController::class,'index'])->name('admin.index');
+Route::put('admin/{id}', [AdminController::class,'update'])->name('admin.update');
+Route::delete('admin/{id}',[AdminController::class, 'deleteUsers'])->name('admin.delete');
+
 
 # Accept users to get in system routes
 Route::get('admin-accept', [AdminController::class,'accept_index'])->name('admin.index.accept');
 Route::put('admin-accept',[AdminController::class, 'acceptUsers'])->name('admin.accept');;
-Route::delete('admin/{id}',[AdminController::class, 'deleteUsers'])->name('admin.delete');
+
+
 
 
 # Sell routes
