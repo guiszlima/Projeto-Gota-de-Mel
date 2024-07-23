@@ -12,6 +12,8 @@ class MostrarProdutos extends Component
    
     public function fetchProducts(Client $woocommerce)
     {
+        $this->searchTerm = str_replace(' ', ',', $this->searchTerm);
+ 
        if ($this->searchTerm[-1] !== ','){
         $this->searchTerm .= ',';
        }
