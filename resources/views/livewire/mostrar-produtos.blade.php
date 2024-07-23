@@ -1,6 +1,6 @@
 <div class="my-8">
     <form class="flex justify-center items-center flex-col" wire:submit.prevent="fetchProducts">
-        <input required class="w-2/5 mb-3 h-10 rounded text-center  "  name="products" type="text" wire:model="searchTerm" placeholder="Procurar Produtos">
+        <input required autocomplete="off" class="w-2/5 mb-3 h-10 rounded text-center  "  name="products" type="text" wire:model="searchTerm" placeholder="Procurar Produtos">
         <button class="  text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800" type="submit">Procurar</button>
     </form>
     
