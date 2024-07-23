@@ -10,7 +10,7 @@
             <a href="#" class="hover:text-gray-300">Contact</a>
         </nav>
         <form action="{{ route('logout') }}" method="post">
-            <button type="submit" class="border-2 border-red-600 rounded-lg px-3 py-2 text-red-400 cursor-pointer hover:bg-red-600 hover:text-red-200">Sair</button>
+            <button type="submit" class="border-2 border-red-600 rounded-lg px-6 py-1 text-red-400 cursor-pointer hover:bg-red-600 hover:text-red-200">Sair</button>
         </form>
     </div>
 </header>

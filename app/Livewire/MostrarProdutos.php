@@ -25,6 +25,7 @@ class MostrarProdutos extends Component
             $this->products = $woocommerce->get('products', $params);
             
             
+            
         } else {
             $this->products = [];
         }
