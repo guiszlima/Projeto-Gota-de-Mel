@@ -1,6 +1,6 @@
 <div class="my-8">
-    <form class="flex justify-center items-center flex-col" wire:submit.prevent="fetchProducts">
-        <input required autocomplete="off" class="w-2/5 mb-3 h-10 rounded text-center  "  name="products" type="text" wire:model="searchTerm" placeholder="Procurar Produtos">
+    <form class="flex justify-start items-start flex-row " wire:submit.prevent="fetchProducts">
+        <input id="codigoBarras" required autocomplete="off" class="w-2/5 mx-3 mb-3 h-10 rounded text-center  "  name="products" type="text" wire:model="searchTerm" placeholder="Procurar Produtos">
         <button class="  text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-4 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800" type="submit">Procurar</button>
     </form>
     
@@ -60,5 +60,48 @@
             </form>
         </div>
     @endif
+    <script>
+        let previousValue = '';
+        let timeout;
+        const inputField = document.getElementById('codigoBarras');
+
+
+        inputField.addEventListener('keydown',()=>{
+
+        })
+        inputField.addEventListener('input', () => {
+            const currentValue = inputField.value;
+            clearTimeout(timeout);
+
+            // Verifica se há diferença no valor atual e o anterior
+            const insertedChars = currentValue.substring(previousValue.length);
+
+            // Define um tempo limite para detectar a digitação gradual
+            timeout = setTimeout(() => {
+                if (insertedChars.length > 1) {
+                    console.log(`Caracteres inseridos de uma vez: ${insertedChars}`);
+                } else if (insertedChars.length === 1) {
+                    // Manter o valor original para identificar a digitação gradual
+                    inputField.value = '';
+                    console.log('Caracteres digitados um por um');
+                } else {
+                    console.log('Nenhuma alteração detectada');
+                }
+                // Atualiza o valor anterior para a próxima comparação
+                previousValue = currentValue;
+            }, 50); // Ajuste o tempo conforme necessário
+        });
+        inputField.addEventListener('keydown', (event) => {
+            // Se a tecla estiver pressionada por mais de 10ms
+            keyDownTimeout = setTimeout(() => {
+                inputField.value = ''; // Apaga o texto do input
+                console.log('Texto apagado devido à tecla mantida');
+            }, 10); // 10 milissegundos
+        });
+
+        inputField.addEventListener('keyup', (event) => {
+            clearTimeout(keyDownTimeout); // Limpa o temporizador se a tecla for liberada antes dos 10ms
+        });
+    </script>
 
 </div>

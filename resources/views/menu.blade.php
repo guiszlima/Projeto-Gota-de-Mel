@@ -7,7 +7,7 @@
     <!-- Card 1 -->
    <x-menu-option titulo="Vender" img_title="Vender" alt="Vender" image="{{asset('images/shopping-cart.png')}}" routeName="products.sell" button_text="Vender"></x-menu-option>
 
-   <x-menu-option titulo="Código de Barras" img_title="Código de Barras" alt="Gerar Código de Barras" image="{{asset('images/shopping-cart.png')}}" routeName="barcode.index" button_text="Gerar código de barras"></x-menu-option>
+   <x-menu-option titulo="Código de Barras" img_title="Código de Barras" alt="Código de Barras" image="{{asset('images/shopping-cart.png')}}" routeName="barcode.index" button_text="Código de barras"></x-menu-option>
 </div>
 
 @endsection
