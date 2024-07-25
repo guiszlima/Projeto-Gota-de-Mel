@@ -4,14 +4,30 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Automattic\WooCommerce\Client;
+use phpDocumentor\Reflection\PseudoTypes\False_;
+
 class MostrarProdutos extends Component
 {
     public $searchTerm;
     public $products = [];
     public $contagem = [];
+    public $cor = 'bg-slate-800';
+    public $formType = false;
+
+   public function changeFormtype(){
+    
+    $this->formType = !$this->formType;
    
+   $this->cor = !$this->formType? 'bg-slate-800':'bg-pink-500';
+
+    
+
+}
     public function fetchProducts(Client $woocommerce)
     {
+    
+    if($this->formType === false){
+         
         $this->searchTerm = str_replace(' ', ',', $this->searchTerm);
  
        if ($this->searchTerm[-1] !== ','){
@@ -31,6 +47,14 @@ class MostrarProdutos extends Component
         } else {
             $this->products = [];
         }
+    }
+    else{
+          
+         $this->products = $woocommerce->get('products',['search'=>$this->searchTerm]);
+         foreach ($this->products as $product) {
+            $this->contagem[$product->id] = 1;
+        }
+    }
     }
 
     public function increment($productId)
@@ -53,6 +77,7 @@ class MostrarProdutos extends Component
         $data = [
             'quantidade' => $this->contagem,
             'products' => $this->products,
+            'formState' => $this->formType
         ];
     
         return view('livewire.mostrar-produtos', compact("data"));
