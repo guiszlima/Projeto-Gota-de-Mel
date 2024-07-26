@@ -2,7 +2,7 @@
 
 @section('content')
 <body>
-    
+@livewireStyles
     <livewire:mostrar-produtos />
     
     @livewireScripts

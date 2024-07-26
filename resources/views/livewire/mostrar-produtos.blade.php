@@ -11,8 +11,9 @@
                class="w-[50vw] mx-3 mb-3 h-10 rounded text-center pl-10"
                name="products" type="text" wire:model="searchTerm"
                placeholder="Procurar Produtos" autofocus>
-       
-         <button type="button" id="change-form" class=" fa fa-search {{$cor}} absolute left-4 top-1/3  transform -translate-y-1/2 ml-1 w-9 h-8  rounded-full text-white"  wire:click="changeFormtype">
+
+               <button type="button" id="change-form" class="fa fa-search {{$formType ?'bg-pink-500':' bg-slate-800'}} absolute left-4 top-1/3 transform -translate-y-1/2 ml-1 w-9 h-8 rounded-full text-white" wire:click="changeFormtype">
+
          
             <!-- Ícone ou qualquer conteúdo -->
         </button>
@@ -25,29 +26,33 @@
     @if (!empty($data) && !empty($data['products']))
     
     <div class="w-1/2 my-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        @csrf
-
-        @foreach ($data['products'] as $product)
-            @if (isset($data['quantidade'][$product->id]))
-                <div class="bg-white p-3 rounded-lg shadow">
-                    <div class="text-center font-bold mb-2">
-                        {{ $product->name }}
-                    </div>
-                    <div class="text-center mb-2">
-                        Preço: {{ $currentPrice = $product->price * $data['quantidade'][$product->id] }}
-                    </div>
-                    <div class="text-center mb-2">
-                        Quantidade: {{ $data['quantidade'][$product->id] }}
-                    </div>
-                    <div class="flex justify-center gap-2">
-                        <button class="bg-green-700 text-white rounded-full font-extrabold w-[40px] h-[40px] flex items-center justify-center hover:bg-green-800" type="button" wire:click="increment({{ $product->id }})">+</button>
-                        <button class="bg-red-700 text-white rounded-full font-extrabold w-[40px] h-[40px] flex items-center justify-center hover:bg-red-800" type="button" wire:click="decrement({{ $product->id }})">-</button>
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    @foreach ($data['products'] as $product)
+        @if (isset($data['quantidade'][$product->id]))
+            <div class="flex flex-col bg-white h-[200px] p-4 rounded-lg shadow-md">
+                <!-- Nome do produto -->
+                <div class="text-center font-bold mb-2">
+                    {{ $product->name }}
+                </div>
+                
+                <!-- Preço e botão Adicionar -->
+                <div class="flex flex-col h-full justify-end">
+                    
+                    
+                    <!-- Botão Adicionar -->
+                    <div class="flex justify-end h-full flex-col text-center">
+                    Preço: R${{ $currentPrice = $product->price * $data['quantidade'][$product->id] }}
+                        <button class="bg-blue-600 text-white rounded mt-2 px-6 py-2 text-xs font-medium uppercase transition duration-150 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800">
+                            Adicionar
+                        </button>
                     </div>
                 </div>
-            @endif
-        @endforeach
-    </div>
+            </div>
+        @endif
+    @endforeach
+</div>
+
+
 </div>
 </div>
                 

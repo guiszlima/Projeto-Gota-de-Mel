@@ -11,17 +11,13 @@ class MostrarProdutos extends Component
     public $searchTerm;
     public $products = [];
     public $contagem = [];
-    public $cor = 'bg-slate-800';
+    
     public $formType = false;
 
    public function changeFormtype(){
     
     $this->formType = !$this->formType;
-   
-   $this->cor = !$this->formType? 'bg-slate-800':'bg-pink-500';
-
     
-
 }
     public function fetchProducts(Client $woocommerce)
     {
@@ -77,7 +73,7 @@ class MostrarProdutos extends Component
         $data = [
             'quantidade' => $this->contagem,
             'products' => $this->products,
-            'formState' => $this->formType
+            'formState' => $this->formType,  
         ];
     
         return view('livewire.mostrar-produtos', compact("data"));
