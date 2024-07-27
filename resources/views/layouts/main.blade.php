@@ -1,59 +1,72 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title class="print:hidden">{{ config('app.name', 'Gotas de Mel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title class="print:hidden">{{ config('app.name', 'Gotas de Mel') }}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
 
-        <style>
-            
-   
-            @media print {
-            body * {
-                @apply hidden;
-            }
-            .printable, .printable * {
-                @apply block;
-                visibility: visible;
-            }
-            .printable {
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
-            @page {
-                margin: 0;
-            }
-            body {
-                margin: 0;
-            }
+    <style>
+    @media print {
+        body * {
+            @apply hidden;
+            width: 100%;
+            height: 100%
         }
+
+        main {
+            width: 100%;
+            height: 100%
+        }
+
+        .printable,
+        .printable * {
+            @apply block;
+            visibility: visible;
+        }
+
+        .printable {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        @page {
+            margin: 0;
+        }
+
+        body {
+            margin: 0;
+        }
+    }
     </style>
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-            <!-- Page Heading -->
-            <x-nav-bar ></x-nav-bar>
+<body class="font-sans antialiased">
+    <div class="min-h-screen bg-gray-100">
 
-            <!-- Page Content -->
-            <main>
-                @yield('content')
-            </main>
-        </div>
 
- 
-    </body>
+        <!-- Page Heading -->
+        <x-nav-bar></x-nav-bar>
+
+        <!-- Page Content -->
+        <main>
+            @yield('content')
+        </main>
+    </div>
+
+
+</body>
+
 </html>

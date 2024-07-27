@@ -11,13 +11,14 @@ class MostrarProdutos extends Component
     public $searchTerm;
     public $products = [];
     public $contagem = [];
+    public $cart = [];
     
     public $formType = false;
 
    public function changeFormtype(){
     
     $this->formType = !$this->formType;
-    
+
 }
     public function fetchProducts(Client $woocommerce)
     {
@@ -53,20 +54,13 @@ class MostrarProdutos extends Component
     }
     }
 
-    public function increment($productId)
-    {
-        if (isset($this->contagem[$productId])) {
-            $this->contagem[$productId]++;
-        }
+    public function addToCart($productName,$productValue){
+        $cartItem = (array) [
+            'name'=> $productName,
+            'value' => $productValue
+        ];
+        $this->cart[] = $cartItem;
     }
-
-    public function decrement($productId)
-    {
-        if (isset($this->contagem[$productId]) && $this->contagem[$productId] > 0) {
-            $this->contagem[$productId]--;
-        }
-    }
-
 
     public function render()
     {
