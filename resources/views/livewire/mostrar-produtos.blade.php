@@ -28,13 +28,16 @@
 
         @if (!empty($data) && !empty($data['products']))
         <div class="w-full my-4">
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($data['products'] as $product)
                 @if (isset($data['quantidade'][$product->id]))
+
                 <div class="flex flex-col bg-white h-[200px] p-4 rounded-lg shadow-md">
                     <!-- Nome do produto -->
                     <div class="text-center font-bold mb-2">
-                        {{ $product->name }}
+                        {{ $product->name  }}
+
                     </div>
                     <!-- Preço e botão Adicionar -->
                     <div class="flex flex-col h-full justify-end">
@@ -43,7 +46,7 @@
                             Preço: R${{$product->price  }}
                             <button
                                 class="bg-blue-600 text-white rounded mt-2 px-6 py-2 text-xs font-medium uppercase transition duration-150 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800"
-                                wire:click="addToCart( '{{$product->name}}','{{$product->price}}' )">
+                                wire:click="addToCart( '{{$product->name}}','{{$product->price}}','{{$product->id}}' )">
                                 Adicionar
                             </button>
                         </div>
@@ -64,16 +67,18 @@
             <div class="text-center">
                 <p class="text-lg font-bold">{{$item['name']}}</p>
                 <p class="text-sm text-gray-300">{{$item['value']}}</p>
+                <p class="text-sm text-gray-300"> {{$item['quantidade']}}</p>
             </div>
             <div class="flex items-center">
+
                 <button
                     class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-2 focus:outline-none"
-                    wire:click="increment({{$loop->index}})">
+                    wire:click="increment">
                     +
                 </button>
                 <button
                     class="bg-red-600 text-white rounded-full h-8 w-8 flex items-center justify-center focus:outline-none"
-                    wire:click="decrement({{$loop->index}})">
+                    wire:click="decrement">
                     -
                 </button>
             </div>

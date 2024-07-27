@@ -54,13 +54,33 @@ class MostrarProdutos extends Component
     }
     }
 
-    public function addToCart($productName,$productValue){
-        $cartItem = (array) [
-            'name'=> $productName,
-            'value' => $productValue
-        ];
-        $this->cart[] = $cartItem;
+    public function addToCart($productName, $productValue,$productId){
+        // Inicializa uma variável para indicar se o produto já foi encontrado
+        $found = false;
+    
+        // Percorre o carrinho para encontrar o produto
+        foreach ($this->cart as &$item) {
+            if ($item['id'] === $productId) {
+                // Se o produto for encontrado, atualiza a quantidade e o valor
+                $item['quantidade'] += 1;
+                $item['value'] = $productValue;
+                $found = true;
+                break;
+            }
+        }
+    
+        // Se o produto não foi encontrado, adiciona um novo item ao carrinho
+        if (!$found) {
+            $cartItem = [
+                'id' => $productId,
+                'name' => $productName,
+                'value' => $productValue,
+                'quantidade' => 1
+            ];
+            $this->cart[] = $cartItem;
+        }
     }
+    
 
     public function render()
     {
