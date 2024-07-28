@@ -81,6 +81,42 @@ class MostrarProdutos extends Component
         }
     }
     
+    public function increment($id){
+        
+        foreach( $this->cart as &$item) {
+        
+            if($item['id'] == $id){
+                $item['quantidade'] +=1;
+               
+                break;
+                
+            }
+            
+    }
+    
+}
+    public function decrement($id,$qtde){
+        
+
+
+        foreach( $this->cart as $key => &$item ) {
+        
+            if($item['id'] == $id){
+                $item['quantidade'] -=1;
+            if($item['quantidade'] < 1 ){
+                unset($this->cart[$key]);
+            }
+                break;
+                
+            }
+        }
+            
+    
+    }
+
+
+
+
 
     public function render()
     {

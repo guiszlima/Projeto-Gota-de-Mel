@@ -1,11 +1,7 @@
 <div class="flex flex-row w-full">
     <div class="flex my-8 w-7/12 justify-start flex-col">
         {{--<x-payment-options></x-payment-options>
-         <button
-            class="relative flex h-[35px] w-40 my-7 self-center items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56 rounded-full"
-            type="submit" id="paymentButton">
-            <span class="relative z-10">Definir Pagamento</span>
-        </button>--}}
+        --}}
 
 
 
@@ -23,6 +19,15 @@
                 <button
                     class="float-start text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-2 me-2 mb-4 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
                     type="submit">Procurar</button>
+                @if($cart)
+
+                <button
+                    class="relative h-[35px] w-40 mr-7 items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56 rounded-full {{ $cart ? 'flex' : 'hidden' }}"
+                    type="submit" id="paymentButton">
+                    <span class="relative z-10">Definir Pagamento</span>
+                </button>
+
+                @endif
             </div>
         </form>
 
@@ -60,25 +65,28 @@
     </div>
 
 
+
+
     @if($cart)
-    <div class="flex flex-col my-8 w-5/12 bg-black rounded-l-lg text-white">
+    <div class="flex flex-col my-8 w-5/12  ">
         @foreach ($cart as $item)
-        <div class="border border-white p-4 mb-4 rounded-lg flex justify-between items-center">
+        <div class="border border-slate-500 p-4 mr-5 mb-4 rounded-lg flex justify-between items-center">
             <div class="text-center">
                 <p class="text-lg font-bold">{{$item['name']}}</p>
-                <p class="text-sm text-gray-300">{{$item['value']}}</p>
-                <p class="text-sm text-gray-300"> {{$item['quantidade']}}</p>
+                <p class="text-sm ">{{$item['value']}}</p>
+                <p class="text-sm "> {{$item['quantidade']}}</p>
             </div>
-            <div class="flex items-center">
+
+            <div class="flex  flex-col items-center">
 
                 <button
                     class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-2 focus:outline-none"
-                    wire:click="increment">
+                    wire:click="increment({{$item['id']}})">
                     +
                 </button>
                 <button
                     class="bg-red-600 text-white rounded-full h-8 w-8 flex items-center justify-center focus:outline-none"
-                    wire:click="decrement">
+                    wire:click="decrement({{$item['id']}},'{{$item['quantidade']}}')">
                     -
                 </button>
             </div>
@@ -86,8 +94,19 @@
         @endforeach
     </div>
     @endif
+    <div id="myModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
 
+        <!-- Modal content -->
+        <div class="bg-white p-6 rounded shadow-lg w-3/4 lg:w-1/2">
+            <span class="close text-gray-500 float-right text-2xl font-bold cursor-pointer">&times;</span>
+            <p>Some text in the Modal..</p>
+        </div>
+
+    </div>
 </div>
+
+
+
 <script>
 let previousValue = '';
 let timeout;
@@ -149,6 +168,32 @@ inputField.addEventListener('keyup', (event) => {
         clearTimeout(keyDownTimeout); // Limpa o temporizador se a tecla for liberada antes dos 10ms
     }
 });
+
+
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("paymentButton");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+    modal.classList.toggle("hidden");
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.classList.add("hidden");
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.classList.add("hidden");
+    }
+}
 </script>
 
 </div>
