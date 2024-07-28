@@ -1,7 +1,6 @@
 <div class="flex flex-row w-full">
     <div class="flex my-8 w-7/12 justify-start flex-col">
-        {{--<x-payment-options></x-payment-options>
-        --}}
+
 
 
 
@@ -19,15 +18,15 @@
                 <button
                     class="float-start text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-2 me-2 mb-4 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
                     type="submit">Procurar</button>
-                @if($cart)
+
 
                 <button
                     class="relative h-[35px] w-40 mr-7 items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56 rounded-full {{ $cart ? 'flex' : 'hidden' }}"
-                    type="submit" id="paymentButton">
+                    type="button" id="open_modal">
                     <span class="relative z-10">Definir Pagamento</span>
                 </button>
 
-                @endif
+
             </div>
         </form>
 
@@ -94,15 +93,28 @@
         @endforeach
     </div>
     @endif
-    <div id="myModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
 
-        <!-- Modal content -->
-        <div class="bg-white p-6 rounded shadow-lg w-3/4 lg:w-1/2">
-            <span class="close text-gray-500 float-right text-2xl font-bold cursor-pointer">&times;</span>
-            <p>Some text in the Modal..</p>
+
+    <div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="relative bg-white p-6 rounded-lg w-max">
+            <button id="close_modal" class="absolute top-0 right-0 mt-2 mr-2 bg-red-600 text-white rounded px-4 py-2">
+                Fechar
+            </button>
+            <form class="flex flex-col px-20 items-center" method="post" action="{{route('products.payment')}}">
+                @csrf
+                <x-payment-options></x-payment-options>
+                <input type="hidden" name="cart" value="{{json_encode($cart)}}">
+                <button
+                    class="select-none rounded-lg bg-green-500 mt-2 py-3 px-6 w-1/2 text-center align-middle  font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none "
+                    type="submit">
+                    realizar compra
+                </button>
+            </form>
         </div>
-
     </div>
+
+
+
 </div>
 
 
@@ -169,31 +181,34 @@ inputField.addEventListener('keyup', (event) => {
     }
 });
 
+// parte do modal
+document.addEventListener('DOMContentLoaded', () => {
+    const btnOpen = document.getElementById('open_modal');
+    const modal = document.getElementById('modal');
+    const btnClose = document.getElementById('close_modal');
 
-var modal = document.getElementById("myModal");
 
-// Get the button that opens the modal
-var btn = document.getElementById("paymentButton");
+    function toggleModal() {
+        modal.classList.toggle('hidden');
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-    modal.classList.toggle("hidden");
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-    modal.classList.add("hidden");
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.classList.add("hidden");
     }
-}
+
+    if (btnOpen && modal && btnClose) {
+        btnOpen.addEventListener('click', toggleModal);
+        btnClose.addEventListener('click', toggleModal);
+
+
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                toggleModal();
+            }
+        });
+
+
+
+
+    }
+});
 </script>
 
 </div>

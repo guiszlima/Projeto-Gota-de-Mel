@@ -42,6 +42,7 @@ Route::put('admin-accept',[AdminController::class, 'acceptUsers'])->name('admin.
 # Sell routes
 Route::get('sell-product',[WooCommerceController::class,'sellProducts'])->name('products.sell');
 Route::post('sell-product',[WooCommerceController::class,'makeSell'])->name('products.make-sell');
+Route::post('payment',[WooCommerceController::class,'payment'])->name('products.payment');
 
 # BarCode Generator
 Route::get('barcode',[BarCodeMakerController::class,'index'])->name('barcode.index');

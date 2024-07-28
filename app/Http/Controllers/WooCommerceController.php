@@ -31,7 +31,7 @@ class WooCommerceController extends Controller
         return view("sell.sell-product");
     }
 
-    public function makeSell(Request $request){
+    public function payment(Request $request){
         dd($request->all());
     }
 }
