@@ -72,7 +72,7 @@
         <div class="border border-slate-500 p-4 mr-5 mb-4 rounded-lg flex justify-between items-center">
             <div class="text-center">
                 <p class="text-lg font-bold">{{$item['name']}}</p>
-                <p class="text-sm ">{{$item['value']}}</p>
+                <p class="text-sm ">{{$item['value'] * $item['quantidade']}}</p>
                 <p class="text-sm "> {{$item['quantidade']}}</p>
             </div>
 
