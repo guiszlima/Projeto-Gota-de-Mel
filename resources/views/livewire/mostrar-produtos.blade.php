@@ -15,7 +15,7 @@
                     wire:click="changeFormtype">
                     <!-- Ícone ou qualquer conteúdo -->
                 </button>
-                <button
+                <button id="procura-produtos"
                     class="float-start text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-2 me-2 mb-4 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
                     type="submit">Procurar</button>
 
@@ -123,6 +123,7 @@
 let previousValue = '';
 let timeout;
 let formtype = false
+const form = document.getElementById('procura-produtos')
 const inputField = document.getElementById('codigoBarras');
 const changeForm = document.getElementById('change-form')
 
@@ -162,6 +163,13 @@ inputField.addEventListener('input', () => {
             }
             // Atualiza o valor anterior para a próxima comparação
             previousValue = currentValue;
+
+
+            if (currentValue.length === 12 || currentValue.length === 13 || currentValue.length === 8) {
+                console.log("Código de barras detectado: ", currentValue);
+                form.click();
+                inputField.value = '';
+            }
         }, 50); // Ajuste o tempo conforme necessário
     }
 });
