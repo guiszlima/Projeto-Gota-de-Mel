@@ -25,26 +25,16 @@ class MostrarProdutos extends Component
     
     if($this->formType === false){
          
-        $this->searchTerm = str_replace(' ', ',', $this->searchTerm);
- 
-       if ($this->searchTerm[-1] !== ','){
-        $this->searchTerm .= ',';
-       }
-        $id_array = explode(",", $this->searchTerm);
-        
-        // Remove valores vazios e espaços
-        $filteredArray = array_filter(array_map('trim', $id_array));
-        $this->contagem = array_count_values($filteredArray);
-        if (count($filteredArray) > 0) {
-            $params = ['include' => $filteredArray];
-            $this->products = $woocommerce->get('products', $params);
+       
+         $param = [ 'sku'=> $this->searchTerm];
+           
+            $pedido = $woocommerce->get('products', $param);
+            if(!empty($pedido)){
+            $produto = $pedido[0];
             
-            
-            
-        } else {
-            $this->products = [];
-        }
+            $this->addToCart($produto->name,$produto->price,$produto->id);
     }
+}
     else{
           
          $this->products = $woocommerce->get('products',['search'=>$this->searchTerm]);
@@ -52,6 +42,7 @@ class MostrarProdutos extends Component
             $this->contagem[$product->id] = 1;
         }
     }
+    
     }
 
     public function addToCart($productName, $productValue,$productId){
