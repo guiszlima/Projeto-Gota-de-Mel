@@ -38,9 +38,9 @@ class BarCodeMakerController extends Controller
 
    public function generate(Request $request){
       $nome_sem_espacos = str_replace(' ', '_', trim($request->name));
-      $id_with_comma = $request->id . ',';
+      
       $product = [
-         'id'=>$id_with_comma,
+         'id'=>$request->sku,
          'price'=> $request->price,
          'name' => $nome_sem_espacos
       ];
