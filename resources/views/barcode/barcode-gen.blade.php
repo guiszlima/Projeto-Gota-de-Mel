@@ -1,7 +1,7 @@
 @extends("layouts.main")
 
 @section('content')
-<h1>Produtos</h1>
+<h1>Gerar Código de Barras</h1>
 
 <table>
     <thead>
