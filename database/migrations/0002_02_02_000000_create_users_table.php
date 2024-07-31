@@ -2,7 +2,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 return new class extends Migration
 {
     /**
@@ -20,7 +21,27 @@ return new class extends Migration
             $table->boolean('is_pending')->default(true);
             $table->rememberToken();
             $table->timestamps();
-        }); 
+
+
+          
+            
+        });
+        
+        $adminRole = DB::table('roles')->where('name', 'Administrador')->first();
+        if ($adminRole) {
+            // Crie um usuário administrador
+            DB::table('users')->insert([
+                'role_id' => $adminRole->id,
+                'name' => env('ADMIN_NAME'),
+                'email' => env('ADMIN_EMAIL'),
+                'password' => Hash::make(env('ADMIN_PASSWORD')),
+                'CPF' => env('ADMIN_CPF'), 
+                'is_pending' => false, 
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+        
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');

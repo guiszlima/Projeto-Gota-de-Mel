@@ -17,15 +17,14 @@ class CreateRolesTable extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->integer('permission')->unique();
             $table->timestamps();
         });
 
         // Inserir os registros
         DB::table('roles')->insert([
-            ['name' => 'Vendedor', 'permission' => 1],
-            ['name' => 'Gerente', 'permission' => 2],
-            ['name' => 'Administrador', 'permission' => 3],
+            ['name' => 'Vendedor'],
+            ['name' => 'Gerente'],
+            ['name' => 'Administrador'],
         ]);
     }
 

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 class AdminController extends Controller
 {
 public function index(){
-    $users = $usuarios_pendentes = User::where('is_pending', false)->get();
+    $users = $usuarios_pendentes = User::where('is_pending', false)->where('id','!=',1)->get();
     $currentRoute = Route::currentRouteName();
     $roles = Role::all();
     return view("admin.admin-index")
