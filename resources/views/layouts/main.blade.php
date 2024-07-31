@@ -28,6 +28,11 @@
             height: 100%
         }
 
+        .print-hidden {
+
+            display: none;
+        }
+
         .printable,
         .printable * {
             @apply block;
@@ -36,8 +41,8 @@
 
         .printable {
             position: absolute;
-            left: 0;
-            top: 0;
+            left: 50%;
+
         }
 
         @page {
