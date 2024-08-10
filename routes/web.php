@@ -7,7 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BarCodeMakerController;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
-
+use App\Http\Controllers\StockController;
 
 
 Route::get('/dashboard', function () {
@@ -40,7 +40,8 @@ Route::middleware(['auth','check_pending'])->group(function () {
     # BarCode Generator Routes
     Route::get('barcode',[BarCodeMakerController::class,'index'])->name('barcode.index');
     Route::get('gerar-codigo',[BarCodeMakerController::class,'generate'])->name('barcode.generate');
-    # 
+    # Administrate Products 
+    Route::get('estoque',[StockController::class,'index'])->name('stock.index');
    
 
 });

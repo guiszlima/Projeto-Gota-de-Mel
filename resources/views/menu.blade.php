@@ -14,7 +14,7 @@
 
     @if ($user->role_id === 3|| $user->role_id === 2)
     <x-menu-option titulo="Produtos" img_title="Produtos" alt="Produtos" image="{{asset('images/shopping-cart.png')}}"
-        routeName="barcode.index" button_text="Produtos">
+        routeName="stock.index" button_text="Produtos">
     </x-menu-option>
     @endif
 
