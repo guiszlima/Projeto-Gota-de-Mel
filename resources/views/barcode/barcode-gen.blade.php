@@ -21,7 +21,7 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{ $product->name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $product->price }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                    <form action="{{ route('barcode.generate') }}" method="POST">
+                    <form action="{{ route('barcode.generate') }}">
                         @csrf
                         <input type="hidden" name="sku" value="{{ $product->sku }}">
                         <input type="hidden" name="price" value="{{ $product->price }}">
