@@ -11,7 +11,7 @@
 
 <!-- SVG escondido para código de barras -->
 <div id="printable_div_id m-auto">
-    <svg class="hidden" id="codBarras">{{$product['id']}}</svg>
+    <svg class="hidden" id="codBarras">{{$product['sku']}}</svg>
 </div>
 
 <!-- Imagem do código de barras -->

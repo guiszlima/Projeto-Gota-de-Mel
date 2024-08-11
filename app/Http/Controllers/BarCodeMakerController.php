@@ -40,7 +40,7 @@ class BarCodeMakerController extends Controller
       $nome_sem_espacos = str_replace(' ', '_', trim($request->name));
       
       $product = [
-         'id'=>$request->sku,
+         'sku'=>$request->sku,
          'price'=> $request->price,
          'name' => $nome_sem_espacos
       ];

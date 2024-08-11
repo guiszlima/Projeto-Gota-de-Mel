@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Automattic\WooCommerce\Client;
 use Illuminate\Http\Request;
 
 class StockController extends Controller
@@ -9,11 +9,35 @@ class StockController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request, Client $woocommerce)
     {
-        return view("stock.stock-index");
+       // Recuperando o número da página atual da requisição
+       $page = $request->input('page', 1);
+       $nmbrPerPage = 20;
+       // Definindo parâmetros de paginação e filtros
+       $params = [
+          'per_page' => $nmbrPerPage, // Número de produtos por página
+          'page' => $page, // Página atual
+          
+       ];
+       
+       // Buscando produtos com os parâmetros definidos
+       $products = $woocommerce->get('products', $params);
+       
+       // Obter o total de produtos a partir dos cabeçalhos de resposta
+       $responseHeaders = $woocommerce->http->getResponse()->getHeaders();
+       $totalProducts = $responseHeaders['X-WP-Total'];
+      
+       // Calculando o número total de páginas
+       $totalPages = ceil($totalProducts / $nmbrPerPage);
+       // Retornando a view com os produtos e informações de paginação
+       return view("stock.stock-index", [
+          'products' => $products,
+          'currentPage' => $page,
+          'totalPages' => $totalPages
+       ]);
     }
-
+ 
     /**
      * Show the form for creating a new resource.
      */
@@ -57,8 +81,10 @@ class StockController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Client $woocommerce, string $id)
     {
-        //
+         $woocommerce->delete("products/{$id}");
+        return back()->with('success', 'Produto Deletado com Sucesso!');
     }
+    
 }

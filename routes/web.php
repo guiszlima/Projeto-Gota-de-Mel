@@ -41,7 +41,7 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::get('barcode',[BarCodeMakerController::class,'index'])->name('barcode.index');
     Route::get('gerar-codigo',[BarCodeMakerController::class,'generate'])->name('barcode.generate');
     # Administrate Products 
-    Route::get('estoque',[StockController::class,'index'])->name('stock.index');
+    Route::resource('estoque', StockController::class)->names('stock');
    
 
 });
