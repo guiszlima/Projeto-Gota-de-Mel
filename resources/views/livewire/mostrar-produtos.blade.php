@@ -16,26 +16,24 @@
                     <!-- Ícone ou qualquer conteúdo -->
                 </button>
                 <button id="procura-produtos"
-                    class="float-start text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-2 me-2 mb-4 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
-                    type="submit">Procurar</button>
-
-
-                <button
-                    class="relative h-[35px] w-40 mr-7 items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56 rounded-full {{ $cart ? 'flex' : 'hidden' }}"
-                    type="button" id="open_modal">
-                    <span class="relative z-10">Definir Pagamento</span>
+                    class="float-start text-gray-900 {{$formType? 'block':'hidden'}} hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-2 me-2 mb-4 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800"
+                    type="submit">
+                    Procurar
                 </button>
+
+
+
 
 
             </div>
         </form>
 
-        @if (!empty($data) && !empty($data['products']))
+        @if (!empty($data) && !empty($data['products']) )
         <div class="w-full my-4">
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($data['products'] as $product)
-                @if (isset($data['quantidade'][$product->id]))
+                @if (isset($data['quantidade'][$product->id]) && $formType)
 
                 <div class="flex flex-col bg-white h-[200px] p-4 rounded-lg shadow-md">
                     <!-- Nome do produto -->
@@ -68,6 +66,11 @@
 
     @if($cart)
     <div class="flex flex-col my-8 w-5/12  ">
+        <button
+            class="relative h-[35px] w-full mr-7 mb-2 items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-full rounded-full {{ $cart ? 'flex' : 'hidden' }}"
+            type="button" id="open_modal">
+            <span class="relative z-10">Finalizar Compra</span>
+        </button>
         @foreach ($cart as $item)
         <div class="border border-slate-500 p-4 mr-5 mb-4 rounded-lg flex justify-between items-center">
             <div class="text-center">
@@ -191,31 +194,42 @@ inputField.addEventListener('keyup', (event) => {
 
 // parte do modal
 document.addEventListener('DOMContentLoaded', () => {
-    const btnOpen = document.getElementById('open_modal');
     const modal = document.getElementById('modal');
-    const btnClose = document.getElementById('close_modal');
-
+    const btnClose = document.getElementById('close_modal')
 
     function toggleModal() {
         modal.classList.toggle('hidden');
-
     }
 
-    if (btnOpen && modal && btnClose) {
-        btnOpen.addEventListener('click', toggleModal);
-        btnClose.addEventListener('click', toggleModal);
+    // Observa mudanças no DOM para detectar quando o botão é adicionado
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                const btnOpen = document.getElementById('open_modal');
+                if (btnOpen && modal && btnClose) {
+                    btnOpen.addEventListener('click', toggleModal);
+                    btnClose.addEventListener('click', toggleModal);
 
 
-        window.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
-                toggleModal();
+
+                    observer.disconnect(); // Desconecta o observer após encontrar o botão
+                }
             }
         });
+    });
 
+    // Configuração do observer
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
 
-
-
-    }
+    // Event listener para fechar o modal com a tecla Escape
+    window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+            toggleModal();
+        }
+    });
 });
 </script>
 
