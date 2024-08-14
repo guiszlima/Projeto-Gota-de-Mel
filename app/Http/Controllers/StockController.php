@@ -60,6 +60,21 @@ class StockController extends Controller
     public function show(Client $woocommerce, string $id)
     {
         $product = $woocommerce->get("products/{$id}");
+        if($product->variations){
+            $variations = $woocommerce->get("products/{$id}/variations");
+            
+                foreach($variations as $variation){
+                    $variation->parent_name = $product->name;
+                    $variation ->name = $variation->parent_name ." ". $variation->name;
+                    $variation->parent_id = $product->id;
+                    if ($variation->image) {
+                        # code...
+                    }
+                }
+                $product = $variations;
+
+       }
+        
         return view("stock.stock-show")->with('product', $product);
     }
 
