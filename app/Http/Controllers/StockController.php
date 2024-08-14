@@ -51,15 +51,16 @@ class StockController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Client $woocommerce, string $id)
     {
-        //
+        $product = $woocommerce->get("products/{$id}");
+        return view("stock.stock-show")->with('product', $product);
     }
 
     /**
