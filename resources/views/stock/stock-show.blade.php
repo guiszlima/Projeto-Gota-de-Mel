@@ -4,10 +4,11 @@
 
 @php
 $tipoProduto = $product->type ?? $product[0]->type;
+$variante = 'true'
 @endphp
 
-<div class="flex items-center justify-center h-screen bg-gray-100">
-    <div class="w-[80vw] h-max bg-white shadow-lg rounded-lg p-8 flex flex-col items-center">
+<div class="flex items-center  justify-center h-100% bg-gray-100">
+    <div class="w-[80vw] h-max  mt-[5%] bg-white shadow-lg rounded-lg p-8 flex flex-col items-center">
         <form method="POST" action="{{ route('stock.update') }}" class="w-full flex flex-col items-center">
             @csrf
             @method('PUT')
@@ -26,25 +27,34 @@ $tipoProduto = $product->type ?? $product[0]->type;
             </div>
 
             @if ($tipoProduto !== 'variation')
+            @php
+            $variante = 'falso';
+            @endphp
             <div class="flex flex-col items-center">
                 <img src="{{ $product->images[0]->src }}" alt="{{ $product->name }}"
                     class="w-1/2 h-auto object-contain mb-6 rounded shadow">
                 <input type="text" name="name" readonly value="{{ $product->name }}"
-                    class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-full mb-4">
+                    class="editInput text-center text-xl font-semibold border border-gray-300 p-3 rounded w-full mb-4">
             </div>
 
             <div class="flex flex-row justify-between w-50% space-x-10 mt-10">
                 <div class="flex flex-col w-1/2">
                     <label for="sku" class="text-gray-700 mb-2">Identificador de Produto</label>
                     <input id="sku" name="sku" type="text" readonly value="{{ $product->sku }}"
-                        class="text-center border border-gray-300 p-3 rounded w-full">
+                        class="editInput text-center border border-gray-300 p-3 rounded w-full">
                 </div>
 
                 <div class="flex flex-col w-1/2">
                     <label for="price" class="text-gray-700 mb-2">Preço</label>
                     <input id="price" name="price" type="text" readonly value="{{ $product->price }}"
-                        class="text-center border border-gray-300 p-3 rounded w-full">
+                        class="editInput text-center border border-gray-300 p-3 rounded w-full">
                 </div>
+                <div class="flex flex-col w-1/2">
+                    <label for="price" class="text-gray-700 mb-2">Quantidade: </label>
+                    <input id="quantity" name="quantity" type="number" readonly value="{{ $product->stock_quantity }}"
+                        class="editInput text-center border border-gray-300 p-3 rounded w-full">
+                </div>
+
             </div>
             @else
             <div class="flex flex-col ">
@@ -68,7 +78,7 @@ $tipoProduto = $product->type ?? $product[0]->type;
                             <img src="{{ $variant->image->src }}" alt="{{ $variant->name }}"
                                 class="w-3/4 h-auto object-contain mb-4 rounded-lg shadow-md">
                             <input type="text" name="variant_name[]" readonly value="{{ $variant->name }}"
-                                class="editInput   text-center text-xl font-semibold border border-gray-300 p-3 rounded w-full mb-4">
+                                class="editInputVar   text-center text-xl font-semibold border border-gray-300 p-3 rounded w-full mb-4">
 
                             <div class="flex flex-row justify-between w-full space-x-4">
                                 <div class="flex flex-col w-1/2">
@@ -76,14 +86,20 @@ $tipoProduto = $product->type ?? $product[0]->type;
                                         Produto</label>
                                     <input id="sku_{{ $loop->index }}" name="variant_sku[]" type="text" readonly
                                         value="{{ $variant->sku }}"
-                                        class="editInput text-center border border-gray-300 p-3 rounded w-full">
+                                        class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
                                 </div>
 
                                 <div class="flex flex-col w-1/2">
                                     <label for="price_{{ $loop->index }}" class="text-gray-700 mb-2">Preço</label>
                                     <input id="price_{{ $loop->index }}" name="variant_price[]" type="text" readonly
                                         value="{{ $variant->price }}"
-                                        class="precos  editInput text-center border border-gray-300 p-3 rounded w-full">
+                                        class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                                </div>
+                                <div class="flex flex-col w-1/2">
+                                    <label for="price_{{ $loop->index }}" class="text-gray-700 mb-2">Quantidade</label>
+                                    <input id="price_{{ $loop->index }}" name="variant_stock_quantity[]" type="text"
+                                        readonly value="{{ $variant->stock_quantity }}"
+                                        class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
                                 </div>
                             </div>
                         </div>
@@ -112,41 +128,73 @@ toggleButtons.forEach(button => {
 });
 
 const editButton = document.getElementById('editButton');
-const inputs = document.querySelectorAll('.editInput');
+const editInputsVar = document.querySelectorAll('.editInputVar');
+const editInputs = document.querySelectorAll('.editInput');
 const inputChangePrices = document.getElementById('inputChangePrice');
 const changeButton = document.getElementById('changeButton');
 const prices = document.querySelectorAll('.precos');
 const divChangePrices = document.getElementById('divChangePrices');
 
-changeButton.addEventListener('click', () => {
-    prices.forEach(price => {
-        price.value = inputChangePrices.value
-        console.log("produto alterado")
+
+if ("{{$variante}}" !== "falso") {
+    changeButton.addEventListener('click', () => {
+        prices.forEach(price => {
+            price.value = inputChangePrices.value
+            console.log("produto alterado")
+        });
+    })
+
+    editButton.addEventListener('click', () => {
+        const isReadOnly = editInputsVar[0].hasAttribute('readonly');
+
+        editInputsVar.forEach(input => {
+
+            if (input.hasAttribute('readonly')) {
+
+                divChangePrices.classList.remove('hidden');
+
+                input.removeAttribute('readonly');
+                editButton.classList.add('edit-mode');
+                editButton.classList.add('bg-green-500');
+                editButton.classList.remove('bg-blue-500');
+            } else {
+                input.setAttribute('readonly', true);
+
+                divChangePrices.classList.add('hidden');
+
+                editButton.classList.remove('bg-green-500');
+                editButton.classList.add('bg-blue-500');
+                editButton.classList.remove('edit-mode');
+
+            }
+        });
+
+
     });
-})
+} else {
+    editButton.addEventListener('click', () => {
+        const isReadOnly = editInputs[0].hasAttribute('readonly');
 
-editButton.addEventListener('click', () => {
-    const isReadOnly = inputs[0].hasAttribute('readonly');
+        editInputs.forEach(input => {
 
-    inputs.forEach(input => {
+            if (input.hasAttribute('readonly')) {
 
-        if (input.hasAttribute('readonly')) {
-            divChangePrices.classList.remove('hidden');
-            input.removeAttribute('readonly');
-            editButton.classList.add('edit-mode');
-            editButton.classList.add('bg-green-500');
-            editButton.classList.remove('bg-blue-500');
-        } else {
-            input.setAttribute('readonly', true);
-            divChangePrices.classList.add('hidden');
-            editButton.classList.remove('bg-green-500');
-            editButton.classList.add('bg-blue-500');
-            editButton.classList.remove('edit-mode');
+                input.removeAttribute('readonly');
+                editButton.classList.add('edit-mode');
+                editButton.classList.add('bg-green-500');
+                editButton.classList.remove('bg-blue-500');
+            } else {
+                input.setAttribute('readonly', true);
 
-        }
+                editButton.classList.remove('bg-green-500');
+                editButton.classList.add('bg-blue-500');
+                editButton.classList.remove('edit-mode');
+
+            }
+        });
+
+
     });
-
-
-});
+}
 </script>
 @endsection
