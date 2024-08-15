@@ -41,7 +41,27 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::get('barcode',[BarCodeMakerController::class,'index'])->name('barcode.index');
     Route::get('gerar-codigo',[BarCodeMakerController::class,'generate'])->name('barcode.generate');
     # Administrate Products 
-    Route::resource('estoque', StockController::class)->names('stock');
+   // Listar todos os recursos
+    Route::get('estoque', [StockController::class, 'index'])->name('stock.index');
+
+    // Exibir o formulário de criação de um novo recurso
+    Route::get('estoque/create', [StockController::class, 'create'])->name('stock.create');
+
+    // Armazenar um novo recurso
+    Route::post('estoque', [StockController::class, 'store'])->name('stock.store');
+
+    // Exibir um recurso específico
+    Route::get('estoque/{id}', [StockController::class, 'show'])->name('stock.show');
+
+    // Exibir o formulário de edição de um recurso existente
+    Route::get('estoque/{id}/edit', [StockController::class, 'edit'])->name('stock.edit');
+
+    // Atualizar um recurso existente
+    Route::put('estoque', [StockController::class, 'update'])->name('stock.update');
+   
+
+    // Excluir um recurso
+    Route::delete('estoque/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
    
 
 });
