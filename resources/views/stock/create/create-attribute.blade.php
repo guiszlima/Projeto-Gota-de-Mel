@@ -13,8 +13,9 @@
             <div class="mb-4">
                 <label for="atributo" class="block text-gray-700 font-bold mb-2">Atributo</label>
                 <div class="flex">
-                    <input type="text" id="atributo" class=" shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight
-                        focus:outline-none focus:shadow-outline" placeholder="Digite o nome do atributo">
+                    <input type="text" id="atributo"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        placeholder="Digite o nome do atributo">
                     <button id="criarAtributo" type="button"
                         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2 focus:outline-none focus:shadow-outline">
                         Criar Atributo
@@ -93,7 +94,7 @@ document.getElementById('criarAtributo').addEventListener('click', function() {
 
         const inputPropriedade = document.createElement('input');
         inputPropriedade.type = 'text';
-
+        inputPropriedade.name = `propriedade_${atributoNome}`;
         inputPropriedade.placeholder = `Digite o nome da propriedade de ${atributoNome}`;
         inputPropriedade.className =
             'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2 ' +
@@ -141,8 +142,8 @@ document.getElementById('submitData').addEventListener('click', function() {
 
         if (propriedadesArray.length > 0) {
             // Substitui espaços por hífens para a classe
-            const atributoClasse = atributoNome.replace(/\s+/g, '-').toLowerCase();
-            data[atributoClasse] = propriedadesArray;
+
+            data[atributoNome] = propriedadesArray;
         }
     }
 
