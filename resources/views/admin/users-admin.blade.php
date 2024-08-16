@@ -2,13 +2,15 @@
 
 @section('content')
 <main>
-<div class="flex flex-row  justify-around w-1/3 my-10">
-<x-admin-link text="Admin" route="admin.index" currentRoute="{{$currentRoute}}" />
-<x-admin-link text="Aceitar usuários" route="admin.index.accept" currentRoute="{{$currentRoute}}" />
-</div>
-<div class="w-full ml-auto mr-auto  overflow-x-auto rounded-lg border border-gray-200">
-    
-    
+
+    <div class="flex flex-row  justify-around w-1/3 my-10">
+        <x-dynamic-link text="Admin" route="admin.index" currentRoute="{{$currentRoute}}" />
+        <x-dynamic-link text="Aceitar usuários" route="admin.index.accept" currentRoute="{{$currentRoute}}" />
+    </div>
+
+    <div class="w-full ml-auto mr-auto  overflow-x-auto rounded-lg border border-gray-200">
+
+
         <table class="text-left w-full h-full table-auto">
             <thead class="text-center">
                 <tr>
@@ -21,35 +23,39 @@
             </thead>
             <tbody class='text-center divide-y divide-gray-200'>
                 @foreach($usuarios_pendentes as $usuario)
-                    <tr class="border-b dark:border-neutral-500"></tr>
-                        <td class="whitespace-nowrap px-6 py-4">{{ $usuario->name }}</td>
-                        <td class="whitespace-nowrap px-6 py-4" >{{ $usuario->email }}</td>
-                        <td class="whitespace-nowrap px-6 py-4">{{ $usuario->CPF }}</td>
-                        <td>{{ $usuario->is_pending ? 'Pendente' : 'Autorizado' }}</td>
-                       
-                        <td class=" flex flex-row w-max  whitespace-nowrap px-6 py-4">
-                            <form action="{{ route('admin.accept') }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                               
-                                <label for="role">Escolha um papel:</label>
-                                <select name="role" id="role">
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                    @endforeach
-                                </select>
-                                
-                                <input type="hidden" name="user_id" value="{{ $usuario->id }}">
-                                <button class="mx-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">Aceitar</button>
-                            </form>
-                            <form action="{{ route('admin.delete', $usuario->id) }}" method="POST" >
-                                @csrf
-                                @method('DELETE')
-                                <input type="hidden" name="user_id" value="{{$usuario->id}}">
-                                <button class="mx-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"  type="submit">Negar</button>
-                            </form>
-                        </td>
-                    </tr>
+                <tr class="border-b dark:border-neutral-500"></tr>
+                <td class="whitespace-nowrap px-6 py-4">{{ $usuario->name }}</td>
+                <td class="whitespace-nowrap px-6 py-4">{{ $usuario->email }}</td>
+                <td class="whitespace-nowrap px-6 py-4">{{ $usuario->CPF }}</td>
+                <td>{{ $usuario->is_pending ? 'Pendente' : 'Autorizado' }}</td>
+
+                <td class=" flex flex-row w-max  whitespace-nowrap px-6 py-4">
+                    <form action="{{ route('admin.accept') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <label for="role">Escolha um papel:</label>
+                        <select name="role" id="role">
+                            @foreach ($roles as $role)
+                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+
+                        <input type="hidden" name="user_id" value="{{ $usuario->id }}">
+                        <button
+                            class="mx-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            type="submit">Aceitar</button>
+                    </form>
+                    <form action="{{ route('admin.delete', $usuario->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="user_id" value="{{$usuario->id}}">
+                        <button
+                            class="mx-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            type="submit">Negar</button>
+                    </form>
+                </td>
+                </tr>
                 @endforeach
             </tbody>
         </table>

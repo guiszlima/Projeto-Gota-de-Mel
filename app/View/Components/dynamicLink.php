@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use Illuminate\Support\Facades\Route;
-class adminlink extends Component
+class dynamicLink extends Component
 {
     public $text;
     public $route;
@@ -21,6 +21,6 @@ class adminlink extends Component
 
     public function render(): View|Closure|string
     {
-        return view('components.admin-link');;
+        return view('components.dynamic-link');;
     }
 }
