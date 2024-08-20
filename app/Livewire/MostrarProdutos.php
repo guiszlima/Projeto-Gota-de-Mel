@@ -42,9 +42,9 @@ class MostrarProdutos extends Component
 }
     else{
         $this->products = $woocommerce->get('products', ['search' => $this->searchTerm]);
-
+       // dd($this->products);
         $productsWithVariations = [];
-        
+        $productIdsToRemove = [];
         foreach ($this->products as $product) {
             // Adiciona o produto principal ao array
             $productsWithVariations[] = $product;

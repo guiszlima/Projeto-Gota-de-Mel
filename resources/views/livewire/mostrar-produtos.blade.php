@@ -46,11 +46,17 @@
                         <!-- Botão Adicionar -->
                         <div class="flex justify-end h-full flex-col text-center">
                             Preço: R${{$product->price  }}
+                            @if ($product->stock_quantity!=0)
+
+
                             <button
                                 class="bg-blue-600 text-white rounded mt-2 px-6 py-2 text-xs font-medium uppercase transition duration-150 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800"
                                 wire:click="addToCart( '{{$product->name}}','{{$product->price}}','{{$product->id}}' )">
                                 Adicionar
                             </button>
+                            @else
+                            <p>FORA DE ESTOQUE</p>
+                            @endif
                         </div>
                     </div>
                 </div>
