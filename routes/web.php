@@ -46,12 +46,12 @@ Route::middleware(['auth','check_pending'])->group(function () {
 
     // Exibir o formulário de criação de um novo produto
     Route::get('estoque/create', [StockController::class, 'create'])->name('stock.create');
-    // Exibir o formulário de criação de um novo atributo
-    Route::get('estoque/create-attribute', [StockController::class, 'createAttribute'])->name('stock.attribute');
-    Route::post('estoque/create-attribute', [StockController::class, 'storeAttribute'])->name('stock.store.attribute'); 
+    
+    Route::get('estoque/create-variation-product',[StockController::class,'createVariableProduct'])->name('stock.create.var-product');
+
     // Armazenar um novo recurso
     Route::post('estoque', [StockController::class, 'store'])->name('stock.store');
-
+    
     // Exibir um recurso específico
     Route::get('estoque/{id}', [StockController::class, 'show'])->name('stock.show');
 

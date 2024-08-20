@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Automattic\WooCommerce\Client;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client as WpClient;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 class StockController extends Controller
@@ -48,28 +49,143 @@ class StockController extends Controller
     public function create(Request $request,Client $woocommerce)
     {
         $currentRoute = Route::currentRouteName();
-       return view('stock.create.create')->with('currentRoute',$currentRoute);
+        $categories_data = [];
+        $woocategories = $woocommerce->get('products/categories');
+        foreach($woocategories as $category){
+        $categories_data[] = [
+                        'id' =>  $category->id,
+                        'name'=>$category->name
+        ]; 
+    }
+       return view('stock.create.create')->with('currentRoute',$currentRoute)->with('categories', $categories_data)->with('currentRoute',$currentRoute);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Client $woocommerce, Request $request, WpClient $wpService )
+{
+    // Validação dos dados
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'sku' => 'required|string|max:255',
+        'price' => 'required|string',
+        'stock_quantity' => 'required|integer',
+        'description' => 'nullable|string',
+        'height' => 'nullable|numeric',
+        'width' => 'nullable|numeric',
+        'depth' => 'nullable|numeric',
+        'weight' => 'nullable|numeric',
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,svg,webp',
+        'category'=> 'required|numeric',
+    ]);
+
+    // Processar o upload da imagem
+    if ($request->hasFile('image')) {
+        // Obtém o caminho do arquivo da imagem
+        $requestImage = $request->image;
+        $extension = $requestImage->extension();
+        $imageName = $validatedData['name'] . strtotime('now') . '.' . $extension;
+        $imgPath = public_path('img/temp_imgs/' . $imageName);
+        $requestImage->move(public_path('img/temp_imgs'), $imageName);
+       
+        // Caminho da imagem no seu projeto Laravel
+        $client = new wpClient();
+
+        // Caminho da imagem no seu projeto Laravel
+       
+        $e_commerce=env('WOOCOMMERCE_STORE_URL');
+        $request = '/wp-json/wp/v2/media';
+        $request_url = $e_commerce.$request;
+        // Fazer a requisição de upload da imagem
+        
+        $response = $client->request('POST', $request_url, [
+            'headers' => [
+                'Content-Disposition' => 'attachment; filename="' . basename($imgPath) . '"',
+                'Content-Type' => "image/$extension",
+            ],
+            'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
+            'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
+            
+        ]);
+        
+        $image_data = json_decode($response->getBody(), true);
+        $image_id = $image_data['id']; // Obter o ID da imagem
+        
+
+        unlink($imgPath);
+        
+        $productData = [
+            'name' => $validatedData['name'],
+            'sku' => $validatedData['sku'],
+            'manage_stock'=>true,
+            'regular_price' => $validatedData['price'],
+            'stock_quantity' => $validatedData['stock_quantity'],
+            'description' => $validatedData['description'],
+            'dimensions' => [
+                'height' => $validatedData['height'] ?? '',
+                'width' => $validatedData['width'] ?? '',
+                'length' => $validatedData['depth'] ?? '',
+            ],
+            'weight' => $validatedData['weight'] ?? '',
+            'categories' => [
+                [
+                    'id' => $validatedData['category']
+                ],
+            ],
+            'images' => [
+                [
+                    'id' => $image_id
+                ],
+                ]
+            ];
+    
     }
 
+    else{
+        $productData = [
+            'name' => $validatedData['name'],
+            'sku' => $validatedData['sku'],
+            'regular_price' => $validatedData['price'],
+            'manage_stock'=>true,
+            'stock_quantity' => $validatedData['stock_quantity'],
+            'description' => $validatedData['description'],
+            'dimensions' => [
+                'height' => $validatedData['height'] ?? '',
+                'width' => $validatedData['width'] ?? '',
+                'length' => $validatedData['depth'] ?? '',
+            ],
+            'weight' => $validatedData['weight'] ?? '',
+            'categories' => [
+                [
+                    'id' => $validatedData['category']
+                ],
+            ],
+           
+            ]; 
+    }
+        
+    try {
+        // Enviar a requisição para criar o produto na API do WooCommerce
+        $response = $woocommerce->post('products', $productData);
 
+        // Opcional: Verifique a resposta e execute ações conforme necessário
+        dd($response); // Apenas para fins de depuração
+    } catch (\Exception $e) {
+        // Lide com exceções, como erros de rede ou falhas na API
+        dd($e->getMessage());
+        return back()->withErrors(['error' => 'Erro ao criar o produto: ' . $e->getMessage()]);
+    }
+}
 
-    public function createAttribute(Request $request,Client $woocommerce){
-        $currentRoute = Route::currentRouteName();
-            return view("stock.create.create-attribute")->with('currentRoute',$currentRoute);
+    public function createVariableProduct(){
+
+        
+
             
     }
-    public function storeAttribute(Request $request)
-{
-    dd($request->all());
-}
+
+    
 
 
     /**

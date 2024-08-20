@@ -5,6 +5,7 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold mb-6">Gerenciamento de Estoque</h1>
     <div>
+
         <form action="{{route('stock.create')}}" class="my-7">
             <button
                 class="relative px-8 py-2 rounded-md bg-white isolation-auto z-10 border-2 text-gray-700 border-yellow-300 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-yellow-300 before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700">
