@@ -48,7 +48,7 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::get('estoque/create', [StockController::class, 'create'])->name('stock.create');
     
     Route::get('estoque/create-variation-product',[StockController::class,'createVariableProduct'])->name('stock.create.var-product');
-
+    Route::post('estoque/create-variation-product',[StockController::class,'storeVariableProduct'])->name('stock.store.var-product');
     // Armazenar um novo recurso
     Route::post('estoque', [StockController::class, 'store'])->name('stock.store');
     

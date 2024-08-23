@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client as WpClient;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use phpDocumentor\Reflection\PseudoTypes\True_;
+
 class StockController extends Controller
 {
     /**
@@ -90,7 +92,7 @@ class StockController extends Controller
         $requestImage->move(public_path('img/temp_imgs'), $imageName);
        
         // Caminho da imagem no seu projeto Laravel
-        $client = new wpClient();
+
 
         // Caminho da imagem no seu projeto Laravel
        
@@ -99,7 +101,7 @@ class StockController extends Controller
         $request_url = $e_commerce.$request;
         // Fazer a requisição de upload da imagem
         
-        $response = $client->request('POST', $request_url, [
+        $response = $wpService->request('POST', $request_url, [
             'headers' => [
                 'Content-Disposition' => 'attachment; filename="' . basename($imgPath) . '"',
                 'Content-Type' => "image/$extension",
@@ -186,6 +188,94 @@ public function createVariableProduct(Client $woocommerce) {
     return view('stock.create-variable-product')->with('currentRoute',$currentRoute);
 }
 
+public function storeVariableproduct(Client $woocommerce, Request $request,WpClient $wpService){
+
+ $request->validate([
+ 'file.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp',
+]);
+    $result = [];
+    $e_commerce=env('WOOCOMMERCE_STORE_URL');
+    $woorequest = '/wp-json/wp/v2/media';
+    $request_url = $e_commerce.$woorequest;
+    
+    foreach ($request->id_term as $index => $id) {
+        $result[] = [
+            'preco' => $request->preco[$index],
+            'id_term' => $id,
+            'has_image' => $request->has_image[$id],
+            'nome'=> $request->nome,
+            'attribute_dad' =>$request->attribute_dad[0]
+        ];
+    }
+    
+dd($result);
+
+if ($request->has('file') && !empty($request->file('file'))) {
+    $files = $request->file('file');
+
+    // Filtra o array para garantir que apenas arquivos válidos sejam processados
+    $validFiles = array_filter($files, function ($file) {
+        return $file instanceof \Illuminate\Http\UploadedFile && $file->isValid();
+    });
+
+if(count($validFiles) > 0){
+$files = $request->file('file');
+$uniqueFiles = [];
+$imgPathArray = [];
+
+
+foreach ($files as $file) {
+    // Calcula o hash do conteúdo do arquivo para verificar duplicidade
+    $fileHash = md5_file($file->getRealPath());
+
+    // Verifica se já existe um arquivo com o mesmo hash
+    if (!in_array($fileHash, array_column($uniqueFiles, 'hash'))) {
+        $uniqueFiles[] = ['file' => $file, 'hash' => $fileHash];
+    }
+}
+
+
+foreach($uniqueFiles as $file){
+
+$extension = $file['extension'];
+$imageName = $file . strtotime('now') . '.' . $extension;
+$imgPath = public_path('img/temp_imgs/' . $imageName);
+
+
+// Caminho da imagem no seu projeto Laravel
+
+
+// Fazer a requisição de upload da imagem
+
+$response = $wpService->request('POST', $request_url, [
+    'headers' => [
+        'Content-Disposition' => 'attachment; filename="' . basename($imgPath) . '"',
+        'Content-Type' => "image/$extension",
+    ],
+    'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
+    'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
+    
+]);
+$image_data = json_decode($response->getBody(), true);
+$image_id = $image_data['id']; 
+foreach ($result as &$item) {
+    if ($item['has_image'] === 'true') {
+        $item['product_image'] = $image_id;
+    }
+}
+}
+}
+}
+// Processa os arquivos únicos
+
+return back()->with('success', 'Arquivos únicos enviados com sucesso!');
+
+
+
+}
+
+    
+    
 
 
     /**

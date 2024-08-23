@@ -64,7 +64,9 @@
 
         <!-- Formulário de Variações -->
         @if($escolhido && $atributo_pai !== null && !$mensagem)
-        <form action="" method="POST" class="w-full mt-6">
+        <form id="myForm" action="{{route('stock.store.var-product')}}" method="POST" enctype="multipart/form-data"
+            class="w-full mt-6">
+            @csrf
             <div id="variations-container" class="space-y-4 w-full bg-white p-6 rounded-lg shadow-md">
                 @foreach ($attributes as $attribute)
                 @if($attribute['id_pai'] == $atributo_pai)
@@ -72,16 +74,21 @@
 
                 <div class="flex justify-between items-center mb-4">
                     <p>{{ $nome_produto . " " . $term['name'] }}</p>
-                    <input type="file" name="file[{{ $term['id'] }}]" class="file-input">
-                    <input type="text" name="preco[{{ $term['id'] }}]" placeholder="Preço"
+                    <input type="file" name="file[]" class="file-input">
+                    <input type="text" name="preco[]" placeholder="Preço"
                         class="price-input ml-4 block w-1/2 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <input type="hidden" value="{{$term['id']}}" name="id_term[]">
+                    <input type="hidden" class="hasImage" name="has_image[{{$term['id']}}]">
+                    <input type="hidden" value="{{$atributo_pai}}" name="attribute_dad[]">
+                    <input type="hidden" value="{{$term['name']}}" name="'nome[]">
                 </div>
 
                 @endforeach
                 @endif
                 @endforeach
                 <div class="flex justify-end mt-6">
-                    <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">
+                    <button type="button" id="submitButton"
+                        class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">
                         Salvar
                     </button>
                 </div>
@@ -92,7 +99,8 @@
 </div>
 
 <script>
-const insertValues = document.getElementById('insert-values')
+const insertValues = document.getElementById('insert-values');
+
 insertValues.addEventListener('click', function() {
     // Obter o valor do preço de todos
     const allPrice = document.getElementById('all-price').value;
@@ -109,14 +117,50 @@ insertValues.addEventListener('click', function() {
         input.value = allPrice;
     });
 
-    // Selecionar todos os campos de arquivo nas variações
-
-
-    // Inserir o valor de todos os arquivos nos inputs correspondentes
     fileInputs.forEach(input => {
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(allFile);
         input.files = dataTransfer.files;
     });
 });
+
+// Função para configurar o evento de clique no botão de submit
+function setupSubmitButton() {
+    const submitButton = document.getElementById('submitButton');
+    if (submitButton) {
+        submitButton.addEventListener('click', function() {
+            const fileInputs = document.querySelectorAll('.file-input');
+            const hasImageInputs = document.querySelectorAll('.hasImage');
+            const form = document.getElementById('myForm');
+
+            fileInputs.forEach((input, index) => {
+                // Verifica se o input de arquivo possui arquivos
+                const temImagem = input.files.length > 0;
+                // Define o valor do input oculto baseado na presença de imagem
+                hasImageInputs[index].value = temImagem ? 'true' : 'false';
+            });
+
+            // Envia o formulário manualmente
+            form.submit();
+        });
+    }
+}
+
+// Configurar o MutationObserver para detectar quando o submitButton é adicionado ao DOM
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.addedNodes.length > 0) {
+            setupSubmitButton();
+        }
+    });
+});
+
+// Começa a observar o DOM para alterações
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+
+// Configura o botão de submit se já estiver no DOM
+setupSubmitButton();
 </script>
