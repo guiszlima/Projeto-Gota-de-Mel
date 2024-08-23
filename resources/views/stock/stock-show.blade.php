@@ -31,13 +31,13 @@ $variante = 'true'
             $variante = 'falso';
             @endphp
             <div class="flex flex-col items-center">
-                <img src="{{ $product->images[0]->src }}" alt="{{ $product->name }}"
+                <img src="{{ $product->images[0]->src ?? ""}}" alt="{{ $product->name }}"
                     class="w-1/2 h-auto object-contain mb-6 rounded shadow">
                 <input type="text" name="name" readonly value="{{ $product->name }}"
                     class="editInput text-center text-xl font-semibold border border-gray-300 p-3 rounded w-full mb-4">
             </div>
 
-            < class="flex flex-row justify-between w-50% space-x-10 mt-10">
+            <div class="flex flex-row justify-between w-50% space-x-10 mt-10">
                 <div class="flex flex-col w-1/2">
                     <label for="sku" class="text-gray-700 mb-2">Identificador de Produto</label>
                     <input id="sku" name="sku" type="text" readonly value="{{ $product->sku }}"

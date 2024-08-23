@@ -177,15 +177,15 @@ class StockController extends Controller
         return back()->withErrors(['error' => 'Erro ao criar o produto: ' . $e->getMessage()]);
     }
 }
-
-    public function createVariableProduct(){
-
-        
-
-            
-    }
+public function createVariableProduct(Client $woocommerce) {
+    // Obter os atributos de produtos
+    $currentRoute = Route::currentRouteName();
 
     
+    // Passar os atributos organizados para a view
+    return view('stock.create-variable-product')->with('currentRoute',$currentRoute);
+}
+
 
 
     /**
@@ -193,6 +193,7 @@ class StockController extends Controller
      */
     public function show(Client $woocommerce, string $id)
     {
+        
         $product = $woocommerce->get("products/{$id}");
         if ($product->variations) {
             $variations = $woocommerce->get("products/{$id}/variations");

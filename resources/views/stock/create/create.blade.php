@@ -4,7 +4,8 @@
 <main class="flex flex-col">
     <h1 class="text-2xl font-bold m-6">Criar</h1>
     <div class="flex flex-row justify-around w-1/3 my-10">
-        <x-dynamic-link text="Inserir Produto com Variações" route="stock.create.var-product"
+        <x-dynamic-link text="Produto sem Variações" route="{{$currentRoute}}" currentRoute="{{$currentRoute}}" />
+        <x-dynamic-link text="Produto com Variações" route="stock.create.var-product"
             currentRoute="{{$currentRoute}}" />
 
     </div>
