@@ -208,7 +208,7 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
         ];
     }
     
-dd($result);
+
 
 if ($request->has('file') && !empty($request->file('file'))) {
     $files = $request->file('file');
@@ -237,10 +237,13 @@ foreach ($files as $file) {
 
 foreach($uniqueFiles as $file){
 
-$extension = $file['extension'];
-$imageName = $file . strtotime('now') . '.' . $extension;
-$imgPath = public_path('img/temp_imgs/' . $imageName);
+    $file = $file['file'];
+    $extension = $file->getClientOriginalExtension();
+    $imageName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '_' . strtotime('now') . '.' . $extension;
+    $imgPath = public_path('img/temp_imgs/' . $imageName);
 
+    // Salva o arquivo temporariamente em storage/public
+    $file->move(public_path('img/temp_imgs'), $imageName);
 
 // Caminho da imagem no seu projeto Laravel
 

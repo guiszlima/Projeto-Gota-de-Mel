@@ -27,7 +27,7 @@
                     Identificador de Produto <span class="text-red-500">*</span>
                 </label>
                 <div class="flex flex-row">
-                    <input type="text" id="sku" name="sku"
+                    <input readonly type="text" id="sku" name="sku"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         placeholder="Digite o SKU" required>
                     <button id="generateSku"
@@ -133,7 +133,7 @@
 
 <script>
 document.getElementById("generateSku").addEventListener("click", function() {
-    let name = document.getElementById('name');
+
     // Função para gerar SKU único
     function generateSku() {
         now = new Date();
@@ -146,7 +146,7 @@ document.getElementById("generateSku").addEventListener("click", function() {
         const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
 
         const timeString = `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`
-        let sku = name.value + timeString;
+        let sku = timeString;
 
         return sku;
     }
