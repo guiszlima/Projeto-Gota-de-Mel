@@ -182,100 +182,136 @@ class StockController extends Controller
 public function createVariableProduct(Client $woocommerce) {
     // Obter os atributos de produtos
     $currentRoute = Route::currentRouteName();
+   
 
     
     // Passar os atributos organizados para a view
-    return view('stock.create-variable-product')->with('currentRoute',$currentRoute);
+    return view('stock.create-variable-product')->with('currentRoute',$currentRoute); 
 }
 
 public function storeVariableproduct(Client $woocommerce, Request $request,WpClient $wpService){
-
- $request->validate([
- 'file.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp',
-]);
-    $result = [];
-    $e_commerce=env('WOOCOMMERCE_STORE_URL');
-    $woorequest = '/wp-json/wp/v2/media';
-    $request_url = $e_commerce.$woorequest;
     
-    foreach ($request->id_term as $index => $id) {
-        $result[] = [
-            'preco' => $request->preco[$index],
-            'id_term' => $id,
-            'has_image' => $request->has_image[$id],
-            'nome'=> $request->nome,
-            'attribute_dad' =>$request->attribute_dad[0]
+    $data = $request->all();
+  
+    // Processar o upload da imagem
+    if ($request->hasFile('image')) {
+        // Obtém o caminho do arquivo da imagem
+        $requestImage = $request->image;
+        $extension = $requestImage->extension();
+        $imageName = $request['productName'] . strtotime('now') . '.' . $extension;
+        $imgPath = public_path('img/temp_imgs/' . $imageName);
+        $requestImage->move(public_path('img/temp_imgs'), $imageName);
+       
+        // Caminho da imagem no seu projeto Laravel
+
+
+        // Caminho da imagem no seu projeto Laravel
+       
+        $e_commerce=env('WOOCOMMERCE_STORE_URL');
+        $request = '/wp-json/wp/v2/media';
+        $request_url = $e_commerce.$request;
+        // Fazer a requisição de upload da imagem
+        
+        $response = $wpService->request('POST', $request_url, [
+            'headers' => [
+                'Content-Disposition' => 'attachment; filename="' . basename($imgPath) . '"',
+                'Content-Type' => "image/$extension",
+            ],
+            'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
+            'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
+            
+        ]);
+        
+        $image_data = json_decode($response->getBody(), true);
+        $image_id = $image_data['id']; // Obter o ID da imagem
+        
+
+        unlink($imgPath);
+        
+        $createProd = [
+            'name' => $request['productName'],
+            'type' => 'variable',
+            'description' => 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.',
+            'short_description' => 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
+            'categories' => [
+                [
+                    'id' => 9
+                ],
+                [
+                    'id' => 14
+                ]
+            ],
+            'images' => [
+                [
+                    'id'=> 42
+                ],
+                [
+                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
+                ]
+            ]
         ];
-    }
+        
+       
     
-
-
-if ($request->has('file') && !empty($request->file('file'))) {
-    $files = $request->file('file');
-
-    // Filtra o array para garantir que apenas arquivos válidos sejam processados
-    $validFiles = array_filter($files, function ($file) {
-        return $file instanceof \Illuminate\Http\UploadedFile && $file->isValid();
-    });
-
-if(count($validFiles) > 0){
-$files = $request->file('file');
-$uniqueFiles = [];
-$imgPathArray = [];
-
-
-foreach ($files as $file) {
-    // Calcula o hash do conteúdo do arquivo para verificar duplicidade
-    $fileHash = md5_file($file->getRealPath());
-
-    // Verifica se já existe um arquivo com o mesmo hash
-    if (!in_array($fileHash, array_column($uniqueFiles, 'hash'))) {
-        $uniqueFiles[] = ['file' => $file, 'hash' => $fileHash];
-    }
-}
-
-
-foreach($uniqueFiles as $file){
-
-    $file = $file['file'];
-    $extension = $file->getClientOriginalExtension();
-    $imageName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '_' . strtotime('now') . '.' . $extension;
-    $imgPath = public_path('img/temp_imgs/' . $imageName);
-
-    // Salva o arquivo temporariamente em storage/public
-    $file->move(public_path('img/temp_imgs'), $imageName);
-
-// Caminho da imagem no seu projeto Laravel
-
-
-// Fazer a requisição de upload da imagem
-
-$response = $wpService->request('POST', $request_url, [
-    'headers' => [
-        'Content-Disposition' => 'attachment; filename="' . basename($imgPath) . '"',
-        'Content-Type' => "image/$extension",
-    ],
-    'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
-    'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
+   
+            // Data foi inicializado no começo da função
+            $variantData = [];
+            $count = count($data['id_term']);
+        
+            for ($i = 0; $i < $count; $i++) {
+                $variantData['create'][] = [
+                    'regular_price' => $data['preco'][$i],
+                    'sku' => $data['sku'][$i],
+                    'stock_quantity' => $data['quantity'][$i],
+                    'attributes' => [
+                        [
+                            'id' => (int)$data['attribute_dad'][0], // Ajuste este ID conforme necessário
+                            'option' =>  $data['nome'][$i], // Ajuste este valor conforme necessário
+                        ],
+                    ],
+                    'images' => [
+                        [
+                            'id' => $image_id,
+                        ],
+                    ]
+                ];
+                    }
+                    $wooresponse =  $woocommerce->post("products/{$data['attribute_dad'][0]}/variations/batch", $variantData);
+                    dd($wooresponse);
+    } 
+    else{
+        $variantData = [];
+            $count = count($data['id_term']);
+        
+            for ($i = 0; $i < $count; $i++) {
+                $variantData['create'][] = [
+                    'regular_price' => $data['preco'][$i],
+                    'sku' => $data['sku'][$i],
+                    'stock_quantity' => $data['quantity'][$i],
+                    'attributes' => [
+                        [
+                            'id' => (int)$data['attribute_dad'][0], // Ajuste este ID conforme necessário
+                            'option' =>  $data['nome'][$i], // Ajuste este valor conforme necessário
+                        ],
+                    ],
+                   
+                ];
+                    }
     
-]);
-$image_data = json_decode($response->getBody(), true);
-$image_id = $image_data['id']; 
-foreach ($result as &$item) {
-    if ($item['has_image'] === 'true') {
-        $item['product_image'] = $image_id;
+                   $wooresponse = $woocommerce->post("products/{$data['attribute_dad'][0]}/variations/batch", $variantData);
+                   dd($wooresponse);
+                }         
     }
-}
-}
-}
-}
+      
+
+
 // Processa os arquivos únicos
 
-return back()->with('success', 'Arquivos únicos enviados com sucesso!');
 
 
 
-}
+
+
 
     
     

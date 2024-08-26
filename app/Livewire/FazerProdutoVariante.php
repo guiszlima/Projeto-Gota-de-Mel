@@ -17,18 +17,29 @@ class FazerProdutoVariante extends Component
     public $escolhido = false;
     public $mensagem;
     public $currentRoute;
+    public $categories;
+
+    public $categoryValue;
 
 
-
-
-    
-  
+    public function getCategories(Client $woocommerce){
+        $categories_data = [];
+        $woocategories = $woocommerce->get('products/categories');
+        foreach($woocategories as $category){
+        $categories_data[] = [
+                        'id' =>  $category->id,
+                        'name'=>$category->name
+        ]; 
+        return $categories_data;
+    }
+}
     // Método para requisitar atributos do WooCommerce
     public function ReqAttributes(Client $woocommerce)
     {
         
 
         $productAttributes = $woocommerce->get('products/attributes');
+       
         $organizedAttributes = [];
 
         // Iterar sobre os atributos para buscar seus termos
@@ -61,10 +72,20 @@ class FazerProdutoVariante extends Component
     {
         if(!$this->nome_produto){
             $this->mensagem = "O nome do produto é invalido";
+            return;
+        } 
+        if(!$this->atributo_pai){
+            $this->mensagem="Atributo não selecionado";
+            return;
         }
-        else{
+        if(!$this->categoryValue){
+            $this->mensagem = "Categoria não selecionada";
+            return;
+        }
+       
+        
             $this->mensagem = false;
-        }
+        
         $this->escolhido = true;
     }
 
@@ -82,6 +103,7 @@ class FazerProdutoVariante extends Component
     {
         $this->currentRoute = Route::currentRouteName();
         $this->ReqAttributes($woocommerce);
+        $this->categories = $this->getCategories($woocommerce);
         
     }
 }
