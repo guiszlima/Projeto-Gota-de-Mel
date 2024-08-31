@@ -192,13 +192,14 @@ public function createVariableProduct(Client $woocommerce) {
 public function storeVariableproduct(Client $woocommerce, Request $request,WpClient $wpService){
     
     $data = $request->all();
-  
-   $attribute_name = $data['nomeProduto'];
+
+   $attribute_name = $data['nameAttribute'];
     $attribute_id =(int)$data['attribute_dad'][0];
+
     // Processar o upload da imagem
-    if ($request->hasFile('image')) {
+    if ($request->hasFile('imagem')) {
         // Obtém o caminho do arquivo da imagem
-        $requestImage = $request->image;
+        $requestImage = $request->imagem;
         $extension = $requestImage->extension();
         $imageName = $request['productName'] . strtotime('now') . '.' . $extension;
         $imgPath = public_path('img/temp_imgs/' . $imageName);
@@ -229,15 +230,14 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
         
 
         unlink($imgPath);
-        
+     
         $createProd = [
-            'name' => $request['nomeProduto'],
+            'name' => $data['nomeProduto'],
             'type' => 'variable',
-            'sku'=>strtotime('now'),
-            'description' =>$request['description']??'',
+            'description' =>$data['description']??'',
             'categories' => [
                 [
-                    'id' => $request['category']
+                    'id' => $data['category']
                 ]
               
             ],
@@ -283,22 +283,28 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                         [
                             'id' => $image_id,
                         ],
-                    ]
+                    ],
+                    "dimensions"=> [
+                        "weight"=> $data['weight']?? '',
+                        "width"=> $data['width']?? '',
+                        "height"=> $data['height']?? ''
+                    ],
                 ];
                     }
                     $wooresponse = $woocommerce->post("products/{$prodResponse->id}/variations/batch", $variantData);
-                    dd($wooresponse, $prodResponse);
+                    dd("Com imagem \n",$createProd,$variantData);
+                    //dd($wooresponse, $prodResponse);
     } 
     else{
 
         $createProd = [
-            'name' => $request['nomeProduto'],
+            'name' => $data['nomeProduto'],
             'type' => 'variable',
             
-            'description' =>$request['description']??'',
+            'description' =>$data['description']??'',
             'categories' => [
                 [
-                    'id' => $request['category']
+                    'id' => $data['category']
                 ]
               
             ],
@@ -336,12 +342,19 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                             'option' =>  $data['nome'][$i], // Ajuste este valor conforme necessário
                         ],
                     ],
+                    "dimensions"=> [
+                        "weight"=> $data['weight'],
+                        "width"=> $data['width'],
+                        "height"=> $data['height']
+                    ],
                    
                 ];
                     }
                    
                    $wooresponse = $woocommerce->post("products/{$prodResponse->id}/variations/batch", $variantData);
-                   dd($wooresponse,$prodResponse);
+                   dd("Sem imagem \n",$createProd,$variantData);
+                  
+                   // dd($wooresponse,$prodResponse);
                 }         
     }
       

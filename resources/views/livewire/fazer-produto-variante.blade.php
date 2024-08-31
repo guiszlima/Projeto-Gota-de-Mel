@@ -234,10 +234,10 @@ function setupSubmitButton() {
 
             document.getElementById('send-description').value = description;
 
-            document.getElementById('send-depth').value = depth;
-            document.getElementById('send-height').value = height;
-            document.getElementById('send-width').value = width;
-            document.getElementById('send-weight').value = weight;
+            document.getElementById('send-depth').value = depth || "";
+            document.getElementById('send-height').value = height || "";
+            document.getElementById('send-width').value = width || "";
+            document.getElementById('send-weight').value = weight || "";
 
             const classSku = document.querySelectorAll('.all-sku');
             const imageInput = document.getElementById('image');
