@@ -33,11 +33,20 @@
                     class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                     <option value="" selected>Escolha uma opção</option>
                     @foreach ($attributes as $attribute)
-                    <option value="{{ $attribute['id_pai'] }}">{{ $attribute['nome_pai'] }}</option>
+                    <option value="{{ json_encode($attributes[$loop->index]) }}">{{ $attribute['nome_pai'] }}</option>
                     @endforeach
                 </select>
             </div>
 
+
+            <!-- Descrição do Produto -->
+            <div class="mb-4">
+                <label for="product-description" class="block text-sm font-medium text-gray-700">Descrição do
+                    Produto</label>
+                <textarea id="product-description"
+                    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    rows="4"></textarea>
+            </div>
             <!-- Imagem -->
             <div class="mb-4">
                 <label for="image" class="block text-sm font-medium text-gray-700">Imagem</label>
@@ -88,7 +97,44 @@
                             type="button">
                         </button>
                     </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="height" class="block text-gray-700 font-bold mb-2">
+                                Altura (cm) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="height" name="height"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                placeholder="Digite a altura do produto" required>
+                        </div>
 
+                        <div>
+                            <label for="width" class="block text-gray-700 font-bold mb-2">
+                                Largura (cm) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="width"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                placeholder="Digite a largura do produto" required>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="depth" class="block text-gray-700 font-bold mb-2">
+                                Profundidade (cm)
+                            </label>
+                            <input type="number" id="depth"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                placeholder="Digite a profundidade do produto">
+                        </div>
+
+                        <div>
+                            <label for="weight" class="block text-gray-700 font-bold mb-2">
+                                Peso (kg) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="weight" step="0.01"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                placeholder="Digite o peso do produto" required>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -101,7 +147,7 @@
             @csrf
             <div id="variations-container" class="space-y-4 w-full bg-white p-6 rounded-lg shadow-md">
                 @foreach ($attributes as $attribute)
-                @if($attribute['id_pai'] == $atributo_pai)
+                @if($attribute['id_pai'] == $atributo_pai['id_pai'])
                 @foreach($attribute['atributos_filhos'] as $term)
                 <div class="flex justify-between items-center mb-4">
                     <p>{{ $nome_produto . " " . $term['name'] }}</p>
@@ -119,10 +165,17 @@
                 @endif
                 @endforeach
                 <div class="flex justify-end mt-6">
-                    <input type="hidden" value="{{$atributo_pai}}" name="attribute_dad[]">
-                    <input type="hidden" name="nomeProduto">
-                    <input type="text">
+
+                    <input type="hidden" value="{{$atributo_pai['id_pai']}}" name="attribute_dad[]">
+                    <input type="hidden" name="nomeProduto" value="{{$nome_produto}}">
+                    <input type="hidden" id="send-depth" name="depth">
+                    <input type="hidden" name="nameAttribute" value="{{$atributo_pai['nome_pai']}}">
+                    <input type="hidden" name="height" id="send-height">
+                    <input type="hidden" name="width" id="send-width">
+                    <input type="hidden" name="weight" id="send-weight">
+                    <input type="hidden" name="category" value="{{$categoryValue}}">
                     <input type="file" name="imagem" class="hidden" id="imagem">
+                    <input type="hidden" name="description" id="send-description">
                     <button type="button" value="{{$nome_produto}}" id="submitButton"
                         class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">
                         Salvar
@@ -133,12 +186,14 @@
         @endif
     </div>
 </div>
+
+
 <script>
 const insertPrice = document.getElementById('insert-price');
-const insertQuantity = document.getElementById('insert-quantity')
+const insertQuantity = document.getElementById('insert-quantity');
 
 function generateSku() {
-    now = new Date();
+    const now = new Date();
     const year = now.getFullYear();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
@@ -146,71 +201,65 @@ function generateSku() {
     const minutes = now.getMinutes().toString().padStart(2, '0');
     const seconds = now.getSeconds().toString().padStart(2, '0');
     const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
-
     return `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
 }
 
-
-
 insertPrice.addEventListener('click', function() {
-    // Obter o valor do preço de todos
     const allPrice = document.getElementById('all-price').value;
-
-    // Obter o valor do arquivo de todos
-
-
-    // Selecionar todos os campos de preço e arquivo nas variações
     const priceInputs = document.querySelectorAll('.price-input');
-
-
-    // Inserir o valor de todos os preços e arquivos nos inputs correspondentes
     priceInputs.forEach(input => {
         input.value = allPrice;
     });
-
-})
+});
 
 insertQuantity.addEventListener('click', function() {
     const allQuantity = document.getElementById('all-quantity').value;
-    const quantityInput = document.querySelectorAll('.quantity-input');
-    quantityInput.forEach(input => {
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    quantityInputs.forEach(input => {
         input.value = allQuantity;
     });
-})
+});
 
-// Função para configurar o evento de clique no botão de submit
 function setupSubmitButton() {
+
     const submitButton = document.getElementById('submitButton');
     if (submitButton) {
-        const form = document.getElementById('myForm');
         submitButton.addEventListener('click', function() {
-            const classSku = document.querySelectorAll('.all-sku'); // Corrigido para '.all-sku'
+            const description = document.getElementById('product-description').value;
+
+            const depth = document.getElementById('depth').value;
+            const height = document.getElementById('height').value;
+            const width = document.getElementById('width').value;
+            const weight = document.getElementById('weight').value;
+
+            document.getElementById('send-description').value = description;
+
+            document.getElementById('send-depth').value = depth;
+            document.getElementById('send-height').value = height;
+            document.getElementById('send-width').value = width;
+            document.getElementById('send-weight').value = weight;
+
+            const classSku = document.querySelectorAll('.all-sku');
             const imageInput = document.getElementById('image');
             const imagemInput = document.getElementById('imagem');
 
-
             classSku.forEach((element, index) => {
-
                 element.value = generateSku() + index;
-
             });
 
-            // Chama a próxima iteração após 2 milissegundos
-
-            // Após o loop
             if (imageInput.files.length > 0) {
                 imagemInput.files = imageInput.files;
             }
+
+            const form = document.getElementById('myForm');
             form.submit();
-
-
-
-
         });
     }
+
+
+
 }
 
-// Configurar o MutationObserver para detectar quando o submitButton é adicionado ao DOM
 const observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
         if (mutation.addedNodes.length > 0) {

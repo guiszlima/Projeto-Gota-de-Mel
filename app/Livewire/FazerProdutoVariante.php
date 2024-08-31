@@ -22,6 +22,15 @@ class FazerProdutoVariante extends Component
     public $categoryValue;
 
 
+ 
+    public function updatedAtributoPai($value)
+    {
+        $this->atributo_pai = json_decode($value, true);
+    
+    
+    }
+
+    
     public function getCategories(Client $woocommerce){
         $categories_data = [];
         $woocategories = $woocommerce->get('products/categories');

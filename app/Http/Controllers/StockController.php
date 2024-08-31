@@ -193,6 +193,8 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
     
     $data = $request->all();
   
+   $attribute_name = $data['nomeProduto'];
+    $attribute_id =(int)$data['attribute_dad'][0];
     // Processar o upload da imagem
     if ($request->hasFile('image')) {
         // Obtém o caminho do arquivo da imagem
@@ -229,29 +231,36 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
         unlink($imgPath);
         
         $createProd = [
-            'name' => $request['productName'],
+            'name' => $request['nomeProduto'],
             'type' => 'variable',
-            'description' => 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.',
-            'short_description' => 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
+            'sku'=>strtotime('now'),
+            'description' =>$request['description']??'',
             'categories' => [
                 [
-                    'id' => 9
-                ],
-                [
-                    'id' => 14
+                    'id' => $request['category']
                 ]
+              
             ],
             'images' => [
                 [
-                    'id'=> 42
+                    'id'=> $image_id
                 ],
+                
+            ],
+            'attributes' => [
                 [
-                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
-                ]
-            ]
+                    'id' => $attribute_id, // ID do atributo
+                    'name' => $attribute_name, // Nome do atributo, se aplicável
+                    'options' => $data['nome'], // Opções do atributo
+                    'position' => 0, // Posição do atributo
+                    'visible' => true, // Se o atributo é visível no frontend
+                    'variation' => true // Se o atributo é usado para variações
+                ],
+            ],
+    
         ];
         
-       
+        $prodResponse = $woocommerce->post('products', $createProd);
     
    
             // Data foi inicializado no começo da função
@@ -263,9 +272,10 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                     'regular_price' => $data['preco'][$i],
                     'sku' => $data['sku'][$i],
                     'stock_quantity' => $data['quantity'][$i],
+                    'manage_stock' =>true,
                     'attributes' => [
                         [
-                            'id' => (int)$data['attribute_dad'][0], // Ajuste este ID conforme necessário
+                            'id' =>  $attribute_id,// Ajuste este ID conforme necessário
                             'option' =>  $data['nome'][$i], // Ajuste este valor conforme necessário
                         ],
                     ],
@@ -276,30 +286,62 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                     ]
                 ];
                     }
-                    $wooresponse =  $woocommerce->post("products/{$data['attribute_dad'][0]}/variations/batch", $variantData);
-                    dd($wooresponse);
+                    $wooresponse = $woocommerce->post("products/{$prodResponse->id}/variations/batch", $variantData);
+                    dd($wooresponse, $prodResponse);
     } 
     else{
+
+        $createProd = [
+            'name' => $request['nomeProduto'],
+            'type' => 'variable',
+            
+            'description' =>$request['description']??'',
+            'categories' => [
+                [
+                    'id' => $request['category']
+                ]
+              
+            ],
+            'attributes' => [
+                [
+                    'id' => $attribute_id, // ID do atributo
+                    'name' => $attribute_name, // Nome do atributo, se aplicável
+                    'options' => $data['nome'], // Opções do atributo
+                    'position' => 0, // Posição do atributo
+                    'visible' => true, // Se o atributo é visível no frontend
+                    'variation' => true // Se o atributo é usado para variações
+                ],
+            ],
+            
+        ];
+        
+        $prodResponse = $woocommerce->post('products', $createProd);
+
+
+
         $variantData = [];
             $count = count($data['id_term']);
         
             for ($i = 0; $i < $count; $i++) {
                 $variantData['create'][] = [
+                    'name' =>  $data['nome'][$i],
                     'regular_price' => $data['preco'][$i],
                     'sku' => $data['sku'][$i],
+                    'manage_stock' =>true,
                     'stock_quantity' => $data['quantity'][$i],
                     'attributes' => [
                         [
-                            'id' => (int)$data['attribute_dad'][0], // Ajuste este ID conforme necessário
+                            'id' =>  $attribute_id, // Ajuste este ID conforme necessário
+                            
                             'option' =>  $data['nome'][$i], // Ajuste este valor conforme necessário
                         ],
                     ],
                    
                 ];
                     }
-    
-                   $wooresponse = $woocommerce->post("products/{$data['attribute_dad'][0]}/variations/batch", $variantData);
-                   dd($wooresponse);
+                   
+                   $wooresponse = $woocommerce->post("products/{$prodResponse->id}/variations/batch", $variantData);
+                   dd($wooresponse,$prodResponse);
                 }         
     }
       

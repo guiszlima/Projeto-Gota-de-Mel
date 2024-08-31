@@ -76,7 +76,7 @@ $variante = 'true'
                                 class="toggleBtn w-80 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">{{ $variant->name }}</button>
                             <div
                                 class="content hidden w-80 mt-4 p-4 bg-white shadow-lg rounded-lg flex flex-col items-center justify-center text-lg fade-in">
-                                <img src="{{ $variant->image->src }}" alt="{{ $variant->name }}"
+                                <img src="{{ $variant->image->src ??'' }}" alt="{{ $variant->name }}"
                                     class="w-3/4 h-auto object-contain mb-4 rounded-lg shadow-md">
                                 <input type="text" name="variant_name[]" readonly value="{{ $variant->name }}"
                                     class="editInputVar   text-center text-xl font-semibold border border-gray-300 p-3 rounded w-full mb-4">
