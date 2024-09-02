@@ -8,7 +8,7 @@ use App\Http\Controllers\BarCodeMakerController;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\StockController;
-
+use App\Http\Controllers\ReportController;
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -65,6 +65,8 @@ Route::middleware(['auth','check_pending'])->group(function () {
     // Excluir um recurso
     Route::delete('estoque/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
    
+
+    Route::get('relatorio',[ReportController::class,'reportProducts'])->name('report.products');
 
 });
 
