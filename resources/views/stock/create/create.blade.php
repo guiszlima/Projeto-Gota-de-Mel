@@ -8,7 +8,14 @@
         <x-dynamic-link text="Produto com Variações" route="stock.create.var-product"
             currentRoute="{{$currentRoute}}" />
     </div>
-    <form action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data"
+
+    @if (session('warn'))
+    <div class="border border-blue-500 text-blue-700 bg-green-100 px-4 py-3 rounded relative m" role="alert">
+
+        <span class="block sm:inline">{{ session('warn') }}</span>
+    </div>
+    @endif
+    <form id="myForm" action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data"
         class="w-full max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
         @csrf
         <div class="mb-4">
@@ -20,21 +27,6 @@
                 placeholder="Digite o nome do produto" required>
         </div>
 
-        <div class="mb-4">
-            <label for="sku" class="block text-gray-700 font-bold mb-2">
-                Identificador de Produto <span class="text-red-500">*</span>
-            </label>
-            <div class="flex">
-                <input readonly type="text" id="sku" name="sku"
-                    class="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="Digite o SKU" required>
-                <button id="generateSku"
-                    class="bg-amber-200 text-white rounded-r px-4 py-2 hover:bg-amber-300 hover:text-black transition duration-300"
-                    type="button">
-                    <i class="fa fa-refresh"></i>
-                </button>
-            </div>
-        </div>
 
         <div class="mb-4">
             <label for="price" class="block text-gray-700 font-bold mb-2">
@@ -127,16 +119,21 @@
         </div>
 
         <div class="flex items-center justify-between">
-            <button type="submit"
+            <button type="button" id="submitButton"
                 class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Salvar Produto
             </button>
         </div>
+
+        <input type="hidden" id="sku" name="sku">
     </form>
 </main>
 
 <script>
-document.getElementById("generateSku").addEventListener("click", function() {
+const submitButton = document.getElementById('submitButton');
+const myForm = document.getElementById('myForm');
+
+submitButton.addEventListener("click", function() {
     function generateSku() {
         let now = new Date();
         const year = now.getFullYear();
@@ -149,6 +146,8 @@ document.getElementById("generateSku").addEventListener("click", function() {
         return `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
     }
     document.getElementById("sku").value = generateSku();
+    myForm.submit();
+
 });
 
 document.getElementById("price").addEventListener("input", function(e) {

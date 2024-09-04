@@ -18,8 +18,8 @@ class FazerProdutoVariante extends Component
     public $mensagem;
     public $currentRoute;
     public $categories;
-
-    public $categoryValue;
+    public $warn;
+    public $categoryValue;      
 
 
  
@@ -93,9 +93,10 @@ class FazerProdutoVariante extends Component
         }
        
         
-            $this->mensagem = false;
-        
+        $this->mensagem = false;
+       
         $this->escolhido = true;
+        
     }
 
     // Renderizar a view e passar os dados necessários
@@ -103,7 +104,8 @@ class FazerProdutoVariante extends Component
     {
         return view('livewire.fazer-produto-variante', [
             'attributes' => $this->attr,
-            'escolhido' => $this->escolhido
+            'escolhido' => $this->escolhido,
+          
         ]);
     }
 

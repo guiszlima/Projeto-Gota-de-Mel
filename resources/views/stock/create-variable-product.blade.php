@@ -3,7 +3,13 @@
 @section('content')
 
 @livewireStyles
-<livewire:fazer-produto-variante />
+@if (!session('warn'))
+@livewire('fazer-produto-variante')
+
+@else
+@livewire('fazer-produto-variante',['report' => session('warn')])
+@endif
+
 @livewireScripts
 
 @endsection

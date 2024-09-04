@@ -7,6 +7,11 @@
         </div>
     </div>
 
+    @if (session('warn'))
+    <div class="border border-blue-500 text-blue-700 bg-green-100 px-4 py-3 rounded relative m" role="alert">
+        <span class="block sm:inline">{{ session('warn') }}</span>
+    </div>
+    @endif
     <div class="flex flex-col items-center mt-10 bg-gray-100 py-8">
         <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-2xl font-bold text-center mb-6">Criar Produto Variável</h2>
@@ -191,6 +196,38 @@
 <script>
 const insertPrice = document.getElementById('insert-price');
 const insertQuantity = document.getElementById('insert-quantity');
+const generateVariations = document.getElementById('generate-variations');
+
+function maskFloat(e) {
+    let value = e.target.value;
+    value = value.replace(/\D/g, '');
+    value = (value / 100).toFixed(2) + '';
+    value = value.replace(".", ",");
+    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+    e.target.value = value;
+}
+
+let todosPrice = document.getElementById("all-price");
+todosPrice.addEventListener("input", maskFloat);
+generateVariations.addEventListener('click', () => {
+
+    // Usar setInterval para verificar a presença dos inputs periodicamente
+    const intervalId = setInterval(() => {
+        let priceInputs = document.querySelectorAll('.price-input');
+
+        if (priceInputs.length !== 0) {
+            priceInputs.forEach(item => {
+                item.addEventListener("input", maskFloat);
+            });
+
+            clearInterval(intervalId); // Para o intervalo quando os inputs são encontrados
+        }
+    }, 100);
+
+})
+// Outras operações que dependem dos elementos recém-criados
+
+
 
 function generateSku() {
     const now = new Date();
@@ -224,6 +261,7 @@ function setupSubmitButton() {
 
     const submitButton = document.getElementById('submitButton');
     if (submitButton) {
+
         submitButton.addEventListener('click', function() {
             const description = document.getElementById('product-description').value;
 

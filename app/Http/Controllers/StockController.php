@@ -8,7 +8,7 @@ use GuzzleHttp\Client as WpClient;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use phpDocumentor\Reflection\PseudoTypes\True_;
-
+use App\Models\ReportCreate;
 class StockController extends Controller
 {
     /**
@@ -170,13 +170,18 @@ class StockController extends Controller
     try {
         // Enviar a requisição para criar o produto na API do WooCommerce
         $response = $woocommerce->post('products', $productData);
-
+        ReportCreate::create([
+            'product_id' => $response->id,
+            'nome' => $response->name,
+            'preco' => $response->price,
+            'type'=> 'simples'
+        ]);
         // Opcional: Verifique a resposta e execute ações conforme necessário
-        dd($response); // Apenas para fins de depuração
+        return back()->with("warn", "Produto Registrado com sucesso");
     } catch (\Exception $e) {
         // Lide com exceções, como erros de rede ou falhas na API
-        dd($e->getMessage());
-        return back()->withErrors(['error' => 'Erro ao criar o produto: ' . $e->getMessage()]);
+        
+        return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
     }
 }
 public function createVariableProduct(Client $woocommerce) {
@@ -290,10 +295,29 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                         "height"=> $data['height']?? ''
                     ],
                 ];
+                    } 
+                     $wooresponse = $woocommerce->post("products/{$prodResponse->id}/variations/batch", $variantData);
+                     try {
+                       
+                        if (isset($wooresponse->create)) {
+                            foreach ($wooresponse->create as $variation) {
+                                // Certifique-se de que a estrutura do array é consistente com os campos da tabela
+                                ReportCreate::create([
+                                    'product_id' =>  $variation->id, // ID do produto pai
+                                    'nome' => $data['nomeProduto'] ." ". $variation->name, // Nome da variação
+                                    'preco' => $variation->price, // Preço da variação
+                                    'type' => 'variante' // Tipo, como 'variante'
+                                ]);
+                            }
+                        }
+                        dd('Feito com sucesso');
+                    }catch (\Exception $e) {
+                        // Lide com exceções, como erros de rede ou falhas na API
+                        dd( $wooresponse, $e);
+                        //return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
                     }
-                    $wooresponse = $woocommerce->post("products/{$prodResponse->id}/variations/batch", $variantData);
-                    dd("Com imagem \n",$createProd,$variantData);
-                    //dd($wooresponse, $prodResponse);
+                
+                   
     } 
     else{
 
@@ -322,7 +346,7 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
         ];
         
         $prodResponse = $woocommerce->post('products', $createProd);
-
+        
 
 
         $variantData = [];
@@ -350,28 +374,30 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                    
                 ];
                     }
-                   
-                   $wooresponse = $woocommerce->post("products/{$prodResponse->id}/variations/batch", $variantData);
-                   dd("Sem imagem \n",$createProd,$variantData);
+                    $wooresponse = $woocommerce->post("products/{$prodResponse->id}/variations/batch", $variantData);
                   
-                   // dd($wooresponse,$prodResponse);
+                    try {
+                       
+                        if (isset($wooresponse->create)) {
+                            foreach ($wooresponse->create as $variation) {
+                                // Certifique-se de que a estrutura do array é consistente com os campos da tabela
+                                ReportCreate::create([
+                                    'product_id' =>  $variation->id, // ID do produto pai
+                                    'nome' => $data['nomeProduto'] ." ". $variation->name, // Nome da variação
+                                    'preco' => $variation->price, // Preço da variação
+                                    'type' => 'variante' // Tipo, como 'variante'
+                                ]);
+                            }
+                        }
+                        dd('Feito com sucesso');
+                    }catch (\Exception $e) {
+                        // Lide com exceções, como erros de rede ou falhas na API
+                        dd( $wooresponse, $e);
+                        //return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
+                    }
                 }         
     }
       
-
-
-// Processa os arquivos únicos
-
-
-
-
-
-
-
-    
-    
-
-
     /**
      * Display the specified resource.
      */
@@ -411,8 +437,6 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
      */
     public function update(Request $request, Client $woocommerce)
 {
-
-
     
     $data = $request->all();
 
