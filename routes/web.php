@@ -66,7 +66,7 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::delete('estoque/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
    
 
-    Route::get('relatorio',[ReportController::class,'reportProducts'])->name('report.products');
+    Route::get('relatorio',[ReportController::class,'get'])->name('report.products');
 
 });
 

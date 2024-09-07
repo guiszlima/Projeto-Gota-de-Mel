@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\ReportCreate;
 class ReportController extends Controller
 {
-    public function getProductsReport(){
+    public function get(){
+      
 
+
+        return view('report/report');
         
     }
 }
