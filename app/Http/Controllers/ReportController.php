@@ -13,4 +13,11 @@ class ReportController extends Controller
         return view('report/report');
         
     }
+    public function getSells(){
+      
+
+
+        return view('report/report-sell');
+        
+    }
 }

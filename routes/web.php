@@ -18,10 +18,18 @@ Route::middleware(['auth','check_pending'])->group(function () {
 
     Route::get("/menu", function(){
         $user = Auth::user();
+        
+        
+    return view('menu')
+    ->with('user', $user);
     
-    return view('menu')->with('user', $user);
     });
     
+
+
+
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -34,8 +42,8 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::get('admin-accept', [AdminController::class,'accept_index'])->name('admin.index.accept');
     Route::put('admin-accept',[AdminController::class, 'acceptUsers'])->name('admin.accept');;
     # Sell routes
-    Route::get('sell-product',[WooCommerceController::class,'sellProducts'])->name('products.sell');
-    Route::post('sell-product',[WooCommerceController::class,'makeSell'])->name('products.make-sell');
+    Route::get('vender-produto',[WooCommerceController::class,'sellProducts'])->name('products.sell');
+    Route::post('vender-produto',[WooCommerceController::class,'makeSell'])->name('products.make-sell');
     Route::post('payment',[WooCommerceController::class,'payment'])->name('products.payment');
     # BarCode Generator Routes
     Route::get('barcode',[BarCodeMakerController::class,'index'])->name('barcode.index');
@@ -66,8 +74,9 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::delete('estoque/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
    
 
-    Route::get('relatorio',[ReportController::class,'get'])->name('report.products');
+    Route::get('relatorio/estoque',[ReportController::class,'get'])->name('report.products');
 
+    Route::get('relatorio/vendas',[ReportController::class,'getSells'])->name('report.sells');
 });
 
 
