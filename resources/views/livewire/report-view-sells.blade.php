@@ -80,7 +80,7 @@
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Nome</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Preço</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">CPF</th>
-                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Tipo</th>
+
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Data</th>
                 </tr>
             </thead>
@@ -91,7 +91,7 @@
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->nome }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->preco }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->CPF }}</td>
-                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->type }}</td>
+
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s') }}
                     </td>
