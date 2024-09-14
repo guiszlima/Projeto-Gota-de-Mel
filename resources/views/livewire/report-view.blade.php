@@ -23,7 +23,6 @@
         </button>
     </div>
 
-
     <!-- Filtros por Nome, Id, Preço, Data Início, e Data Fim -->
     <div class="mb-6">
         <span class="text-lg font-semibold">Procurar por</span>
@@ -40,6 +39,33 @@
                 <label class="block text-sm font-medium text-gray-700">Id</label>
                 <input type="search" wire:model="searchId" placeholder="ID do produto"
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+
+            <!-- Agrupando Estoque, Estante e Prateleira -->
+            <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Localização</label>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Input para Estoque -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Estoque</label>
+                        <input type="search" wire:model="estoque" placeholder="Estoque"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+                    </div>
+
+                    <!-- Input para Estante -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Estante</label>
+                        <input type="search" wire:model="estante" placeholder="Estante"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+                    </div>
+
+                    <!-- Input para Prateleira -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Prateleira</label>
+                        <input type="search" wire:model="prateleira" placeholder="Prateleira"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+                    </div>
+                </div>
             </div>
 
             <!-- Input para Preço -->
@@ -78,6 +104,9 @@
                 <tr>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Id</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Nome</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Estoque</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Estante</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Prateleira</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Preço</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Tipo</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Data</th>
@@ -88,7 +117,11 @@
                 <tr class="bg-white hover:bg-gray-50">
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->product_id }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->nome }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->estoque }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->estante }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->prateleira }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->preco }}</td>
+
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->type }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s') }}
@@ -102,6 +135,4 @@
         </div>
 
     </div>
-
-
 </div>

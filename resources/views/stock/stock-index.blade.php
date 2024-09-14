@@ -38,13 +38,9 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{ $product->price }}</td>
                 <td class="px-6 py-4 whitespace-nowrap flex space-x-4 justify-end">
 
+
                     <a href="{{ route('stock.show', $product->id) }}"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded">
-                        Detalhes
-                    </a>
-
-                    <a href="{{ route('stock.edit', $product->id) }}"
-                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded">
                         Editar
                     </a>
 

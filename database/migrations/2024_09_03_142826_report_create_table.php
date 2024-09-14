@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id')->unique();
             $table->string('nome');
+            $table->string('estoque');
+            $table->string('estante');
+            $table->string('prateleira');
             $table->decimal('preco', 8, 2);
             $table->string('type');
             $table->timestamps(); // Adiciona as colunas 'created_at' e 'updated_at'

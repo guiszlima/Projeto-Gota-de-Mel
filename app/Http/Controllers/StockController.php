@@ -173,6 +173,9 @@ class StockController extends Controller
         ReportCreate::create([
             'product_id' => $response->id,
             'nome' => $response->name,
+            'estoque'=> $request->estoque,
+            'estante' => $request->estante,
+            'prateleira'=>$request->prateleira,
             'preco' => $response->price,
             'type'=> 'simples'
         ]);
@@ -180,7 +183,7 @@ class StockController extends Controller
         return back()->with("warn", "Produto Registrado com sucesso");
     } catch (\Exception $e) {
         // Lide com exceções, como erros de rede ou falhas na API
-        
+       
         return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
     }
 }
@@ -420,7 +423,7 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
 
             $product = $variations;
         }
-        
+        ReportCreate:
         return view("stock.stock-show")->with('product', $product);
     }
 

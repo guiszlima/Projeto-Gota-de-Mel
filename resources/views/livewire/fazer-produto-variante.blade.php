@@ -155,6 +155,8 @@
                 @if($attribute['id_pai'] == $atributo_pai['id_pai'])
                 @foreach($attribute['atributos_filhos'] as $term)
                 <div class="flex justify-between items-center mb-4">
+
+
                     <p>{{ $nome_produto . " " . $term['name'] }}</p>
 
                     <input type="text" name="preco[]" placeholder="Preço"

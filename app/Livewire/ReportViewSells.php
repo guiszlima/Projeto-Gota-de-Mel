@@ -11,11 +11,12 @@ class ReportViewSells extends Component
     use WithPagination;
 
     protected $paginationTheme = 'pagination-theme';
-    public $selectedType;
+    public $selectedPay;
     public $searchName;
     public $searchId;
     public $searchPrice;
     public $searchStartDate;
+    public $searchCPF;
     public $searchEndDate;
     
     
@@ -26,17 +27,21 @@ class ReportViewSells extends Component
 
     public function clearSelection()
     {
-        $this->selectedType = null; // Limpa a seleção
+        $this->selectedPay = null; // Limpa a seleção
     }
 
 
     public function render()
     {
+      
         // Aplicar os filtros e paginação
         $items = ReportSell::query()
-        ->when($this->selectedType, function($query) {
-            $query->where('type', $this->selectedType);
+        ->when($this->searchCPF, function($query){
+            $query->where('CPF',$this->searchCPF);
         })
+            ->when($this->selectedPay, function($query) {
+                $query->where('pagamento', $this->selectedPay);
+            })
             ->when($this->searchName, function($query) {
                 $query->where('nome', 'like', '%' . $this->searchName . '%');
             })
@@ -49,9 +54,11 @@ class ReportViewSells extends Component
             ->when($this->searchStartDate && $this->searchEndDate, function($query) {
                 $query->whereBetween('created_at', [$this->searchStartDate, $this->searchEndDate]);
             })
-            ->orderBy('created_at','desc')
-            ->paginate(30); // Aplicar paginação
+            ->orderBy('created_at','desc');
+             // Aplicar paginação
+             $totalPreco = $items->sum('preco');
+             $itemsPaginate = $items->paginate(50);
 
-        return view('livewire.report-view-sells', ['items' => $items]);
+        return view('livewire.report-view-sells', ['items' => $itemsPaginate,'soma' =>$totalPreco]);
     }
 }

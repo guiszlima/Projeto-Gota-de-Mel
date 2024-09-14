@@ -9,5 +9,5 @@ class ReportCreate extends Model
 {
     use HasFactory;
     protected $table = 'report_create';
-    protected $fillable = ['product_id', 'nome', 'preco', 'type'];
+    protected $fillable = ['product_id', 'nome','estoque','estante','prateleira', 'preco', 'type'];
 }

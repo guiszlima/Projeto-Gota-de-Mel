@@ -17,6 +17,11 @@ class ReportView extends Component
     public $searchPrice;
     public $searchStartDate;
     public $searchEndDate;
+    public $estoque;
+    public $estante;
+    public $prateleira;
+    
+    
     
     
     public function applyFilters()
@@ -32,11 +37,21 @@ class ReportView extends Component
 
     public function render()
     {
+        
         // Aplicar os filtros e paginação
         $items = ReportCreate::query()
-        ->when($this->selectedType, function($query) {
-            $query->where('type', $this->selectedType);
-        })
+            ->when($this->estoque, function($query) {
+                $query->where('estoque', $this->estoque);
+            })
+            ->when($this->estante, function($query) {
+                $query->where('estante', $this->estante);
+            })
+            ->when($this->prateleira, function($query) {
+                $query->where('prateleira', $this->prateleira);
+            })
+            ->when($this->selectedType, function($query) {
+                $query->where('type', $this->selectedType);
+            })
             ->when($this->searchName, function($query) {
                 $query->where('nome', 'like', '%' . $this->searchName . '%');
             })

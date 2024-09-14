@@ -1,20 +1,34 @@
+@php
+$totalItems = count($items);
+@endphp
 <div class="p-6">
+
     <!-- Filtros por tipo de produto: Variantes e Simples -->
     <div class="mb-4">
         <span class="text-lg font-semibold">Tipo de Produto</span>
         <div class="flex items-center space-x-4 mt-2">
             <!-- Radio para Variantes -->
             <label class="flex items-center space-x-2">
-                <input type="radio" wire:model="selectedType" name="product_type" value="Variante"
+                <input type="radio" wire:model="selectedPay" name="product_type" value="pix"
                     class="form-radio h-5 w-5 text-blue-600">
-                <span>Variantes</span>
+                <span>Pix</span>
             </label>
 
             <!-- Radio para Simples -->
             <label class="flex items-center space-x-2">
-                <input type="radio" wire:model="selectedType" name="product_type" value="Simples"
+                <input type="radio" wire:model="selectedPay" name="product_pay" value="dinheiro"
                     class="form-radio h-5 w-5 text-blue-600">
-                <span>Simples</span>
+                <span>Dinheiro</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="radio" wire:model="selectedPay" name="product_pay" value="debit"
+                    class="form-radio h-5 w-5 text-blue-600">
+                <span>Débito</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input type="radio" wire:model="selectedPay" name="product_pay" value="credit"
+                    class="form-radio h-5 w-5 text-blue-600">
+                <span>Crédito</span>
             </label>
         </div>
         <!-- Botão de limpar -->
@@ -32,6 +46,11 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700">Nome</label>
                 <input type="search" wire:model="searchName" placeholder="Nome do produto"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">CPF</label>
+                <input type="search" wire:model="searchCPF" placeholder="Buscar por CPF"
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
             </div>
 
@@ -79,19 +98,38 @@
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Id</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Nome</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Preço</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Pagamento</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">CPF</th>
-
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Estante</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Quantidade</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Data</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
+                <div class="mb-4 bg-gray-100 p-4 rounded-lg shadow-md">
+                    <p class="text-lg font-semibold text-gray-800">Total de itens:
+                        <span class="text-blue-600">{{ $totalItems }}</span>
+                    </p>
+                    <p class="text-lg font-semibold text-gray-800">Soma de Preços:
+                        <span class="text-green-600">R$ {{ number_format($soma, 2, ',', '.') }}</span>
+                    </p>
+                </div>
                 @foreach($items as $item)
+
                 <tr class="bg-white hover:bg-gray-50">
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->product_id }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->nome }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->preco }}</td>
-                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->CPF }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm capitalize text-gray-900">
+                        {{ $item->pagamento === 'credit' 
+                        ? 'crédito' 
+                        : ($item->pagamento === 'debit' 
+                            ? 'débito' 
+                            : $item->pagamento) 
+                    }}</td>
 
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->CPF }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->quantidade }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s') }}
                     </td>

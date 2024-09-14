@@ -64,7 +64,7 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::get('estoque/{id}', [StockController::class, 'show'])->name('stock.show');
 
     // Exibir o formulário de edição de um recurso existente
-    Route::get('estoque/{id}/edit', [StockController::class, 'edit'])->name('stock.edit');
+   
 
     // Atualizar um recurso existente
     Route::put('estoque', [StockController::class, 'update'])->name('stock.update');

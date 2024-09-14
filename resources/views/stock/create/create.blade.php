@@ -60,6 +60,7 @@
             </select>
         </div>
 
+
         <div class="mb-4">
             <label for="description" class="block text-gray-700 font-bold mb-2">
                 Descrição
@@ -108,7 +109,24 @@
                     placeholder="Digite o peso do produto" required>
             </div>
         </div>
-
+        <label for="estante" class="block text-gray-700 font-bold mb-2">
+            Estoque <span class="text-red-500">*</span>
+        </label>
+        <input type="input" id="estante" name="estoque"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Informe o Estoque" required>
+        <label for="estante" class="block text-gray-700 font-bold mb-2">
+            Estante <span class="text-red-500">*</span>
+        </label>
+        <input type="number" id="estante" name="estante"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Informe a Estante" required>
+        <label for="estante" class="block text-gray-700 font-bold mb-2">
+            Prateleira <span class="text-red-500">*</span>
+        </label>
+        <input type="number" id="estante" name="prateleira"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Número da Prateleira" required>
         <div class="mb-4">
             <label for="image" class="block text-gray-700 font-bold mb-2">
                 Imagem
