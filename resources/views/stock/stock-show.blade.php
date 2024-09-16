@@ -8,7 +8,9 @@ $variante = 'true'
 @endphp
 
 <div class="flex items-center  justify-center h-100% bg-gray-100">
+
     <div class="w-[80vw] h-max  mt-[5%] bg-white shadow-lg rounded-lg p-8 flex flex-col items-center">
+        <x-warning :warn="session('warn')" />
         <form method="POST" action="{{ route('stock.update') }}" class="w-full flex flex-col items-center">
             @csrf
             @method('PUT')
@@ -43,12 +45,32 @@ $variante = 'true'
                     <input id="sku" name="sku" type="text" readonly value="{{ $product->sku }}"
                         class="editInput text-center border border-gray-300 p-3 rounded w-full">
                 </div>
-
-                <div class="flex flex-col w-1/2">
+                <div class="flex flex-col w-full">
                     <label for="price" class="text-gray-700 mb-2">Preço</label>
                     <input id="price" name="price" type="text" readonly value="{{ $product->price }}"
-                        class="editInput text-center border border-gray-300 p-3 rounded w-full">
+                        class="price editInputVar text-center border border-gray-300 p-3 rounded w-full">
                 </div>
+
+                <div class="flex flex-col">
+                    <div class="flex flex-col w-full">
+                        <label for="estoque" class="text-gray-700 mb-2">Estoque</label>
+                        <input id="estoque" name="estoque" type="text" readonly value="{{ $product->estoque??"" }}"
+                            class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                    </div>
+                    <div class="flex flex-col w-full">
+                        <label for="estante" class="text-gray-700 mb-2">Estante</label>
+                        <input id="estante" name="estante" type="text" readonly value="{{ $product->estante??""  }}"
+                            class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                    </div>
+
+                    <div class="flex flex-col w-full">
+                        <label for="preateleira" class=" text-gray-700 mb-2">Prateleira</label>
+                        <input id="prateleira" name="prateleira[]" type="text" readonly
+                            value="{{ $product->prateleira??""  }}"
+                            class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                    </div>
+                </div>
+
                 <div class="flex flex-col w-1/2">
                     <label for="price" class="text-gray-700 mb-2">Quantidade: </label>
                     <input id="quantity" name="quantity" type="number" readonly value="{{ $product->stock_quantity }}"
@@ -62,12 +84,13 @@ $variante = 'true'
                         <input type="number" id="inputChangePrice"
                             class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-2/5 mb-4"
                             placeholder="
-                Mudar todos valores ">
+                Mudar todos preços ">
                         <button id="changeButton" type="button"
                             class="bg-blue-500 text-white px-4 py-3 h-max ml-2 rounded hover:bg-blue-600 transition-colors duration-300">
                             Atualizar
                         </button>
                     </div>
+
                     <div class="flex flex-wrap  gap-6">
                         @foreach ($product as $variant)
 
@@ -98,6 +121,9 @@ $variante = 'true'
                                             value="{{ $variant->price }}"
                                             class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
                                     </div>
+
+
+
                                     <div class="flex flex-col w-full">
                                         <label for="price_{{ $loop->index }}"
                                             class="text-gray-700 mb-2">Quantidade</label>
@@ -105,7 +131,29 @@ $variante = 'true'
                                             readonly value="{{ $variant->stock_quantity }}"
                                             class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
 
+                                        <div class="flex flex-col w-full">
+                                            <label for="price_{{ $loop->index }}"
+                                                class="text-gray-700 mb-2">Estoque</label>
+                                            <input id="price_{{ $loop->index }}" name="estoque[]" type="text" readonly
+                                                value="{{ $variant->estoque }}"
+                                                class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                                        </div>
 
+                                        <div class="flex flex-col w-full">
+                                            <label for="price_{{ $loop->index }}"
+                                                class="text-gray-700 mb-2">Estante</label>
+                                            <input id="price_{{ $loop->index }}" name="estante[]" type="text" readonly
+                                                value="{{ $variant->estante }}"
+                                                class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                                        </div>
+
+                                        <div class="flex flex-col w-full">
+                                            <label for="preateleira_{{ $loop->index }}"
+                                                class="text-gray-700 mb-2">Prateleira</label>
+                                            <input id="prateleira_{{ $loop->index }}" name="prateleira[]" type="text"
+                                                readonly value="{{ $variant->prateleira }}"
+                                                class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                                        </div>
 
 
                                         <input name="id[]" type="hidden" readonly value="{{ $variant->id }}">

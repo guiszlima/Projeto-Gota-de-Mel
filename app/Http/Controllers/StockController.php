@@ -434,24 +434,42 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
      */
     public function show(Client $woocommerce, string $id)
     {
-        
         $product = $woocommerce->get("products/{$id}");
-        if ($product->variations) {
+    
+        if (!empty($product->variations)) {
             $variations = $woocommerce->get("products/{$id}/variations");
-            
+    
             foreach ($variations as $variation) {
+                // Busca o relatório de criação baseado no ID da variação
+                $repProd = ReportCreate::where('product_id', $variation->id)->first();
+                
                 $variation->parent_name = $product->name;
                 $variation->name = $variation->parent_name . " " . $variation->name;
                 $variation->parent_id = $product->id;
-
+    
+                // Verifica se repProd foi encontrado
+             
+                    $variation->estoque = $repProd->estoque;
+                    $variation->estante = $repProd->estante;
+                    $variation->prateleira = $repProd->prateleira;
+             
+    
                 if ($variation->image) {
                     // Faça algo com a imagem, se necessário
                 }
             }
-
+    
             $product = $variations;
+        } else {
+            $repProd = ReportCreate::where('product_id', $id)->first();
+    
+            if ($repProd) {
+                $product->estoque = $repProd->estoque;
+                $product->estante = $repProd->estante;
+                $product->prateleira = $repProd->prateleira;
+            }
         }
-        ReportCreate:
+    
         return view("stock.stock-show")->with('product', $product);
     }
 
@@ -470,10 +488,11 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
 {
     
     $data = $request->all();
-
+   //dd($data);
+    
     if (isset($data['variant_name'])) {
         $variantData = [];
-        $variantAttr = [];
+        $repItemUpdt = [];    
         $count = count($data['variant_name']);
 
         for ($i = 0; $i < $count; $i++) {
@@ -481,10 +500,13 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                 'id' => $data['id'][$i],
                 'name' => $data['variant_name'][$i],
                 'sku' => $data['variant_sku'][$i],
+                'regular_price' => $data['variant_price'][$i],
                 'price' => $data['variant_price'][$i],
                 'stock_quantity' => $data['variant_stock_quantity'][$i],
             ];
+            
         }
+        
         // Estrutura correta da requisição
         $req = [
             'update' => $variantData,
@@ -496,22 +518,55 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
           
             // Verifica se a resposta contém atualizações
             if (isset($response->update)) {
-                return response()->json([
-                    'message' => 'Variações atualizadas com sucesso!',
-                    'data' => $response->update, // Acessa os dados da atualização
-                ]);
+                return back()->with("warn", "Produto Editado com sucesso");
+                foreach( $variantData as $index=> $var) {
+                    $estoque = $data['estoque'][$index];
+                    $estante = $data['estante'][$index];
+                    $prateleira = $data['prateleira'][$index];
+                    $updateReport=    ReportCreate::where('product_id', $var['id'])->update([
+                        'nome' => $var['name'],
+                        'preco' => $var['regular_price'],
+                        'estoque' => $estoque,
+                        'estante' => $estante,
+                        'prateleira' => $prateleira,
+                        ]);
+                }
+                dd($updateReport);
             }
+            
+            return back()->with('warn', 'Produto editado com sucessoooo' );
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Erro ao atualizar variações.',
-                'error' => $e->getMessage(),
-            ], 500);
+            return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
         }
     }
+    else{
+        // Não é variação
 
-    return response()->json([
-        'message' => 'Nenhuma variação encontrada para atualizar.',
-    ]);
+        try{       
+          $id =  $data['id'] ;
+            $produto = [
+            'name' => $data['name'],
+             'regular_price' => $data['price'],
+             'price' => $data['price'],
+             'stock_quantity' => $data['quantity'],
+             'sku'=> $data['sku'],
+            ];
+            $woocommerce->put("products/$id", $produto);
+
+
+            return back()->with("warn", "Produto Editado com sucesso");
+        }
+        catch (\Exception $e) {
+                       
+            return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
+           
+        }
+        
+    }
+    
+
+
+   
 }
 
     /**

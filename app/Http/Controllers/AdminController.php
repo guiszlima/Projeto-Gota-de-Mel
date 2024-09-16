@@ -46,7 +46,7 @@ public function index(){
         return redirect()->route('admin.index')->with('success', 'Cargo atualizado com sucesso');
     }
     public function acceptUsers(Request $request){
-        dd($request->all());
+     
         $user = User::findOrFail($request->user_id);
         
         $user->is_pending = false;
