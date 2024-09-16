@@ -7,12 +7,10 @@
         </div>
     </div>
 
-    @if (session('warn'))
-    <div class="border border-blue-500 text-blue-700 bg-green-100 px-4 py-3 rounded relative m" role="alert">
-        <span class="block sm:inline">{{ session('warn') }}</span>
-    </div>
-    @endif
+
+
     <div class="flex flex-col items-center mt-10 bg-gray-100 py-8">
+        <x-warning :warn="session('warn')" />
         <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-2xl font-bold text-center mb-6">Criar Produto Variável</h2>
 
@@ -102,6 +100,40 @@
                             type="button">
                         </button>
                     </div>
+
+
+                    <div class="flex flex-col space-y-6 ">
+                        <div class="flex flex-row mt-3 space-x-4">
+                            <input type="text" id="all-estoque" name="all-estoque"
+                                class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Definir Estoques" required>
+                            <button id="insert-estoque"
+                                class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+                                type="button">
+                            </button>
+                        </div>
+                        <div class="flex flex-row space-x-4">
+                            <input type="text" id="all-estante" name="all-estante"
+                                class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Definir Estantes" required>
+                            <button id="insert-estante"
+                                class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+                                type="button">
+                            </button>
+                        </div>
+                        <div class="flex flex-row space-x-4">
+                            <input type="text" id="all-prateleira" name="all-prateleira"
+                                class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Definir Prateleiras" required>
+                            <button id="insert-prateleira"
+                                class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+                                type="button">
+                            </button>
+                        </div>
+                    </div>
+
+
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label for="height" class="block text-gray-700 font-bold mb-2">
@@ -147,23 +179,33 @@
 
         <!-- Formulário de Variações -->
         @if($escolhido && $categoryValue && $atributo_pai !== null && !$mensagem)
-        <form id="myForm" action="{{route('stock.store.var-product')}}" method="POST" enctype="multipart/form-data"
-            class="w-full max-w-md mt-6">
+        <form id="myForm" action="{{ route('stock.store.var-product') }}" method="POST" enctype="multipart/form-data"
+            class="w-full max-w-4xl mx-auto mt-6">
             @csrf
-            <div id="variations-container" class="space-y-4 w-full bg-white p-6 rounded-lg shadow-md">
+            <div id="variations-container" class="space-y-6 bg-white p-8 rounded-lg shadow-lg">
                 @foreach ($attributes as $attribute)
                 @if($attribute['id_pai'] == $atributo_pai['id_pai'])
                 @foreach($attribute['atributos_filhos'] as $term)
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <p class="text-gray-700 text-lg mb-2 md:mb-0">{{ $nome_produto . " " . $term['name'] }}</p>
 
+                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                        <input type="text" autocomplete="off" name="preco[]" placeholder="Preço"
+                            class="mandatory-input price-input block w-full md:w-1/5 pl-3 pr-4 py-2 text-base border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
 
-                    <p>{{ $nome_produto . " " . $term['name'] }}</p>
+                        <input type="text" name="quantity[]" placeholder="Quantidade"
+                            class="mandatory-input quantity-input block w-full md:w-1/5 pl-3 pr-4 py-2 text-base border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
 
-                    <input type="text" name="preco[]" placeholder="Preço"
-                        class="price-input block w-1/2 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <input type="text" name="estoque[]" placeholder="Estoque"
+                            class="mandatory-input estoque-input block w-full md:w-1/5 pl-3 pr-4 py-2 text-base border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
 
-                    <input type="text" name="quantity[]" placeholder="Quantidade"
-                        class="quantity-input block w-1/2 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <input type="text" name="estante[]" placeholder="Estante"
+                            class="mandatory-input  estante-input block w-full md:w-1/5 pl-3 pr-4 py-2 text-base border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+
+                        <input type="text" name="prateleira[]" placeholder="Prateleira"
+                            class="mandatory-input prateleira-input block w-full md:w-1/5 pl-3 pr-4 py-2 text-base border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    </div>
+
                     <input type="hidden" value="{{$term['id']}}" name="id_term[]">
                     <input type="hidden" class="all-sku" name="sku[]">
                     <input type="hidden" value="{{$term['name']}}" name="nome[]">
@@ -171,8 +213,8 @@
                 @endforeach
                 @endif
                 @endforeach
-                <div class="flex justify-end mt-6">
 
+                <div class="flex flex-col md:flex-row md:justify-end mt-6 space-y-4 md:space-y-0">
                     <input type="hidden" value="{{$atributo_pai['id_pai']}}" name="attribute_dad[]">
                     <input type="hidden" name="nomeProduto" value="{{$nome_produto}}">
                     <input type="hidden" id="send-depth" name="depth">
@@ -183,21 +225,26 @@
                     <input type="hidden" name="category" value="{{$categoryValue}}">
                     <input type="file" name="imagem" class="hidden" id="imagem">
                     <input type="hidden" name="description" id="send-description">
-                    <button type="button" value="{{$nome_produto}}" id="submitButton"
-                        class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">
+                    <button onclick="setupSubmitButton()" type="button" value="{{$nome_produto}}" id="submitButton"
+                        class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                         Salvar
                     </button>
                 </div>
             </div>
         </form>
         @endif
+
     </div>
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 const insertPrice = document.getElementById('insert-price');
 const insertQuantity = document.getElementById('insert-quantity');
+const insertEstoque = document.getElementById('insert-estoque');
+const insertEstante = document.getElementById('insert-estante');
+const insertPrateleira = document.getElementById('insert-prateleira');
+
 const generateVariations = document.getElementById('generate-variations');
 
 function maskFloat(e) {
@@ -251,6 +298,7 @@ insertPrice.addEventListener('click', function() {
     });
 });
 
+
 insertQuantity.addEventListener('click', function() {
     const allQuantity = document.getElementById('all-quantity').value;
     const quantityInputs = document.querySelectorAll('.quantity-input');
@@ -259,59 +307,87 @@ insertQuantity.addEventListener('click', function() {
     });
 });
 
-function setupSubmitButton() {
-
-    const submitButton = document.getElementById('submitButton');
-    if (submitButton) {
-
-        submitButton.addEventListener('click', function() {
-            const description = document.getElementById('product-description').value;
-
-            const depth = document.getElementById('depth').value;
-            const height = document.getElementById('height').value;
-            const width = document.getElementById('width').value;
-            const weight = document.getElementById('weight').value;
-
-            document.getElementById('send-description').value = description;
-
-            document.getElementById('send-depth').value = depth || "";
-            document.getElementById('send-height').value = height || "";
-            document.getElementById('send-width').value = width || "";
-            document.getElementById('send-weight').value = weight || "";
-
-            const classSku = document.querySelectorAll('.all-sku');
-            const imageInput = document.getElementById('image');
-            const imagemInput = document.getElementById('imagem');
-
-            classSku.forEach((element, index) => {
-                element.value = generateSku() + index;
-            });
-
-            if (imageInput.files.length > 0) {
-                imagemInput.files = imageInput.files;
-            }
-
-            const form = document.getElementById('myForm');
-            form.submit();
-        });
-    }
-
-
-
-}
-
-const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-        if (mutation.addedNodes.length > 0) {
-            setupSubmitButton();
-        }
+insertEstoque.addEventListener('click', function() {
+    const allEstoque = document.getElementById('all-estoque').value;
+    const estoqueInputs = document.querySelectorAll('.estoque-input');
+    estoqueInputs.forEach(input => {
+        input.value = allEstoque;
     });
 });
 
-observer.observe(document.body, {
-    childList: true,
-    subtree: true
+
+insertEstante.addEventListener('click', function() {
+    const allEstante = document.getElementById('all-estante').value;
+    const estanteInputs = document.querySelectorAll('.estante-input');
+    estanteInputs.forEach(input => {
+        input.value = allEstante;
+    });
 });
 
-setupSubmitButton();
+insertPrateleira.addEventListener('click', function() {
+    const allPrateleira = document.getElementById('all-prateleira').value;
+    const prateleiraInputs = document.querySelectorAll('.prateleira-input');
+    prateleiraInputs.forEach(input => {
+        input.value = allPrateleira;
+    });
+});
+
+function setupSubmitButton() {
+    const submitButton = document.getElementById('submitButton');
+    if (submitButton) {
+        // Primeiro, remova qualquer ouvinte de evento existente para garantir que apenas um ouvinte esteja presente
+        submitButton.removeEventListener('click', handleClick);
+
+        // Adiciona um novo ouvinte de evento
+        submitButton.addEventListener('click', handleClick());
+    }
+}
+
+function handleClick() {
+    const description = document.getElementById('product-description').value;
+    const depth = document.getElementById('depth').value;
+    const height = document.getElementById('height').value;
+    const width = document.getElementById('width').value;
+    const weight = document.getElementById('weight').value;
+
+    document.getElementById('send-description').value = description;
+    document.getElementById('send-depth').value = depth || "";
+    document.getElementById('send-height').value = height || "";
+    document.getElementById('send-width').value = width || "";
+    document.getElementById('send-weight').value = weight || "";
+
+    const classSku = document.querySelectorAll('.all-sku');
+    const imageInput = document.getElementById('image');
+    const imagemInput = document.getElementById('imagem');
+
+    classSku.forEach((element, index) => {
+        element.value = generateSku() + index;
+    });
+
+    if (imageInput.files.length > 0) {
+        imagemInput.files = imageInput.files;
+    }
+
+    let mandInput = document.querySelectorAll('.mandatory-input');
+    let filled = true;
+    mandInput.forEach(element => {
+        if (element.value === '') {
+            filled = false;
+        }
+    });
+
+    if (filled) {
+        const form = document.getElementById('myForm');
+        form.submit();
+    } else {
+        console.log('olá');
+
+        Swal.fire({
+            title: 'Alerta!',
+            text: 'Por favor insira as informações necessárias',
+            icon: 'info',
+            confirmButtonText: 'OK'
+        });
+    }
+}
 </script>

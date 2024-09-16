@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\ReportSell;
-
+use App\Models\ReportCreate;
 class ReportViewSells extends Component
 {
     use WithPagination;
@@ -18,7 +18,9 @@ class ReportViewSells extends Component
     public $searchStartDate;
     public $searchCPF;
     public $searchEndDate;
-    
+    public $estoque;
+    public $estante;
+    public $prateleira;
     
     public function applyFilters()
     {
@@ -36,9 +38,11 @@ class ReportViewSells extends Component
       
         // Aplicar os filtros e paginação
         $items = ReportSell::query()
-        ->when($this->searchCPF, function($query){
-            $query->where('CPF',$this->searchCPF);
-        })
+        ->join('report_create', 'report_sells.product_id', '=', 'report_create.product_id')
+        
+            ->when($this->searchCPF, function($query){
+                $query->where('CPF',$this->searchCPF);
+            })
             ->when($this->selectedPay, function($query) {
                 $query->where('pagamento', $this->selectedPay);
             })
@@ -52,11 +56,11 @@ class ReportViewSells extends Component
                 $query->where('preco', $this->searchPrice);
             })
             ->when($this->searchStartDate && $this->searchEndDate, function($query) {
-                $query->whereBetween('created_at', [$this->searchStartDate, $this->searchEndDate]);
+                $query->whereBetween('report_sells.created_at', [$this->searchStartDate, $this->searchEndDate]);
             })
-            ->orderBy('created_at','desc');
+            ->orderBy('report_sells.created_at','desc');
              // Aplicar paginação
-             $totalPreco = $items->sum('preco');
+             $totalPreco = $items->sum('report_create.preco');
              $itemsPaginate = $items->paginate(50);
 
         return view('livewire.report-view-sells', ['items' => $itemsPaginate,'soma' =>$totalPreco]);

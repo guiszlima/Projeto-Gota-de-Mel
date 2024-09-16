@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('report_sells', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('product_id')->unique();
             $table->string('nome');
-            $table->decimal('preco', 8, 2);
+            
             $table->integer('quantidade');
             $table->string('pagamento');
             $table->string('CPF');

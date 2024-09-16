@@ -67,6 +67,31 @@ $totalItems = count($items);
                 <input type="search" wire:model="searchPrice" placeholder="Preço do produto"
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
             </div>
+            <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Localização</label>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Input para Estoque -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Estoque</label>
+                        <input type="search" wire:model="estoque" placeholder="Estoque"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+                    </div>
+
+                    <!-- Input para Estante -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Estante</label>
+                        <input type="search" wire:model="estante" placeholder="Estante"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+                    </div>
+
+                    <!-- Input para Prateleira -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Prateleira</label>
+                        <input type="search" wire:model="prateleira" placeholder="Prateleira"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+                    </div>
+                </div>
+            </div>
 
             <!-- Inputs para Data Início e Data Fim agrupados -->
             <div>
@@ -98,9 +123,11 @@ $totalItems = count($items);
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Id</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Nome</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Preço</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Estoque</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Estante</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Prateleira</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Pagamento</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">CPF</th>
-                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Estante</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Quantidade</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Data</th>
                 </tr>
@@ -120,6 +147,9 @@ $totalItems = count($items);
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->product_id }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->nome }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->preco }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->estoque }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->estante }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->prateleira }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm capitalize text-gray-900">
                         {{ $item->pagamento === 'credit' 
                         ? 'crédito' 

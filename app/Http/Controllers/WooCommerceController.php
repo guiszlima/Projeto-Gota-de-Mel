@@ -42,7 +42,6 @@ class WooCommerceController extends Controller
                 ReportSell::create([
                 'product_id' => $item['id'], // ID do produto
                 'nome' => $item['name'], // Nome da variação do produto
-                'preco' => $item['value'], // Preço do produto
                 'CPF'=> $cpf,
                 'quantidade'=>$item['quantidade'],
                 'pagamento' => $pagamento, // Método de pagamento

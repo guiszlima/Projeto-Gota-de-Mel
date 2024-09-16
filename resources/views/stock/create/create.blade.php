@@ -8,13 +8,9 @@
         <x-dynamic-link text="Produto com Variações" route="stock.create.var-product"
             currentRoute="{{$currentRoute}}" />
     </div>
+    <x-warning :warn="session('warn')" />
 
-    @if (session('warn'))
-    <div class="border border-blue-500 text-blue-700 bg-green-100 px-4 py-3 rounded relative m" role="alert">
 
-        <span class="block sm:inline">{{ session('warn') }}</span>
-    </div>
-    @endif
     <form id="myForm" action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data"
         class="w-full max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
         @csrf
