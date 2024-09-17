@@ -6,7 +6,7 @@
 $tipoProduto = $product->type ?? $product[0]->type;
 $variante = 'true'
 @endphp
-
+<x-button-back :route="route('stock.index')"></x-button-back>
 <div class="flex items-center  justify-center h-100% bg-gray-100">
 
     <div class="w-[80vw] h-max  mt-[5%] bg-white shadow-lg rounded-lg p-8 flex flex-col items-center">
@@ -48,26 +48,26 @@ $variante = 'true'
                 <div class="flex flex-col w-full">
                     <label for="price" class="text-gray-700 mb-2">Preço</label>
                     <input id="price" name="price" type="text" readonly value="{{ $product->price }}"
-                        class="price editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                        class="price editInput text-center border border-gray-300 p-3 rounded w-full">
                 </div>
 
                 <div class="flex flex-col">
                     <div class="flex flex-col w-full">
                         <label for="estoque" class="text-gray-700 mb-2">Estoque</label>
                         <input id="estoque" name="estoque" type="text" readonly value="{{ $product->estoque??"" }}"
-                            class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                            class="editInput text-center border border-gray-300 p-3 rounded w-full">
                     </div>
                     <div class="flex flex-col w-full">
                         <label for="estante" class="text-gray-700 mb-2">Estante</label>
                         <input id="estante" name="estante" type="text" readonly value="{{ $product->estante??""  }}"
-                            class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                            class="  editInput text-center border border-gray-300 p-3 rounded w-full">
                     </div>
 
                     <div class="flex flex-col w-full">
-                        <label for="preateleira" class=" text-gray-700 mb-2">Prateleira</label>
-                        <input id="prateleira" name="prateleira[]" type="text" readonly
+                        <label for="prateleira" class=" text-gray-700 mb-2">Prateleira</label>
+                        <input id="prateleira" name="prateleira" type="text" readonly
                             value="{{ $product->prateleira??""  }}"
-                            class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                            class="editInput text-center border border-gray-300 p-3 rounded w-full">
                     </div>
                 </div>
 
@@ -136,7 +136,7 @@ $variante = 'true'
                                                 class="text-gray-700 mb-2">Estoque</label>
                                             <input id="price_{{ $loop->index }}" name="estoque[]" type="text" readonly
                                                 value="{{ $variant->estoque }}"
-                                                class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                                                class="  editInputVar text-center border border-gray-300 p-3 rounded w-full">
                                         </div>
 
                                         <div class="flex flex-col w-full">
@@ -144,7 +144,7 @@ $variante = 'true'
                                                 class="text-gray-700 mb-2">Estante</label>
                                             <input id="price_{{ $loop->index }}" name="estante[]" type="text" readonly
                                                 value="{{ $variant->estante }}"
-                                                class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                                                class="  editInputVar text-center border border-gray-300 p-3 rounded w-full">
                                         </div>
 
                                         <div class="flex flex-col w-full">
@@ -152,7 +152,7 @@ $variante = 'true'
                                                 class="text-gray-700 mb-2">Prateleira</label>
                                             <input id="prateleira_{{ $loop->index }}" name="prateleira[]" type="text"
                                                 readonly value="{{ $variant->prateleira }}"
-                                                class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
+                                                class="  editInputVar text-center border border-gray-300 p-3 rounded w-full">
                                         </div>
 
 

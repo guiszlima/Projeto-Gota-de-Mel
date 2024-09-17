@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
+<x-button-back :route="route('menu')"></x-button-back>
 <main>
 
     <div class="flex flex-row  justify-around w-1/3 my-10">

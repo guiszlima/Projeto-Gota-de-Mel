@@ -1,13 +1,15 @@
 <header class="bg-gray-800 text-white shadow print:hidden">
     <div class="container mx-auto flex justify-between items-center py-4 px-6">
         <div class="text-lg font-semibold">
-            <a href="#" class="hover:text-gray-300">My Logo</a>
+            <a href="{{route('menu')}}" class="hover:text-gray-300">My Logo</a>
         </div>
         <nav class="flex space-x-4">
-            <a href="#" class="hover:text-gray-300">Home</a>
-            <a href="#" class="hover:text-gray-300">About</a>
-            <a href="#" class="hover:text-gray-300">Services</a>
-            <a href="#" class="hover:text-gray-300">Contact</a>
+
+            <a href="{{route('products.sell')}}" class="hover:text-gray-300">Vender</a>
+            <a href="{{route('barcode.index')}}" class="hover:text-gray-300">Código de Barras</a>
+            <a href="{{route('stock.index')}}" class="hover:text-gray-300">Produtos</a>
+
+            <a href="{{route('report.sells')}}" class="hover:text-gray-300">Relatórios Vendas</a>
         </nav>
         <form action="{{ route('logout') }}" method="post">
             @csrf

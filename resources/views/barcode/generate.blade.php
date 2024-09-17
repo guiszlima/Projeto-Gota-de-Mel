@@ -2,7 +2,7 @@
 
 @section('content')
 
-
+<x-button-back :route="route('barcode.index')"></x-button-back>
 
 
 

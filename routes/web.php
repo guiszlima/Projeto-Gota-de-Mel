@@ -23,7 +23,7 @@ Route::middleware(['auth','check_pending'])->group(function () {
     return view('menu')
     ->with('user', $user);
     
-    });
+    })->name('menu');
     
 
 

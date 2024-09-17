@@ -518,7 +518,7 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
           
             // Verifica se a resposta contém atualizações
             if (isset($response->update)) {
-                return back()->with("warn", "Produto Editado com sucesso");
+             
                 foreach( $variantData as $index=> $var) {
                     $estoque = $data['estoque'][$index];
                     $estante = $data['estante'][$index];
@@ -531,17 +531,17 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                         'prateleira' => $prateleira,
                         ]);
                 }
-                dd($updateReport);
+               
             }
             
-            return back()->with('warn', 'Produto editado com sucessoooo' );
+            return back()->with('warn', 'Produto editado com sucesso' );
         } catch (\Exception $e) {
             return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
         }
     }
     else{
         // Não é variação
-
+    
         try{       
           $id =  $data['id'] ;
             $produto = [
@@ -552,7 +552,13 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
              'sku'=> $data['sku'],
             ];
             $woocommerce->put("products/$id", $produto);
-
+            $updateReport=    ReportCreate::where('product_id', $id)->update([
+                'nome' => $data['name'],
+                'preco' => $data['price'],
+                'estoque' => $data['estoque'],
+                'estante' => $data['estante'],
+                'prateleira' => $data['prateleira']
+                ]);
 
             return back()->with("warn", "Produto Editado com sucesso");
         }

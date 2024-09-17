@@ -1,6 +1,7 @@
 @php
 $totalItems = count($items);
 @endphp
+
 <div class="p-6">
 
     <!-- Filtros por tipo de produto: Variantes e Simples -->
@@ -36,7 +37,6 @@ $totalItems = count($items);
             Limpar Seleção
         </button>
     </div>
-
 
     <!-- Filtros por Nome, Id, Preço, Data Início, e Data Fim -->
     <div class="mb-6">

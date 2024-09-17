@@ -1,16 +1,23 @@
 @extends('layouts.main')
 
 @section('content')
-
+<x-button-back :route="route('menu')"></x-button-back>
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold mb-6">Gerenciamento de Estoque</h1>
     <div>
-
-        <form action="{{route('stock.create')}}" class="my-7">
+        <form action="{{route('stock.create')}}" class="my-7 flex flex-row gap-4">
             <button
                 class="relative px-8 py-2 rounded-md bg-white isolation-auto z-10 border-2 text-gray-700 border-yellow-300 before:absolute before:w-full before:transition-all before:duration-700 before:hover:w-full before:-left-full before:hover:left-0 before:rounded-full before:bg-yellow-300 before:-z-10 before:aspect-square before:hover:scale-150 overflow-hidden before:hover:duration-700">
                 <span class="font-bold">Criar Produto</span>
             </button>
+
+            <!-- A div abaixo vai ocupar o espaço disponível e empurrar o botão para o final -->
+            <div class="flex-grow"></div>
+
+            <a href="{{ route('report.products') }}" class="flex justify-end bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border
+                border-blue-700 rounded">
+                Relatório
+            </a>
         </form>
 
         @if (session('success'))

@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
+<x-button-back :route="route('stock.index')"></x-button-back>
 <main class="flex flex-col items-center p-4">
     <h1 class="text-2xl font-bold mb-6">Criar</h1>
     <div class="flex flex-col sm:flex-row justify-around w-full sm:w-1/3 mb-10">

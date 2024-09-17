@@ -1,6 +1,9 @@
 @extends('layouts.main')
 
 @section('content')
+
+<x-button-back :route="route('menu')"></x-button-back>
+
 <div class="flex flex-row justify-around w-1/3 my-10">
     <x-dynamic-link text="Admin" route="admin.index" currentRoute="{{$currentRoute}}" />
     <x-dynamic-link text="Aceitar usuários" route="admin.index.accept" currentRoute="{{$currentRoute}}" />

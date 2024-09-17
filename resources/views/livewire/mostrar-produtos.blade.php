@@ -1,4 +1,5 @@
 <div class="flex flex-row w-full">
+
     <div class="flex my-8 w-7/12 justify-start flex-col">
 
 
