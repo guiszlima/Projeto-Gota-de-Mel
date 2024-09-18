@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Automattic\WooCommerce\Client;
 use Illuminate\Http\Request;
+use App\WordpressClass;
 use GuzzleHttp\Client as WpClient;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -454,15 +455,12 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
                     $variation->prateleira = $repProd->prateleira;
              
     
-                if ($variation->image) {
-                    // Faça algo com a imagem, se necessário
-                }
             }
     
             $product = $variations;
         } else {
             $repProd = ReportCreate::where('product_id', $id)->first();
-    
+            $product->parent_id =$product->id;
             if ($repProd) {
                 $product->estoque = $repProd->estoque;
                 $product->estante = $repProd->estante;
@@ -484,12 +482,15 @@ public function storeVariableproduct(Client $woocommerce, Request $request,WpCli
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Client $woocommerce)
+    public function update(Request $request, Client $woocommerce,WpClient $wpService)
 {
     
     $data = $request->all();
-   //dd($data);
-    
+   
+    if($request->hasFile('image')){
+        $wpClass = new WordpressClass($request->all(),$woocommerce,$wpService);
+        $wpClass->EditarImagem();
+    }
     if (isset($data['variant_name'])) {
         $variantData = [];
         $repItemUpdt = [];    

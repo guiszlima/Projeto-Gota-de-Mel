@@ -11,7 +11,8 @@ $variante = 'true'
 
     <div class="w-[80vw] h-max  mt-[5%] bg-white shadow-lg rounded-lg p-8 flex flex-col items-center">
         <x-warning :warn="session('warn')" />
-        <form method="POST" action="{{ route('stock.update') }}" class="w-full flex flex-col items-center">
+        <form method="POST" action="{{ route('stock.update') }}" class="w-full flex flex-col items-center"
+            enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -32,6 +33,13 @@ $variante = 'true'
             @php
             $variante = 'falso';
             @endphp
+            <div id="divChangeImg" class="flex flex-row hidden ">
+                <input name="image" type="file"
+                    class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-min mb-4" placeholder="
+            Inserir imagem ">
+
+            </div>
+
             <div class="flex flex-col items-center">
                 <img src="{{ $product->images[0]->src ?? ""}}" alt="{{ $product->name }}"
                     class="w-1/2 h-auto object-contain mb-6 rounded shadow">
@@ -91,6 +99,13 @@ $variante = 'true'
                         </button>
                     </div>
 
+                    <div id="divChangeImgVar" class="flex flex-row hidden ">
+                        <input name="image" type="file"
+                            class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-2/5 mb-4"
+                            placeholder="
+                Mudar todos preços ">
+
+                    </div>
                     <div class="flex flex-wrap  gap-6">
                         @foreach ($product as $variant)
 
@@ -193,6 +208,8 @@ const inputChangePrices = document.getElementById('inputChangePrice');
 const changeButton = document.getElementById('changeButton');
 const prices = document.querySelectorAll('.precos');
 const divChangePrices = document.getElementById('divChangePrices');
+const divChangeImgVar = document.getElementById('divChangeImgVar');
+const divChangeImg = document.getElementById('divChangeImg');
 
 
 if ("{{$variante}}" !== "falso") {
@@ -207,19 +224,33 @@ if ("{{$variante}}" !== "falso") {
         const isReadOnly = editInputsVar[0].hasAttribute('readonly');
 
         editInputsVar.forEach(input => {
+            console.log(divChangeImg)
 
             if (input.hasAttribute('readonly')) {
+                if (divChangeImgVar) {
+                    divChangeImgVar.classList.remove('hidden');
+                    divChangePrices.classList.remove('hidden');
+                }
+                if (divChangeImg) {
 
-                divChangePrices.classList.remove('hidden');
+                }
 
                 input.removeAttribute('readonly');
+
                 editButton.classList.add('edit-mode');
                 editButton.classList.add('bg-green-500');
                 editButton.classList.remove('bg-blue-500');
             } else {
                 input.setAttribute('readonly', true);
+                if (divChangeImgVar) {
+                    divChangePrices.classList.add('hidden');
+                    divChangeImgVar.classList.add('hidden');
+                }
+                if (divChangeImg) {
 
-                divChangePrices.classList.add('hidden');
+                }
+
+
 
                 editButton.classList.remove('bg-green-500');
                 editButton.classList.add('bg-blue-500');
@@ -239,12 +270,15 @@ if ("{{$variante}}" !== "falso") {
             if (input.hasAttribute('readonly')) {
 
                 input.removeAttribute('readonly');
+                divChangeImg.classList.remove('hidden')
+                console.log('apareceu')
                 editButton.classList.add('edit-mode');
                 editButton.classList.add('bg-green-500');
                 editButton.classList.remove('bg-blue-500');
             } else {
                 input.setAttribute('readonly', true);
-
+                divChangeImg.classList.add('hidden')
+                console.log('SUMIU!')
                 editButton.classList.remove('bg-green-500');
                 editButton.classList.add('bg-blue-500');
                 editButton.classList.remove('edit-mode');
