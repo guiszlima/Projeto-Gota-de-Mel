@@ -103,7 +103,7 @@ $variante = 'true'
                         <input name="image" type="file"
                             class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-2/5 mb-4"
                             placeholder="
-                Mudar todos preços ">
+                Inserir imagem">
 
                     </div>
                     <div class="flex flex-wrap  gap-6">
