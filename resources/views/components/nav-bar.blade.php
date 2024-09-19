@@ -1,7 +1,8 @@
-<header class="bg-gray-800 text-white shadow print:hidden">
+<header class="bg-[#702b59] text-white shadow print:hidden">
     <div class="container mx-auto flex justify-between items-center py-4 px-6">
         <div class="text-lg font-semibold">
-            <a href="{{route('menu')}}" class="hover:text-gray-300">My Logo</a>
+            <a href="{{route('menu')}}" class="hover:text-gray-300"><img class="w-32 h-32"
+                    src="{{asset(path: 'images/logo-sem-fundo.png')}}" alt="Logo"></a>
         </div>
         <nav class="flex space-x-4">
 
