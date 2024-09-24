@@ -10,7 +10,8 @@
             <a href="{{route('barcode.index')}}" class="hover:text-gray-300">Código de Barras</a>
             <a href="{{route('stock.index')}}" class="hover:text-gray-300">Produtos</a>
 
-            <a href="{{route('report.sells')}}" class="hover:text-gray-300">Relatórios Vendas</a>
+            <a href="{{route('report.sells')}}" class="hover:text-gray-300">R. Vendas</a>
+            <a href="{{route('admin.index')}}" class="hover:text-gray-300">Admin</a>
         </nav>
         <form action="{{ route('logout') }}" method="post">
             @csrf
