@@ -6,6 +6,6 @@ rounded-[38px] shadow-xl ">
     <div id="whoobe-1okdg" class="w-full p-4 justify-start flex flex-col">
 
         <a href="{{route($routeName)}}" value="button"
-            class="my-4 px-4 py-2 text-white hover:bg-blue-700 bg-blue-500 text-center rounded-full">{{$button_text}}</a>
+            class="my-4 px-4 py-2 text-white hover:bg-pink-500 bg-yellow-500  text-center rounded-full">{{$button_text}}</a>
     </div>
 </div>

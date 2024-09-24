@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('product_id')->unique();
             $table->string('nome');
-            
+            $table->decimal('preco', 8, 2);
             $table->integer('quantidade');
             $table->string('pagamento');
             $table->string('CPF');
