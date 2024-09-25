@@ -23,7 +23,7 @@ class CheckPending
             // Verifica se o campo is_pending é false
             if ($user->is_pending == true) {
                 // Redireciona para a rota 'autorizado'
-                return redirect()->route('autorizado');
+                return redirect()->route('register');
             }
 
             // Se is_pending for true, passa a requisição para o próximo middleware/controlador
@@ -31,6 +31,6 @@ class CheckPending
         }
 
         // Se o usuário não estiver autenticado, redireciona para a rota de registro
-        return redirect()->route('register');
+        return redirect()->route('login')->with('error', 'Você precisa estar autenticado.');
     }
 }
