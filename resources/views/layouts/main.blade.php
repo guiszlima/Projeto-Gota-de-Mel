@@ -66,6 +66,7 @@
     </style>
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 
 <body class="font-sans antialiased">
@@ -73,8 +74,8 @@
 
 
         <!-- Page Heading -->
-        <x-nav-bar></x-nav-bar>
-
+        @livewire('nav-bar')
+        @livewireScripts
         <!-- Page Content -->
         <main>
             @yield('content')

@@ -20,7 +20,7 @@
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
         <div>
             <a href="/register">
-                <img class="w-72	 h-72" src="{{asset('images/Logo_Gotas_de_Mel_sem_fundol.png')}}">
+                <img class="w-72	 h-72" src="{{asset('images/Logo_Gotas_de_Mel_RGB_vertical.png')}}">
 
                 </img>
             </a>
