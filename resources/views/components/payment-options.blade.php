@@ -62,38 +62,36 @@
                 </label>
             </div>
         </div>
-        <div class="mt-4">
-            <p class="text-blue-gray-700 font-medium">Deseja usar a integração com maquininha?</p>
-            <div
-                class="flex items-center w-full p-2 mt-2 transition-all rounded-lg text-start cursor-pointer hover:bg-gray-100">
-                <label for="maquininha_sim" class="flex items-center w-full cursor-pointer">
-                    <div class="mr-3">
-                        <input name="maquininha" id="maquininha_sim" value="sim" type="radio" class="hidden peer" />
-                        <span
-                            class="flex items-center justify-center w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-gray-900">
-                            <svg class="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
-                                <circle cx="8" cy="8" r="8" />
-                            </svg>
-                        </span>
-                    </div>
-                    <p class="text-blue-gray-600">Sim</p>
-                </label>
+        {{-- 
+<div class="mt-4">
+    <p class="text-blue-gray-700 font-medium">Deseja usar a integração com maquininha?</p>
+    <div class="flex items-center w-full p-2 mt-2 transition-all rounded-lg text-start cursor-pointer hover:bg-gray-100">
+        <label for="maquininha_sim" class="flex items-center w-full cursor-pointer">
+            <div class="mr-3">
+                <input name="maquininha" id="maquininha_sim" value="sim" type="radio" class="hidden peer" />
+                <span class="flex items-center justify-center w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-gray-900">
+                    <svg class="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="8" cy="8" r="8" />
+                    </svg>
+                </span>
             </div>
-            <div
-                class="flex items-center w-full p-2 transition-all rounded-lg text-start cursor-pointer hover:bg-gray-100">
-                <label for="maquininha_nao" class="flex items-center w-full cursor-pointer">
-                    <div class="mr-3">
-                        <input name="maquininha" id="maquininha_nao" value="nao" type="radio" class="hidden peer" />
-                        <span
-                            class="flex items-center justify-center w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-gray-900">
-                            <svg class="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
-                                <circle cx="8" cy="8" r="8" />
-                            </svg>
-                        </span>
-                    </div>
-                    <p class="text-blue-gray-600">Não</p>
-                </label>
+            <p class="text-blue-gray-600">Sim</p>
+        </label>
+    </div>
+    <div class="flex items-center w-full p-2 transition-all rounded-lg text-start cursor-pointer hover:bg-gray-100">
+        <label for="maquininha_nao" class="flex items-center w-full cursor-pointer">
+            <div class="mr-3">
+                <input name="maquininha" id="maquininha_nao" value="nao" type="radio" class="hidden peer" />
+                <span class="flex items-center justify-center w-5 h-5 border border-gray-300 rounded-full peer-checked:bg-gray-900">
+                    <svg class="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="8" cy="8" r="8" />
+                    </svg>
+                </span>
             </div>
-        </div>
+            <p class="text-blue-gray-600">Não</p>
+        </label>
+    </div>
 </div>
-</nav>
+--}}
+
+    </nav>

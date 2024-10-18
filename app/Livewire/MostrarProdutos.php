@@ -16,9 +16,9 @@ class MostrarProdutos extends Component
     public $products = [];
     public $contagem = [];
     public $cart = [];
-    
+    public $c = 0;
     public $formType = false;
-
+public $x = 0;
    public function changeFormtype(){
     
     $this->formType = !$this->formType;
@@ -83,54 +83,59 @@ class MostrarProdutos extends Component
     }
     
     
-
     public function addToCart($productName, $productValue,$productId){
         // Inicializa uma variável para indicar se o produto já foi encontrado
-        $found = false;
+        
+    //    $test = array_key_exists($productId, $this->cart);
+         $this->cart[$productId]=  [
+            'id' => $productId,
+            'name' => $productName,
+            'value' => $productValue,
+            'quantidade' => 1
+        ];
+    // if (!$test) {
+        
+      
+       
+    //     return;
+       
+    // }
+    // else{
+        
+        
+    // $this->cart[$productId]['quantidade']++;
     
-        // Percorre o carrinho para encontrar o produto
-        foreach ($this->cart as &$item) {
-            if ($item['id'] === $productId) {
-                // Se o produto for encontrado, atualiza a quantidade e o valor
-                $item['quantidade'] += 1;
-                $item['value'] = $productValue;
-                $found = true;
-                break;
-            }
-        }
+        
+    // return;
+    // }
+   
+       
     
         // Se o produto não foi encontrado, adiciona um novo item ao carrinho
-        if (!$found) {
-            $cartItem = [
-                'id' => $productId,
-                'name' => $productName,
-                'value' => $productValue,
-                'quantidade' => 1
-            ];
-            $this->cart[] = $cartItem;
-        }
+       
     }
-    
     public function increment($id){
-        
-        foreach( $this->cart as &$item) {
+        // dd($this->cart,$id);
+        foreach( $this->cart as $key=> &$item) {
         
             if($item['id'] == $id){
                 $item['quantidade'] +=1;
-               
-                break;
                 
-            }
+                
+                
+            }    
             
     }
+ 
     
+
 }
-    public function decrement($id,$qtde){
+    public function decrement($id){
         
 
-
+        
         foreach( $this->cart as $key => &$item ) {
-        
+            dd($item);
             if($item['id'] == $id){
                 $item['quantidade'] -=1;
             if($item['quantidade'] < 1 ){

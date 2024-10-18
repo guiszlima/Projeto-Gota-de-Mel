@@ -52,7 +52,9 @@
 
                             <button
                                 class="bg-blue-600 text-white rounded mt-2 px-6 py-2 text-xs font-medium uppercase transition duration-150 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800"
-                                wire:click="addToCart( '{{$product->name}}','{{$product->price}}','{{$product->id}}' )">
+                                wire:click="addToCart( '{{$product->name}}','{{$product->price}}','{{$product->id}}' )"
+                                data-product-id="{{$product->id}}" data-product-name="{{$product->name}}"
+                                data-product-price="{{$product->price}}">
                                 Adicionar
                             </button>
                             @else
@@ -90,7 +92,7 @@
 
                 <button
                     class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center mr-2 focus:outline-none"
-                    wire:click="increment({{$item['id']}})">
+                    wire:click="increment({{$item['id']}},'{{$item['quantidade']}}')">
                     +
                 </button>
                 <button
@@ -115,13 +117,14 @@
                 <x-payment-options></x-payment-options>
                 <input type="hidden" name="cart" value="{{json_encode($cart)}}">
                 <button
-                    class="select-none rounded-lg bg-green-500 mt-2 py-3 px-6 w-1/2 text-center align-middle  font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none "
+                    class="select-none rounded-lg bg-green-500 mt-2 py-3 px-6 w-full text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none mx-auto"
                     type="submit">
                     realizar compra
                 </button>
             </form>
         </div>
     </div>
+
 
 
 

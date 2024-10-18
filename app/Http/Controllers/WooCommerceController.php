@@ -26,13 +26,17 @@ class WooCommerceController extends Controller
 
     public function sellProducts(){
         
-
-
         return view("sell.sell-product");
+        
     }
 
+   
+
+
     public function payment(Request $request){
-       
+      
+       $sell = $request->all();
+      /*
         $cpf = auth()->user()->CPF;
        $cartItems = json_decode($request->input('cart'), true);
         
@@ -49,8 +53,8 @@ class WooCommerceController extends Controller
                 // Adicione outros campos se necessário
                 );
          }
-    
-        dd($request->all());
+ */   
+             return view('payment')->with('sell',$sell);
     
 }
 }
