@@ -62,7 +62,7 @@ Route::middleware(['auth','check_pending'])->group(function () {
     # Sell routes
     Route::get('vender-produto',[WooCommerceController::class,'sellProducts'])->name('products.sell');
     Route::post('vender-produto',[WooCommerceController::class,'makeSell'])->name('products.make-sell');
-    Route::post('payment',[WooCommerceController::class,'payment'])->name('products.payment');
+    Route::get('pagamento',[WooCommerceController::class,'payment'])->name('products.payment');
     # BarCode Generator Routes
     Route::get('barcode',[BarCodeMakerController::class,'index'])->name('barcode.index');
     Route::get('gerar-codigo',[BarCodeMakerController::class,'generate'])->name('barcode.generate');

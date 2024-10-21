@@ -51,7 +51,7 @@
 
 
                             <button
-                                class="bg-blue-600 text-white rounded mt-2 px-6 py-2 text-xs font-medium uppercase transition duration-150 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800"
+                                class="btnAddToCart bg-blue-600 text-white rounded mt-2 px-6 py-2 text-xs font-medium uppercase transition duration-150 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800"
                                 wire:click="addToCart( '{{$product->name}}','{{$product->price}}','{{$product->id}}' )"
                                 data-product-id="{{$product->id}}" data-product-name="{{$product->name}}"
                                 data-product-price="{{$product->price}}">
@@ -84,7 +84,7 @@
         <div class="border border-slate-500 p-4 mr-5 mb-4 rounded-lg flex justify-between items-center">
             <div class="text-center">
                 <p class="text-lg font-bold">{{$item['name']}}</p>
-                <p class="text-sm ">{{$item['value'] * $item['quantidade']}}</p>
+                <p class="text-sm ">{{number_format($item['value'] * $item['quantidade'], 2, ',', '.')}}</p>
                 <p class="text-sm "> {{$item['quantidade']}}</p>
             </div>
 
@@ -112,7 +112,7 @@
             <button id="close_modal" class="absolute top-0 right-0 mt-2 mr-2 bg-red-600 text-white rounded px-4 py-2">
                 Fechar
             </button>
-            <form class="flex flex-col px-20 items-center" method="post" action="{{route('products.payment')}}">
+            <form class="flex flex-col px-20 items-center" action="{{route('products.payment')}}">
                 @csrf
                 <x-payment-options></x-payment-options>
                 <input type="hidden" name="cart" value="{{json_encode($cart)}}">
@@ -129,8 +129,6 @@
 
 
 </div>
-
-
 
 <script>
 let previousValue = '';

@@ -42,7 +42,7 @@ public $x = 0;
 }
     else{
         $this->products = $woocommerce->get('products', ['search' => $this->searchTerm]);
-       // dd($this->products);
+  
         $productsWithVariations = [];
         $productIdsToRemove = [];
         foreach ($this->products as $product) {
@@ -56,7 +56,7 @@ public $x = 0;
             if ($product->type === 'variable') {
                 // Busca as variações do produto
                 $variations = $woocommerce->get("products/{$product->id}/variations");
-                $daddyIsOff = False;
+              
                 // Adiciona cada variação como um produto independente no array
                 foreach ($variations as $variation) {
                     // Adiciona algumas propriedades do produto principal à variação
@@ -86,33 +86,29 @@ public $x = 0;
     public function addToCart($productName, $productValue,$productId){
         // Inicializa uma variável para indicar se o produto já foi encontrado
         
-    //    $test = array_key_exists($productId, $this->cart);
-         $this->cart[$productId]=  [
+      $test = array_key_exists($productId, $this->cart);
+      
+    if (!$test) {
+            $this->cart[$productId]=  [
             'id' => $productId,
             'name' => $productName,
-            'value' => $productValue,
-            'quantidade' => 1
+            'value' =>(float) $productValue,
+            'quantidade' => 1,
+            'real_qtde' => (float)($productValue * 1), 
+            
         ];
-    // if (!$test) {
-        
       
+        return;
        
-    //     return;
-       
-    // }
-    // else{
+    }
+    else{
         
         
-    // $this->cart[$productId]['quantidade']++;
-    
+    $this->cart[$productId]['quantidade']++;
+    $this->cart[$productId]['real_qtde'] =  $this->cart[$productId]['value'] * $this->cart[$productId]['quantidade'] ;
         
-    // return;
-    // }
-   
-       
-    
-        // Se o produto não foi encontrado, adiciona um novo item ao carrinho
-       
+    return;
+    }  
     }
     public function increment($id){
         // dd($this->cart,$id);
@@ -135,7 +131,7 @@ public $x = 0;
 
         
         foreach( $this->cart as $key => &$item ) {
-            dd($item);
+            
             if($item['id'] == $id){
                 $item['quantidade'] -=1;
             if($item['quantidade'] < 1 ){
