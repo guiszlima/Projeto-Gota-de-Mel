@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+
+        
         Schema::create('report_sells', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('product_id')->unique();
+            $table->id(); // Este já é um campo bigIncrements (8 bytes por padrão)
+            $table->unsignedBigInteger('sell_id'); // Chave primária com 8 bytes
+            $table->unsignedBigInteger('product_id');
             $table->string('nome');
             $table->decimal('preco', 8, 2);
             $table->integer('quantidade');

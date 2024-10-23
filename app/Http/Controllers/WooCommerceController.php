@@ -36,24 +36,11 @@ class WooCommerceController extends Controller
     public function payment(Request $request){
       
        $sell = $request->all();
-      /*
-        $cpf = auth()->user()->CPF;
+     
        $cartItems = json_decode($request->input('cart'), true);
-        
+       
+    
       
-            // Certifique-se de que a estrutura do array é consistente com os campos da tabela
-            foreach ($cartItems as $item){
-                ReportSell::create([
-                'product_id' => $item['id'], // ID do produto
-                'nome' => $item['name'], // Nome da variação do produto
-                'CPF'=> $cpf,
-                'quantidade'=>$item['quantidade'],
-                'pagamento' => $item['value'], // Método de pagamento
-                ]
-                // Adicione outros campos se necessário
-                );
-         }
- */   
              return view('payment')->with('sell',$sell);
     
 }
