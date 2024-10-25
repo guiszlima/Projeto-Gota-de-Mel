@@ -380,7 +380,7 @@ function handleClick() {
         const form = document.getElementById('myForm');
         form.submit();
     } else {
-        console.log('olá');
+
 
         Swal.fire({
             title: 'Alerta!',

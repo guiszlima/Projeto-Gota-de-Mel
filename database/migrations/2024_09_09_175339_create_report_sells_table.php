@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('quantidade');
             $table->string('pagamento');
             $table->string('CPF');
-           
+           $table->string('parcelas');
             $table->timestamps(); // Adiciona as colunas 'created_at' e 'updated_at'
         });
     }

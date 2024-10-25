@@ -94,7 +94,7 @@ public $x = 0;
             'name' => $productName,
             'value' =>(float) $productValue,
             'quantidade' => 1,
-            'real_qtde' => (float)($productValue * 1), 
+            'product_real_qtde' => (float)($productValue * 1), 
             
         ];
       
@@ -105,7 +105,7 @@ public $x = 0;
         
         
     $this->cart[$productId]['quantidade']++;
-    $this->cart[$productId]['real_qtde'] =  $this->cart[$productId]['value'] * $this->cart[$productId]['quantidade'] ;
+    $this->cart[$productId]['product_real_qtde'] =  $this->cart[$productId]['value'] * $this->cart[$productId]['quantidade'] ;
         
     return;
     }  
