@@ -89,6 +89,18 @@
         });
 
     });
+
+    window.addEventListener('noPayment', function(event) {
+        console.log('hello')
+
+        Swal.fire({
+            title: 'Não foi inserido um pagamento',
+            html: `Por favor, insira um valor.`, // Corrigido aqui
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+
+    });
     document.addEventListener('DOMContentLoaded', () => {
         const paymentMethod = document.getElementById('payment-method');
         const parcelas = document.getElementById('parcelas');

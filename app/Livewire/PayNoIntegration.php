@@ -3,14 +3,16 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\ReportSell;
-use Illuminate\Support\Facades\Log;
+use App\Models\Sell;
+use App\Models\payments;
+use App\Models\ItensSell;
 
 class PayNoIntegration extends Component
 {
     public $sell;
     public $payment;
     public $total;
+    
     public $paymentmethod;
     public $showParcelas = false;
 
@@ -23,10 +25,38 @@ class PayNoIntegration extends Component
         $this->sell = $sell;
         $this->sell['cart'] =  json_decode($sell['cart'], true);
         $this->total = $this->getTotal($this->sell['cart']);
+        
+        $userId = auth()->id();
+
+        $nowSell =  Sell::create([
+
+            'user_id' => $userId,
+            'preco_total'=>  $this->total,
+
+    ]);
+
+    foreach($this->sell['cart'] as $item){
+
+        ItensSell::create([
+            'product_id'=> $item['id'],
+            'sell_id' => $nowSell->id,
+            'nome'=> $item['id'],
+
+        ]);
+    }
+  
+         return view('payment')->with('sell',$sell);
+      
+        
     }
 
     public function selling()
     {
+        if(!$this->payment|| $this->payment === '0,00'){
+            
+            $this->dispatch('noPayment');
+            return;
+        }
         // Depuração dos tipos e valores
         // Limpar o valor de pagamento
         $cleanPayment = str_replace(['.', ' '], '', $this->payment); // Remove pontos e espaços
@@ -48,28 +78,14 @@ class PayNoIntegration extends Component
              
         }
         // Gera um novo ID para a venda e recupera o CPF do usuário logado
-        $sellId = ReportSell::max('sell_id') + 1;
-        $cpf = auth()->user()->CPF;
-    
-        // Insere cada item no banco de dados
-        // ...
-    }
-    
- // // Insere cada item no banco de dados
-        // foreach ($this->sell['cart'] as $item) {
-        //     ReportSell::create([
-        //         'sell_id' => $sellId,
-        //         'product_id' => $item['id'],
-        //         'nome' => $item['name'], // Nome do produto
-        //         'CPF' => $cpf,
-        //         'preco' => $item['real_qtde'], // Preço total
-        //         'quantidade' => $item['quantidade'],
-        //         'pagamento' => $this->sell['payment_method'] // Método de pagamento
-        //     ]);
-        // }
+     
+      
 
         // Redirecionar ou mostrar uma mensagem de sucesso aqui, se necessário
 
+
+    }
+    
 
         public function updatedPaymentmethod()
 {
@@ -87,8 +103,13 @@ private function getTotal($array){
     foreach ($array as $item) {
         $total += $item['product_real_qtde'];
         }
-        return $total;
+        return (float)$total;
 }
+
+private function createSell(){
+    
+}
+
     public function render()
     {
         return view('livewire.pay-no-integration');
