@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sell_id'); // Campo da chave estrangeira
             $table->timestamps();
             $table->string('pagamento');
-            $table->integer('parcelas');
+            $table->integer('parcelas')->nullable();
             $table->float('preco');
             // Definindo a chave estrangeira
             $table->foreign('sell_id')

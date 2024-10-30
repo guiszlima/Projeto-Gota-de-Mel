@@ -11,7 +11,9 @@ class Payment extends Model
     protected $table = 'payments';
     protected $fillable = [
         'sell_id',
-        'product_ids', // IDs de produtos em formato JSON
+        'pagamento',
+        'parcelas',
+        'preco'
     ];
 
     /**

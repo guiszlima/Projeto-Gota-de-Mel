@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Automattic\WooCommerce\Client;
 use phpDocumentor\Reflection\PseudoTypes\False_;
-
+use Illuminate\Support\Str;
 class MostrarProdutos extends Component
 {
 
@@ -17,8 +17,12 @@ class MostrarProdutos extends Component
     public $contagem = [];
     public $cart = [];
     public $c = 0;
+    public $uniqueId;
     public $formType = false;
 public $x = 0;
+public function mount(){
+$this->uniqueId  = Str::uuid()->toString();
+}
    public function changeFormtype(){
     
     $this->formType = !$this->formType;
@@ -87,15 +91,14 @@ public $x = 0;
         // Inicializa uma variável para indicar se o produto já foi encontrado
         
       $test = array_key_exists($productId, $this->cart);
-      
+     
     if (!$test) {
             $this->cart[$productId]=  [
             'id' => $productId,
             'name' => $productName,
             'value' =>(float) $productValue,
             'quantidade' => 1,
-            'product_real_qtde' => (float)($productValue * 1), 
-            
+            'product_real_qtde' => (float)($productValue * 1),             
         ];
       
         return;

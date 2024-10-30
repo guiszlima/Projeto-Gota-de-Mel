@@ -35,8 +35,9 @@
             </div>
 
 
-            <input type="text" placeholder="Em quantas vezes Deseja Parcelar?" name="Insira as Parcelas" id="parcelas"
-                class="hidden w-full p-2 border border-gray-300 rounded-lg mb-6">
+            <input wire:model="parcelas" type="text" placeholder="Em quantas vezes Deseja Parcelar?"
+                name="Insira as Parcelas" id="parcelas" class="hidden w-full p-2 border border-gray-300 rounded-lg mb-6"
+                value="1">
 
 
             {{-- Botão de pagar --}}

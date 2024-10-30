@@ -116,6 +116,8 @@
                 @csrf
                 <x-payment-options></x-payment-options>
                 <input type="hidden" name="cart" value="{{json_encode($cart)}}">
+                <input type="hidden" name="session_id" value="{{$uniqueId}}">
+
                 <button
                     class="select-none rounded-lg bg-green-500 mt-2 py-3 px-6 w-full text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-green-500/20 transition-all hover:shadow-lg hover:shadow-green-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none mx-auto"
                     type="submit">

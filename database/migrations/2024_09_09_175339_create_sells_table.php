@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sells', function (Blueprint $table) {
             $table->id(); // Chave primária
             $table->unsignedBigInteger('user_id'); // Chave estrangeira para 'users.id'
-            $table->boolean('cancelado')->default(0);
+            $table->boolean('cancelado')->default(1);
             $table->float('preco_total');
             $table->timestamps(); // Adiciona 'created_at' e 'updated_at'
 

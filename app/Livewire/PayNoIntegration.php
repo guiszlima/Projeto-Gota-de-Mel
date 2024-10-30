@@ -3,16 +3,15 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Sell;
-use App\Models\payments;
-use App\Models\ItensSell;
+use App\Models\Payment;
+
 
 class PayNoIntegration extends Component
 {
     public $sell;
     public $payment;
     public $total;
-    
+    public $parcelas;
     public $paymentmethod;
     public $showParcelas = false;
 
@@ -26,24 +25,9 @@ class PayNoIntegration extends Component
         $this->sell['cart'] =  json_decode($sell['cart'], true);
         $this->total = $this->getTotal($this->sell['cart']);
         
-        $userId = auth()->id();
+     
 
-        $nowSell =  Sell::create([
-
-            'user_id' => $userId,
-            'preco_total'=>  $this->total,
-
-    ]);
-
-    foreach($this->sell['cart'] as $item){
-
-        ItensSell::create([
-            'product_id'=> $item['id'],
-            'sell_id' => $nowSell->id,
-            'nome'=> $item['id'],
-
-        ]);
-    }
+     
   
          return view('payment')->with('sell',$sell);
       
@@ -74,7 +58,16 @@ class PayNoIntegration extends Component
             return;
         }
         else{
+            $data = [
+                
+                'pagamento'=> $this->paymentmethod,
+                'preco'=> $paymentValue,
+                'parcelas'=> $this->parcelas
+            ];
+
+                
              $this->total = $this->total - $paymentValue;
+             Payment::create($data);
              
         }
         // Gera um novo ID para a venda e recupera o CPF do usuário logado
@@ -106,9 +99,7 @@ private function getTotal($array){
         return (float)$total;
 }
 
-private function createSell(){
-    
-}
+
 
     public function render()
     {
