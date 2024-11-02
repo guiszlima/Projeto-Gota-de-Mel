@@ -1,70 +1,74 @@
 <div>
-    {{-- Botão de cancelar venda --}}
     <div class="flex justify-center w-full">
+        {{-- Botão de cancelar venda --}}
         <button type="button"
-            class="w-10/12 mt-10 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-lg">
+            class="w-10/12 mt-10 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-semibold rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-xl">
             Cancelar venda
         </button>
     </div>
 
-
     <div class="flex flex-col mt-10 items-center h-screen bg-gray-100">
         {{-- Container para o conteúdo centralizado --}}
-        <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-            <div class="text-center">
+        <div class="w-full max-w-md p-6 bg-white rounded-2xl shadow-lg border border-gray-200">
+            <div class="text-center mb-6">
                 {{-- Exibe o valor total calculado do carrinho --}}
-                <h1 data-value={{ number_format($total, 2, ',', '.') }} id="valor" class="text-2xl font-semibold mb-4">
-                    Total a pagar: R$
-                    {{ number_format($total, 2, ',', '.') }}
+                <h1 data-value={{ number_format($total, 2, ',', '.') }} id="valor"
+                    class="text-3xl font-bold text-gray-800 mb-4">
+                    Total a pagar: R$ {{ number_format($total, 2, ',', '.') }}
                 </h1>
 
                 {{-- Input para inserir o valor a ser pago --}}
                 <input wire:model="payment" required id="to-pay" autocomplete="off" type="text"
-                    placeholder="Insira valor para pagar" class="w-full p-2 border border-gray-300 rounded-lg mb-6">
+                    placeholder="Insira valor para pagar"
+                    class="w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
 
                 {{-- Selecionar forma de pagamento --}}
                 <select wire:model="paymentmethod" id="payment-method"
-                    class="w-full p-2 border border-gray-300 rounded-lg mb-6">
-                    <option value="debito" {{$sell['payment_method'] === 'debito'? 'selected':''}}>Débito</option>
-                    <option value="credito" {{$sell['payment_method'] === 'credito'? 'selected':''}}>Crédito
-                    </option>
-                    <option value="pix" {{$sell['payment_method'] === 'pix'? 'selected':''}}>Pix</option>
-                    <option value="dinheiro" {{$sell['payment_method'] === 'dinheiro'? 'selected':''}}>Dinheiro
+                    class="w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
+                    <option value="debito" {{$sell['payment_method'] === 'Débito' ? 'selected':''}}>Débito</option>
+                    <option value="credito" {{$sell['payment_method'] === 'Crédito' ? 'selected':''}}>Crédito</option>
+                    <option value="pix" {{$sell['payment_method'] === 'Pix' ? 'selected':''}}>Pix</option>
+                    <option value="dinheiro" {{$sell['payment_method'] === 'Dinheiro' ? 'selected':''}}>Dinheiro
                     </option>
                 </select>
             </div>
 
-
+            {{-- Input de parcelas --}}
             <input wire:model="parcelas" type="text" placeholder="Em quantas vezes Deseja Parcelar?"
-                name="Insira as Parcelas" id="parcelas" class="hidden w-full p-2 border border-gray-300 rounded-lg mb-6"
-                value="1">
-
+                name="Insira as Parcelas" id="parcelas"
+                class="hidden w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
 
             {{-- Botão de pagar --}}
             <div class="flex justify-center w-full mt-6">
-                <button wire:click="selling({{$total}})"
-                    class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-lg">
+                <button wire:click="selling({{$total}})" id="pagar"
+                    class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-semibold rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-xl">
                     Pagar
                 </button>
             </div>
 
-            {{-- Listagem dos itens no canto --}}
-            <div class="mt-4">
-                <h2 class="text-xl font-semibold mb-2">Itens do Carrinho</h2>
-                <ul class="space-y-2">
+            {{-- Listagem dos itens do carrinho --}}
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Itens do Carrinho</h2>
+                <ul class="space-y-3">
                     @foreach ($sell['cart'] as $item)
-                    <li class="border-b pb-2">
-                        <p class="text-lg font-medium">{{ $item['name'] }}</p>
-                        <p>Preço Unidade: R$ {{ number_format($item['value'], 2, ',', '.') }}</p>
-                        <p>Preço Total: R$ {{ number_format($item['product_real_qtde'], 2, ',', '.') }}</p>
-                        <p>Quantidade: {{ $item['quantidade'] }}</p>
+                    <li class="border-b pb-3">
+                        <p class="text-lg font-medium text-gray-800">{{ $item['name'] }}</p>
+                        <p class="text-gray-600">Preço Unidade: R$ {{ number_format($item['value'], 2, ',', '.') }}</p>
+                        <p class="text-gray-600">Preço Total: R$
+                            {{ number_format($item['product_real_qtde'], 2, ',', '.') }}</p>
+                        <p class="text-gray-600">Quantidade: {{ $item['quantidade'] }}</p>
                     </li>
                     @endforeach
                 </ul>
             </div>
         </div>
-    </div>
 
+        {{-- Botão FINALIZAR COMPRA --}}
+        <button wire:click="endPurchase" id="concluirCompra"
+            class=" mt-8 w-11/12 max-w-md text-white font-bold py-4 px-8 bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 rounded-xl hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-teal-300 dark:focus:ring-teal-800 transition duration-300 transform hover:scale-105 shadow-2xl">
+            FINALIZAR COMPRA
+        </button>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -92,7 +96,7 @@
     });
 
     window.addEventListener('noPayment', function(event) {
-        console.log('hello')
+
 
         Swal.fire({
             title: 'Não foi inserido um pagamento',
@@ -109,12 +113,26 @@
         // Adiciona um evento de 'change'
         paymentMethod.addEventListener('change', () => {
             if (paymentMethod.value === "credito") {
-                parcelas.classList.remove('hidden'); // Mostra o input de parcelas
+                parcelas.classList.remove('hidden');
+                // Mostra o input de parcelas
             } else {
                 parcelas.classList.add('hidden'); // Esconde o input de parcelas
                 parcelas.value = "";
             }
         });
+    });
+
+    window.addEventListener('endPurchaseAlert', () => {
+
+        Swal.fire({
+            title: 'O valor total ainda não foi pago',
+            html: `Por favor, apenas conclua a venda quando o valor total for igual a 0,00.`, // Corrigido aqui
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+
+
+
     });
     </script>
 

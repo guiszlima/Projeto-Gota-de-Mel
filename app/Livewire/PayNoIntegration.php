@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Payment;
-
+use App\Models\Sell;
 
 class PayNoIntegration extends Component
 {
@@ -14,17 +14,18 @@ class PayNoIntegration extends Component
     public $parcelas;
     public $paymentmethod;
     public $showParcelas = false;
+    public $totalReference;
 
     // Método para inicializar o componente com o valor de sell
     public function mount($sell)
     {
         // Decodifica o JSON do cart para um array
      
-
+        
         $this->sell = $sell;
         $this->sell['cart'] =  json_decode($sell['cart'], true);
         $this->total = $this->getTotal($this->sell['cart']);
-        
+        $this->paymentmethod = $sell['payment_method'];
      
 
      
@@ -58,8 +59,9 @@ class PayNoIntegration extends Component
             return;
         }
         else{
+          
             $data = [
-                
+                'sell_id'=>$this->sell['IdVenda'],
                 'pagamento'=> $this->paymentmethod,
                 'preco'=> $paymentValue,
                 'parcelas'=> $this->parcelas
@@ -67,8 +69,9 @@ class PayNoIntegration extends Component
 
                 
              $this->total = $this->total - $paymentValue;
+           
              Payment::create($data);
-             
+           
         }
         // Gera um novo ID para a venda e recupera o CPF do usuário logado
      
@@ -79,7 +82,22 @@ class PayNoIntegration extends Component
 
     }
     
+    public function endPurchase(){
+        if($this->total == 0.0){
+           $vendaAtual = Sell::find($this->sell['IdVenda']);
+           $vendaAtual->cancelado = 0;
+        
+           // Salva as alterações no banco de dados
+           $vendaAtual->save();
+           session()->flash('mensagem', 'Venda Feita com sucesso');
 
+           // Redireciona para a view desejada (exemplo: 'vendas.index')
+           return redirect()->route('menu');
+         }
+         else{
+            $this->dispatch('endPurchaseAlert');
+         }
+    }
         public function updatedPaymentmethod()
 {
     
