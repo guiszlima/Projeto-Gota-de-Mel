@@ -35,9 +35,9 @@ class ReportViewSells extends Component
 
     public function render()
     {
-      
-        // Aplicar os filtros e paginação
-        $items = Sell::query()
+
+    // Aplicar os filtros e paginação
+    $itemsQuery = Sell::query()
         ->join('users', 'sells.user_id', '=', 'users.id') // Join com a tabela 'users'
         ->join('payments', 'sells.id', '=', 'payments.sell_id') // Join com a tabela 'payments'
         ->join('itens_sells', 'sells.id', '=', 'itens_sells.sell_id') // Join com a tabela 'itens_sells'
@@ -48,29 +48,27 @@ class ReportViewSells extends Component
             $query->where('payments.pagamento', $this->selectedPay); // Filtra pelo tipo de pagamento na tabela 'payments'
         })
         ->when($this->searchName, function($query) {
-            $query->where('users.nome', 'like', '%' . $this->searchName . '%'); // Filtra pelo nome do usuário na tabela 'users'
+            $query->where('users.name', 'like', '%' . $this->searchName . '%'); // Filtra pelo nome do usuário
         })
         ->when($this->searchId, function($query) {
-            $query->where('itens_sells.product_id', $this->searchId); // Filtra pelo ID do produto na tabela 'itens_sells'
+            $query->where('itens_sells.product_id', $this->searchId); // Filtra pelo ID do produto
         })
         ->when($this->searchPrice, function($query) {
-            $query->where('payments.preco', $this->searchPrice); // Filtra pelo preço na tabela 'payments' (verifique se esse campo está correto na tabela de pagamentos)
+            $query->where('payments.preco', $this->searchPrice); // Filtra pelo preço na tabela 'payments'
         })
         ->when($this->searchStartDate && $this->searchEndDate, function($query) {
-            $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtra pela data de criação na tabela 'sells'
+            $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtra pela data de criação
         })
         ->orderBy('sells.created_at', 'desc')
-        ->select('sells.*', 'users.nome as user_name', 'payments.pagamento', 'itens_sells.product_id'); // Seleciona as colunas relevantes
+        ->select('sells.*', 'users.name as user_name', 'payments.pagamento', 'payments.preco', 'itens_sells.product_id'); // Incluído 'payments.preco'
+
+    // Aplicar paginação
+    $itemsPaginate = $itemsQuery->paginate(50);
     
-    // Aplicar paginação e somatório
-    $totalPreco = $items->sum('payments.preco');
-    $itemsPaginate = $items->paginate(50);
-    
+    // Calcular o total de preços
+    $totalPreco = $itemsQuery->sum('payments.preco'); // Calcular a soma antes da paginação
 
+    return view('livewire.report-view-sells', ['items' => $itemsPaginate, 'soma' => $totalPreco]);
 
-
-
-
-        return view('livewire.report-view-sells', ['items' => $itemsPaginate,'soma' =>$totalPreco]);
     }
 }
