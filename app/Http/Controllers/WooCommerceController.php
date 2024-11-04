@@ -40,31 +40,30 @@ class WooCommerceController extends Controller
         $sell = $request->all();
     
         // Debug: Mostra o conteúdo do array $sell
-        
+       
     
         if ($sell) {
             // Decodifica o JSON do carrinho e calcula o total
             $cartItems = json_decode($sell['cart'], true);
             $total = $this->getTotal($cartItems);
             $userId = auth()->id();
-            
+            $json_produtos = [];
+
+            foreach ($cartItems as $item) {
+                $json_produtos[] = $item['id'];
+            }
+            $produtosJson = json_encode($json_produtos);
             // Verifica se não há uma venda na sessão ou se o session_id não corresponde ao atual
             if (!session()->has('IdVenda') || session('session_id') !== $sell['session_id']) {
                 // Cria um registro de venda com o ID do usuário e o preço total
                 $nowSell = Sell::create([
                     'user_id' => $userId,
                     'preco_total' => $total,
+                    'produtos' => $produtosJson,
                 ]);
                
                 // Insere cada item do carrinho na tabela ItensSell
-                foreach ($cartItems as $item) {
-                    ItensSell::create([
-                        'product_id' => $item['id'],
-                        'sell_id' => $nowSell->id,
-                        'nome' => $item['name'], // Supondo que o campo 'nome' represente o nome do produto
-                    ]);
-                }
-                // Armazena o ID da venda na sessão
+              
                 session(['IdVenda' => $nowSell->id, 'session_id' => $sell['session_id']]);
             } else {
                 // Se já existir uma venda na sessão, recupera a venda existente

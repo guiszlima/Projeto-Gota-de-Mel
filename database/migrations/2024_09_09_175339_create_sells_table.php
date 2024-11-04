@@ -17,7 +17,7 @@ return new class extends Migration
             $table->boolean('cancelado')->default(1);
             $table->float('preco_total');
             $table->timestamps(); // Adiciona 'created_at' e 'updated_at'
-
+            $table->json('produtos');
             $table->foreign('user_id')
             ->references('id')
             ->on('users');

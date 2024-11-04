@@ -4,8 +4,11 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Sell;
 use App\Models\ReportCreate;
+
 class ReportViewSells extends Component
 {
     use WithPagination;
@@ -37,10 +40,10 @@ class ReportViewSells extends Component
     {
 
     // Aplicar os filtros e paginação
-    $itemsQuery = Sell::query()
+   $itemsQuery = Sell::query()
         ->join('users', 'sells.user_id', '=', 'users.id') // Join com a tabela 'users'
         ->join('payments', 'sells.id', '=', 'payments.sell_id') // Join com a tabela 'payments'
-        ->join('itens_sells', 'sells.id', '=', 'itens_sells.sell_id') // Join com a tabela 'itens_sells'
+       
         ->when($this->searchCPF, function($query) {
             $query->where('users.CPF', $this->searchCPF); // Filtra pelo CPF na tabela 'users'
         })
@@ -51,7 +54,7 @@ class ReportViewSells extends Component
             $query->where('users.name', 'like', '%' . $this->searchName . '%'); // Filtra pelo nome do usuário
         })
         ->when($this->searchId, function($query) {
-            $query->where('itens_sells.product_id', $this->searchId); // Filtra pelo ID do produto
+            $query->where('sells.produtos', $this->searchId); // Filtra pelo ID do produto
         })
         ->when($this->searchPrice, function($query) {
             $query->where('payments.preco', $this->searchPrice); // Filtra pelo preço na tabela 'payments'
@@ -60,7 +63,8 @@ class ReportViewSells extends Component
             $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtra pela data de criação
         })
         ->orderBy('sells.created_at', 'desc')
-        ->select('sells.*', 'users.name as user_name', 'payments.pagamento', 'payments.preco', 'itens_sells.product_id'); // Incluído 'payments.preco'
+        ->select('sells.*', 'users.name as user_name','users.CPF as user_cpf', 'payments.pagamento', 'payments.preco');
+        
 
     // Aplicar paginação
     $itemsPaginate = $itemsQuery->paginate(50);

@@ -18,16 +18,17 @@ use App\Http\Controllers\ReportController;
 
 // Redireciona a rota '/' para '/registro'
 
-// Defina a rota '/registro' se ainda não estiver definida
-Route::get('/registro', function () {
-    // Aqui você pode retornar a view de registro, por exemplo:
-    return view('auth.register'); // Substitua 'auth.register' pela view de registro correta.
-})->name('registro');
-
 
 
 Route::middleware(['auth','check_pending'])->group(function () {
 
+
+  Route::get('/',function(){
+    if (Auth::check()) {
+      // Se o usuário estiver autenticado, redireciona para a rota 'menu'
+      return redirect()->route('menu');
+  }
+  });  
     Route::get("/menu", function(){
         $user = Auth::user();
         
