@@ -10,9 +10,21 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReportController;
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
+
+// routes/web.php
+
+
+
+// Redireciona a rota '/' para '/registro'
+
+// Defina a rota '/registro' se ainda não estiver definida
+Route::get('/registro', function () {
+    // Aqui você pode retornar a view de registro, por exemplo:
+    return view('auth.register'); // Substitua 'auth.register' pela view de registro correta.
+})->name('registro');
+
+
 
 Route::middleware(['auth','check_pending'])->group(function () {
 

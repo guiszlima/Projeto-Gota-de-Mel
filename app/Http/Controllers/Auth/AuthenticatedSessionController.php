@@ -28,7 +28,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('menu', absolute: false));
+        return redirect()->intended('/menu');
+
     }
 
     /**
