@@ -15,8 +15,10 @@ class ReportViewSells extends Component
 
     protected $paginationTheme = 'pagination-theme';
     public $selectedPay;
+    public $selectedStatus;
     public $searchName;
     public $searchId;
+    public $searchSellId;
     public $searchPrice;
     public $searchStartDate;
     public $searchCPF;
@@ -24,7 +26,7 @@ class ReportViewSells extends Component
     public $estoque;
     public $estante;
     public $prateleira;
-    
+    public $searchPayment;
     public function applyFilters()
     {
         $this->resetPage(); // Reseta a página para 1 ao aplicar filtros
@@ -32,6 +34,7 @@ class ReportViewSells extends Component
 
     public function clearSelection()
     {
+        $this->selectedStatus = null;
         $this->selectedPay = null; // Limpa a seleção
     }
 
@@ -42,22 +45,31 @@ class ReportViewSells extends Component
     // Aplicar os filtros e paginação
    $itemsQuery = Sell::query()
         ->join('users', 'sells.user_id', '=', 'users.id') // Join com a tabela 'users'
-        ->join('payments', 'sells.id', '=', 'payments.sell_id') // Join com a tabela 'payments'
+        ->leftJoin('payments', 'sells.id', '=', 'payments.sell_id')
        
         ->when($this->searchCPF, function($query) {
-            $query->where('users.CPF', $this->searchCPF); // Filtra pelo CPF na tabela 'users'
+            $query->where('users.CPF', 'like', '%' . $this->searchCPF . '%'); // Filtra pelo CPF na tabela 'users'
         })
         ->when($this->selectedPay, function($query) {
             $query->where('payments.pagamento', $this->selectedPay); // Filtra pelo tipo de pagamento na tabela 'payments'
+        })
+        ->when($this->selectedStatus !== null, function($query) {
+            $query->where('sells.cancelado', (int)$this->selectedStatus); // Filtra pelo tipo de pagamento na tabela 'payments'
         })
         ->when($this->searchName, function($query) {
             $query->where('users.name', 'like', '%' . $this->searchName . '%'); // Filtra pelo nome do usuário
         })
         ->when($this->searchId, function($query) {
-            $query->where('sells.produtos', $this->searchId); // Filtra pelo ID do produto
+            $query->whereRaw('JSON_CONTAINS(sells.produtos, ?)', [json_encode($this->searchId)]); // Filtra pelo ID do produto no JSON
+        })
+        ->when($this->selectedPay, function($query) {
+            $query->where('payments.pagamento', $this->selectedPay); // Filtra pelo tipo de pagamento na tabela 'payments'
+        })
+        ->when($this->searchSellId, function($query){
+            $query->where('sells.id', 'like', '%' . $this->searchSellId); // Filtra pelo preço na tabela 'payments'
         })
         ->when($this->searchPrice, function($query) {
-            $query->where('payments.preco', $this->searchPrice); // Filtra pelo preço na tabela 'payments'
+            $query->where('sells.preco_total', $this->searchPrice); // Filtra pelo preço na tabela 'sells'
         })
         ->when($this->searchStartDate && $this->searchEndDate, function($query) {
             $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtra pela data de criação
