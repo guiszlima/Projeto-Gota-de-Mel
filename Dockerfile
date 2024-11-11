@@ -34,7 +34,7 @@ RUN chown -R www-data:www-data /var/www
 RUN composer install --no-dev --optimize-autoloader
 
 # Expor porta 9000
-EXPOSE 9000
+EXPOSE 80
 
 # Comando para iniciar o PHP-FPM
 CMD ["php-fpm"]
