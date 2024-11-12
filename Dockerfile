@@ -1,40 +1,22 @@
-FROM php:8.2-fpm
-
-# Instalar dependências do sistema
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
-
-# Instalar Composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
-    rm composer-setup.php
-
-# Definir diretório de trabalho
+FROM php:8.1-fpm
 WORKDIR /var/www
-
-# Copiar arquivos do projeto
 COPY . .
-
-# Definir variável para permitir execução do Composer como superusuário
-ENV COMPOSER_ALLOW_SUPERUSER=1
-
-# Ajustar permissões
-RUN chown -R www-data:www-data /var/www
-
-# Instalar dependências do Composer
-RUN composer install --no-dev --optimize-autoloader
-
-# Expor porta 9000
-EXPOSE 80
-
-# Comando para iniciar o PHP-FPM
-CMD ["php-fpm"]
+RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip unzip apache2 libapache2-mod-php8.1
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install pdo pdo_mysql gd
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install
+COPY . /var/www
+RUN echo "<VirtualHost *:80>
+ServerName app.lojagotasdemel.com.br
+ServerAdmin gui.spicacci.dev@gmail.com
+DocumentRoot /var/www/html/Projeto-Gota-de-Mel/public
+<Directory /var/www/html/Projeto-Gota-de-Mel/public>
+    AllowOverride All
+    Require all granted
+</Directory>
+ErrorLog \${APACHE_LOG_DIR}/app_lojagotasdemel_error.log
+CustomLog \${APACHE_LOG_DIR}/app_lojagotasdemel_access.log combined
+</VirtualHost>" > /etc/apache2/sites-available/000-default.conf
+RUN a2enmod rewrite
+CMD ["apache2-foreground"]
