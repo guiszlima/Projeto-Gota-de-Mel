@@ -1,22 +1,36 @@
-FROM php:8.1-fpm
+Usa a imagem base oficial do PHP com FPM
+FROM php:8.2-fpm
 
-# Instalações necessárias
+Instala pacotes essenciais e dependências do Laravel
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
+
+Instala o Composer (gerenciador de dependências PHP)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+Define o diretório de trabalho
 WORKDIR /var/www
+
+Copia o código do projeto para dentro do contêiner
 COPY . .
 
-RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zip unzip apache2 libapache2-mod-php8.1
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install pdo pdo_mysql gd
+Instala as dependências do projeto Laravel
+RUN composer install --no-dev --optimize-autoloader
 
-# Instalar o Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install
+Configura as permissões corretas para o diretório de armazenamento
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Copiar a configuração do Apache
-COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+Expõe a porta do PHP-FPM
+EXPOSE 9000
 
-# Habilitar o módulo rewrite do Apache
-RUN a2enmod rewrite
-
-# Comando para iniciar o Apache
-CMD ["apache2-foreground"]
+Comando padrão para o contêiner
+CMD ["php-fpm"]
