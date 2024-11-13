@@ -10,7 +10,7 @@ class WordpressClass
     public $wpService;
     public function EditarImagem()
     {
-        // Buscar o produto pelo parent_id
+         // Buscar o produto pelo parent_id
         $parentId = $this->request['parent_id']?? $this->request['id'];
         $product = $this->woocommerce->get("products/$parentId");
         $e_commerce = env('WOOCOMMERCE_STORE_URL');
@@ -21,10 +21,10 @@ class WordpressClass
         if (!empty($product->images)) {
             $currentImageId = $product->images[0]->id; // Pegando o ID da primeira imagem
             $delete_url = $request_url.'/'.$currentImageId. '?force=true';
-     
+   
             // Deletar a imagem atual
             $response = $this->wpService->request('DELETE', $delete_url, [
-                'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
+                'auth' => [env('ADMIN_NAME'), env('ADMIN_APP_PASSWORD')], // Autenticação básica com usuário e senha
             ]);
         }
 
@@ -44,9 +44,10 @@ class WordpressClass
                 'Content-Disposition' => 'attachment; filename="' . basename($imgPath) . '"',
                 'Content-Type' => "image/$extension",
             ],
-            'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
-            'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
+            'body' => fopen($imgPath, 'r'),
+            'auth' => [env('ADMIN_NAME'), env('ADMIN_APP_PASSWORD')], // Certifique-se de usar a senha de aplicação
         ]);
+        
 
         $imageData = json_decode($response->getBody(), true);
         $imageId = $imageData['id']; // Obter o ID da imagem
