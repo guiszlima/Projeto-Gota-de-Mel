@@ -1,11 +1,11 @@
 <div>
-    <div class="flex justify-center w-full">
-        {{-- Botão de cancelar venda --}}
-        <button type="button"
-            class="w-10/12 mt-10 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-semibold rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-xl">
-            Cancelar venda
-        </button>
-    </div>
+<div class="flex justify-center w-full">
+    {{-- Botão de cancelar venda --}}
+    <a href="{{ route('products.sell') }}" class="w-10/12 mt-10 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-semibold rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-xl">
+        Cancelar venda
+    </a>
+</div>
+
 
     <div class="flex flex-col mt-10 items-center h-screen bg-gray-100">
         {{-- Container para o conteúdo centralizado --}}
