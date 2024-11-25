@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('pagamento');
             $table->integer('parcelas')->nullable();
             $table->float('preco');
+            $table->float('troco')->nullable();
             // Definindo a chave estrangeira
             $table->foreign('sell_id')
                   ->references('id')

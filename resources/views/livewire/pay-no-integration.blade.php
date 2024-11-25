@@ -49,9 +49,9 @@
             {{-- Listagem dos itens do carrinho --}}
             <div class="mt-8">
                 <h2 class="text-xl font-semibold mb-4 text-gray-700">Itens do Carrinho</h2>
-                <ul class="space-y-3">
+                <ul  class="space-y-3">
                     @foreach ($sell['cart'] as $item)
-                    <li class="border-b pb-3">
+                    <li  class="border-b pb-3">
                         <p class="text-lg font-medium text-gray-800">{{ $item['name'] }}</p>
                         <p class="text-gray-600">Preço Unidade: R$ {{ number_format($item['value'], 2, ',', '.') }}</p>
                         <p class="text-gray-600">Preço Total: R$
@@ -59,6 +59,10 @@
                         <p class="text-gray-600">Quantidade: {{ $item['quantidade'] }}</p>
                     </li>
                     @endforeach
+                    @if($troco)
+    <p>Troco: R$ {{ number_format($troco, 2, ',', '.') }}</p>
+@endif
+
                 </ul>
             </div>
         </div>
@@ -132,8 +136,19 @@
         });
 
 
-
     });
+   
+    window.addEventListener('hasTroco', function(event) {
+
+
+Swal.fire({
+    title: 'Valor maior que o total e já há troco registrado. ',
+    html: `Caso necessário favor refazer a compra`, // Corrigido aqui
+    icon: 'warning',
+    confirmButtonText: 'Entendido'
+});
+
+});
     </script>
 
 </div>

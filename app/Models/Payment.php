@@ -13,7 +13,8 @@ class Payment extends Model
         'sell_id',
         'pagamento',
         'parcelas',
-        'preco'
+        'preco',
+        'troco'
     ];
 
     /**

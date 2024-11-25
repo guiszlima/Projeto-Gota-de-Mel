@@ -14,6 +14,7 @@ class PayNoIntegration extends Component
     public $parcelas;
     public $paymentmethod;
     public $showParcelas = false;
+    public $troco = false;
     public $totalReference;
 
     // Método para inicializar o componente com o valor de sell
@@ -37,6 +38,7 @@ class PayNoIntegration extends Component
 
     public function selling()
     {
+
         if(!$this->payment|| $this->payment === '0,00'){
             
             $this->dispatch('noPayment');
@@ -51,8 +53,27 @@ class PayNoIntegration extends Component
         // Debug para verificar o valor convertido
         // Verifica se o pagamento é maior que o valor total
       
-    
-        if ($this->total < $paymentValue) {
+    if ($this->paymentmethod === "dinheiro" && $this->total < $paymentValue && !$this->troco){
+        $this->troco = $paymentValue - $this->total;
+        $data = [
+            'sell_id'=>$this->sell['IdVenda'],
+            'pagamento'=> $this->paymentmethod,
+            'preco'=> $paymentValue,
+            'troco' =>  $this->troco,
+        ];
+
+            
+         $this->total = 0.0;
+      
+         Payment::create($data);
+    }
+    elseif ($this->total < $paymentValue && $this->troco ) {
+            
+            
+        $this->dispatch('hasTroco');
+        return;
+    }
+        elseif ($this->total < $paymentValue) {
             
             
             $this->dispatch('paymentTooHigh');
