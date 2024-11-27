@@ -86,7 +86,7 @@ class ReportViewSells extends Component
     $itemsPaginate = $itemsQuery->paginate(50);
     
     // Calcular o total de preços
-    $totalPreco = $itemsQuery->sum('payments.preco'); // Calcular a soma antes da paginação
+    $totalPreco =$totalPreco = $itemsQuery->where('sells.cancelado', 0)->sum('sells.preco_total');  // Calcular a soma antes da paginação
 
     return view('livewire.report-view-sells', ['items' => $itemsPaginate, 'soma' => $totalPreco]);
 
