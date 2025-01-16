@@ -87,6 +87,7 @@ class StockController extends Controller
     // Processar o upload da imagem
     if ($request->hasFile('image')) {
         // Obtém o caminho do arquivo da imagem
+        
         $requestImage = $request->image;
         $extension = $requestImage->extension();
         $imageName = $validatedData['name'] . strtotime('now') . '.' . $extension;
@@ -109,7 +110,7 @@ class StockController extends Controller
                 'Content-Type' => "image/$extension",
             ],
             'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
-            'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
+            'auth' => [env('ADMIN_NAME'), env('ADMIN_APP_PASSWORD')], // Autenticação básica com usuário e senha
             
         ]);
         
