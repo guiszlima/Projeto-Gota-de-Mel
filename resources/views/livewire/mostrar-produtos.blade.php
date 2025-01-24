@@ -52,7 +52,7 @@
 
                             <button
                                 class="btnAddToCart bg-blue-600 text-white rounded mt-2 px-6 py-2 text-xs font-medium uppercase transition duration-150 ease-in-out hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 active:bg-blue-800"
-                                wire:click="addToCart( '{{$product->name}}','{{$product->price}}','{{$product->id}}' )"
+                                wire:click="addToCart( '{{$product->name}}','{{$product->price}}','{{$product->id}}','{{$product->stock_quantity}}' )"
                                 data-product-id="{{$product->id}}" data-product-name="{{$product->name}}"
                                 data-product-price="{{$product->price}}">
                                 Adicionar

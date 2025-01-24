@@ -5,6 +5,10 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Payment;
 use App\Models\Sell;
+use Illuminate\Support\Facades\Http; // Adicione esta linha
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Automattic\WooCommerce\Client;
 
 class PayNoIntegration extends Component
 {
@@ -16,6 +20,8 @@ class PayNoIntegration extends Component
     public $showParcelas = false;
     public $troco = false;
     public $totalReference;
+    public $paymentReference;
+    public $dados;
 
     // Método para inicializar o componente com o valor de sell
     public function mount($sell)
@@ -62,7 +68,8 @@ class PayNoIntegration extends Component
             'troco' =>  $this->troco,
         ];
 
-            
+        $this->paymentReference[] = $data;    
+
          $this->total = 0.0;
       
          Payment::create($data);
@@ -88,9 +95,9 @@ class PayNoIntegration extends Component
                 'parcelas'=> $this->parcelas
             ];
 
-                
+            $this->paymentReference[] = $data;
              $this->total = $this->total - $paymentValue;
-           
+            
              Payment::create($data);
            
         }
@@ -103,21 +110,62 @@ class PayNoIntegration extends Component
 
     }
     
-    public function endPurchase(){
-        if($this->total == 0.0){
-           $vendaAtual = Sell::find($this->sell['IdVenda']);
-           $vendaAtual->cancelado = 0;
-        
-           // Salva as alterações no banco de dados
-           $vendaAtual->save();
-           session()->flash('mensagem', 'Venda Feita com sucesso');
+    public function endPurchase(Client $woocommerce)
+    {
+        if ($this->total == 0.0) {
+         
 
-           // Redireciona para a view desejada (exemplo: 'vendas.index')
-           return redirect()->route('menu');
-         }
-         else{
+            try { 
+            $vendaAtual = Sell::find($this->sell['IdVenda']);
+            $vendaAtual->cancelado = 0;
+
+            // Salva as alterações no banco de dados
+            $vendaAtual->save();
+          
+                $data = [];
+
+                foreach ($this->sell['cart'] as $product) {
+                    $newStockQuantity = $product['stock'] - $product['quantidade'];
+                    $data[] = [
+                        'id' => $product['id'],       // ID do produto
+                        'stock_quantity' => $newStockQuantity, // Nova quantidade no estoque
+                    ];
+                }
+
+                // Faz a solicitação em lote para atualizar o estoque
+                $woocommerce->post('products/batch', [
+                    'update' => $data,
+                ]);
+
+                session()->flash('mensagem', 'Venda Feita com sucesso');
+            } catch (\Exception $e) {
+                session()->flash('mensagem', 'Erro na venda favor contatar o desenvolvedor responsável');
+            }
+
+            // Redireciona para a view desejada (exemplo: 'vendas.index')
+            return redirect()->route('menu');
+        } else {
             $this->dispatch('endPurchaseAlert');
-         }
+        }
+    }
+
+    public function printNota()
+    {
+        if ($this->total == 0.0) {
+            // Dados necessários para gerar o PDF
+            $this->dados = [
+                'cart' => $this->sell['cart'],
+                'paymentReference' => $this->paymentReference,
+            ];
+    
+            // Cria a URL da rota para gerar o PDF
+            $url = route('generate.pdf') . '?' . http_build_query($this->dados);
+         
+            // Dispara o evento para o navegador abrir ou imprimir o PDF
+            $this->dispatch('renderizar-pdf', ['url'=> $url],);
+        } else {
+            $this->dispatch('printNotaAlert');
+        }
     }
         public function updatedPaymentmethod()
 {
@@ -129,15 +177,16 @@ class PayNoIntegration extends Component
     {
         // Implementação de cancelamento de venda (se necessário)
     }
-private function getTotal($array){
+    private function getTotal($array)
+    {
+        $total = 0;
     
-    $total = 0;
-    foreach ($array as $item) {
-        $total += $item['product_real_qtde'];
+        foreach ($array as $item) {
+            $total += $item['product_real_qtde'];
         }
-        return (float)$total;
-}
-
+    
+     return floor($total * 100) / 100;; // Garante precisão de 2 casas decimais
+    }
 
 
     public function render()

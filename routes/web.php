@@ -9,7 +9,8 @@ use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReportController;
-
+use Illuminate\Http\Request; // Adicione esta linha
+use Barryvdh\DomPDF\Facade\Pdf; 
 
 
 // routes/web.php
@@ -81,10 +82,25 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::get('gerar-codigo',[BarCodeMakerController::class,'generate'])->name('barcode.generate');
     # Administrate Products 
    // Listar todos os recursos
-  
+   Route::get('/generate-pdf', function (Request $request) {
+    $dados = [
+        'cart' => $request->input('cart'),
+        'paymentReference' => $request->input('paymentReference'),
+    ];
+
+    // Gera o PDF
+    $pdf = Pdf::loadView('pdf.template', ['dados' => $dados]);
+
+    // Retorna o PDF para visualização
+    return $pdf->stream('nota-fiscal.pdf');
+})->name('generate.pdf');
 });
 
+   
+  
 
+//Webhook para a enviar dados para a aplicação desktop de impressão de notas
+Route::post('webhook', [WebhookController::class, 'EnviarWebhook'])->name('webhook');
 
 
 require __DIR__.'/auth.php';

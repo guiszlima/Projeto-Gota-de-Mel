@@ -1,4 +1,6 @@
 <div>
+
+
 <div class="flex justify-center w-full">
     {{-- Botão de cancelar venda --}}
     <a href="{{ route('products.sell') }}" class="w-10/12 mt-10 text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-semibold rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-xl">
@@ -6,15 +8,14 @@
     </a>
 </div>
 
-
     <div class="flex flex-col mt-10 items-center h-screen bg-gray-100">
         {{-- Container para o conteúdo centralizado --}}
         <div class="w-full max-w-md p-6 bg-white rounded-2xl shadow-lg border border-gray-200">
             <div class="text-center mb-6">
                 {{-- Exibe o valor total calculado do carrinho --}}
-                <h1 data-value={{ number_format($total, 2, ',', '.') }} id="valor"
+                <h1 data-value={{ $total }} id="valor"
                     class="text-3xl font-bold text-gray-800 mb-4">
-                    Total a pagar: R$ {{ number_format($total, 2, ',', '.') }}
+                    Total a pagar: R$ {{ $total }}
                 </h1>
 
                 {{-- Input para inserir o valor a ser pago --}}
@@ -66,14 +67,18 @@
                 </ul>
             </div>
         </div>
+        <button wire:click="printNota" id="printNota"
+        class="mt-8 w-11/12 max-w-md text-white font-bold py-4 px-8 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 rounded-xl hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-800 transition duration-300 transform hover:scale-105 shadow-2xl">
+       Gerar nota
+</button>
 
-        {{-- Botão FINALIZAR COMPRA --}}
+        
         <button wire:click="endPurchase" id="concluirCompra"
             class=" mt-8 w-11/12 max-w-md text-white font-bold py-4 px-8 bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 rounded-xl hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-teal-300 dark:focus:ring-teal-800 transition duration-300 transform hover:scale-105 shadow-2xl">
             FINALIZAR COMPRA
         </button>
     </div>
-
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
     const toPay = document.getElementById('to-pay');
@@ -126,29 +131,68 @@
         });
     });
 
-    window.addEventListener('endPurchaseAlert', () => {
+    window.addEventListener('printNotaAlert', () => {
 
         Swal.fire({
             title: 'O valor total ainda não foi pago',
-            html: `Por favor, apenas conclua a venda quando o valor total for igual a 0,00.`, // Corrigido aqui
+            html: `É apenas permitido imprimir a nota fiscal quando o valor total for igual a 0,00.`, 
             icon: 'warning',
-            confirmButtonText: 'Entendido'
+            confirmButtonText: 'Ok'
         });
 
 
     });
-   
-    window.addEventListener('hasTroco', function(event) {
-
+    
+    window.addEventListener('printNotaAlert', () => {
 
 Swal.fire({
-    title: 'Valor maior que o total e já há troco registrado. ',
-    html: `Caso necessário favor refazer a compra`, // Corrigido aqui
+    title: 'O valor total ainda não foi pago',
+    html: `É apenas permitido imprimir a nota fiscal quando o valor total for igual a 0,00.`, 
     icon: 'warning',
-    confirmButtonText: 'Entendido'
+    confirmButtonText: 'Ok'
 });
 
+    });
+
+document.addEventListener('DOMContentLoaded', function () {
+    window.addEventListener('renderizar-pdf', (url) => {
+    const pdfUrl = url.detail[0].url;
+console.log('omg hii',pdfUrl);
+    // Use print.js para abrir e imprimir o PDF
+    printJS({
+        printable: pdfUrl,
+        type: 'pdf',
+        showModal: true,
+        });
+    });
 });
+
+
+window.addEventListener('endPurchaseAlert', () => {
+
+    Swal.fire({
+        title: 'O valor total ainda não foi pago',
+        html: `Por favor, apenas conclua a venda quando o valor total for igual a 0,00.`, 
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+    });
+
+
+});
+window.addEventListener('hasTroco', function(event) {
+
+
+    Swal.fire({
+        title: 'Valor maior que o total e já há troco registrado. ',
+        html: `Caso necessário favor refazer a compra`, // Corrigido aqui
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+    });
+
+});
+
+
+
     </script>
 
 </div>

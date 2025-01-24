@@ -23,12 +23,12 @@ public $x = 0;
 public function mount(){
 $this->uniqueId  = Str::uuid()->toString();
 }
-   public function changeFormtype(){
+public function changeFormtype(){
     
     $this->formType = !$this->formType;
     
 }
-    public function fetchProducts(Client $woocommerce)
+ public function fetchProducts(Client $woocommerce)
     {
     
     if($this->formType === false){
@@ -46,7 +46,7 @@ $this->uniqueId  = Str::uuid()->toString();
 }
     else{
         $this->products = $woocommerce->get('products', ['search' => $this->searchTerm]);
-  
+        
         $productsWithVariations = [];
         $productIdsToRemove = [];
         foreach ($this->products as $product) {
@@ -87,7 +87,7 @@ $this->uniqueId  = Str::uuid()->toString();
     }
     
     
-    public function addToCart($productName, $productValue,$productId){
+    public function addToCart($productName, $productValue,$productId,$prodStockQuantity){
         // Inicializa uma variável para indicar se o produto já foi encontrado
         
       $test = array_key_exists($productId, $this->cart);
@@ -98,6 +98,7 @@ $this->uniqueId  = Str::uuid()->toString();
             'name' => $productName,
             'value' =>(float) $productValue,
             'quantidade' => 1,
+            'stock'=> $prodStockQuantity,
             'product_real_qtde' => (float)($productValue * 1),             
         ];
       
@@ -106,18 +107,19 @@ $this->uniqueId  = Str::uuid()->toString();
     }
     else{
         
-        
+    if($this->cart[$productId]['stock'] > $this->cart[$productId]['quantidade']){
     $this->cart[$productId]['quantidade']++;
     $this->cart[$productId]['product_real_qtde'] =  $this->cart[$productId]['value'] * $this->cart[$productId]['quantidade'] ;
-        
+    }
     return;
     }  
     }
     public function increment($id){
         // dd($this->cart,$id);
+        
         foreach( $this->cart as $key=> &$item) {
         
-            if($item['id'] == $id){
+            if($item['id'] == $id && $item['stock'] > $item['quantidade']){
                 $item['quantidade'] +=1;
                 
                 
