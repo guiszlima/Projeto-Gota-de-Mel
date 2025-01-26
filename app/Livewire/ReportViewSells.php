@@ -40,6 +40,38 @@ class ReportViewSells extends Component
     }
 
 
+    public function trocaDeProduto($id){
+        $venda = Sell::find($id);
+        if($venda->cancelado == 1){
+            $this->dispatch('alreadyCancelled');
+        }
+        else {
+            // Verifica se o produto foi criado há mais de 7 dias
+            $createdAt = $venda->created_at; // Obtém a data de criação
+            $currentDate = now(); // Data e hora atual
+    
+            if ($createdAt->diffInDays($currentDate) > 7) {
+                // Dispara um evento específico
+                $this->dispatch('productTooOld');
+            }
+        else {
+
+            $venda->cancelado = 1; // Marca a venda como cancelada
+            $venda->save(); // Salva as alterações no banco de dados
+
+            session()->flash('alert', [
+                'type' => 'success', 
+                'message' => 'Venda cancelada, o produto pode ser trocado'
+            ]);
+            return redirect()->route('products.sell');
+        }
+
+        // Redireciona para a view 'mostrar-produtos'
+      
+    }
+}
+    
+
     public function render()
     {
 
@@ -91,4 +123,5 @@ class ReportViewSells extends Component
     return view('livewire.report-view-sells', ['items' => $itemsPaginate, 'soma' => $totalPreco]);
 
     }
+
 }

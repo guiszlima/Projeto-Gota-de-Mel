@@ -1,10 +1,21 @@
 <div class="flex flex-row w-full">
 
     <div class="flex my-8 w-7/12 justify-start flex-col">
+   
 
-
-
-
+    @if (session('alert'))
+    <div 
+        class="alert p-4 rounded-md mb-4 text-white font-medium 
+            @if (session('alert.type') === 'success') bg-green-500 
+            @elseif (session('alert.type') === 'error') bg-red-500 
+            @elseif (session('alert.type') === 'warning') bg-yellow-500 
+            @elseif (session('alert.type') === 'info') bg-blue-500 
+            @else bg-gray-500 @endif"
+        role="alert"
+    >
+        {{ session('alert.message') }}
+    </div>
+@endif
         <form class="flex justify-start w-4/12 flex-col h-max" wire:submit.prevent="fetchProducts">
             <div class="relative w-11/12">
                 <input id="codigoBarras" required autocomplete="off"

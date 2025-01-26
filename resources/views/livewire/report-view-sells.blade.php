@@ -157,6 +157,18 @@ $totalItems = count($items);
                     <td colspan="10" class="px-6 py-4 text-sm font-semibold text-gray-800 text-left">
                         Venda ID: {{ $productId }}
                     </td>
+
+
+                    
+               
+
+                     </td> 
+                     <td class="px-2 py-1 whitespace-nowrap">
+    <button wire:click="trocaDeProduto({{ $productId }})"
+        class="text-sm text-blue-500 hover:text-blue-700 focus:outline-none">
+        Troca de Produto
+    </button>
+</td>
                 </tr>
 
                 @foreach($groupedItems as $item)
@@ -193,4 +205,30 @@ $totalItems = count($items);
             {{ $items->links() }}
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        
+        window.addEventListener('productTooOld', function(event) {
+
+
+Swal.fire({
+    title: 'Venda realizada a mais de 7 dias',
+    icon: 'warning',
+    confirmButtonText: 'Entendido'
+});
+
+});
+
+         window.addEventListener('alreadyCancelled', function(event) {
+
+
+                    Swal.fire({
+                        title: 'Essa venda não foi realizada',
+                        icon: 'warning',
+                        confirmButtonText: 'Entendido'
+                    });
+
+                    });
+</script>
+
 </div>
