@@ -68,8 +68,9 @@
             </div>
         </div>
         <button wire:click="printNota" id="printNota"
-        class="mt-8 w-11/12 max-w-md text-white font-bold py-4 px-8 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 rounded-xl hover:bg-gradient-to-br focus:outline-none focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-800 transition duration-300 transform hover:scale-105 shadow-2xl">
-       Gerar nota
+        class="mt-4 w-full max-w-md text-white font-medium py-3 px-6 bg-yellow-500 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+>
+    Gerar nota
 </button>
 
         
