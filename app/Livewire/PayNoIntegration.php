@@ -156,18 +156,19 @@ class PayNoIntegration extends Component
             $this->dados = [
                 'cart' => $this->sell['cart'],
                 'paymentReference' => $this->paymentReference,
+                'troco' => $this->troco,
             ];
     
             // Cria a URL da rota para gerar o PDF
             $url = route('generate.pdf') . '?' . http_build_query($this->dados);
-         
+    
             // Dispara o evento para o navegador abrir ou imprimir o PDF
-            $this->dispatch('renderizar-pdf', ['url'=> $url],);
+            $this->dispatch('renderizar-pdf', ['url' => $url]);
         } else {
             $this->dispatch('printNotaAlert');
         }
     }
-        public function updatedPaymentmethod()
+public function updatedPaymentmethod()
 {
     
     $this->showParcelas = ($this->paymentmethod === 'credito');

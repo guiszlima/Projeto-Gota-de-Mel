@@ -33,10 +33,18 @@
     </style>
 </head>
 <body>
+
+
+
     <div class="header">
         <h2>Loja Gotas De Mel</h2>
         
-        <p>Telefone: (00) 0000-0000</p>
+        <p>Rua Florestal 20, 37A, 104, Bairro Cidade Nova Heliópolis, São Paulo - SP CEP 04235-200
+        </p>
+
+        <p>CNPJ 51.891.343/0001-24
+        </p>
+        <p>Horário: {{$dados['horario']}} </p>
     </div>
 
     <div class="content">
@@ -53,13 +61,16 @@
             <h3>Referências de Pagamento</h3>
             @foreach ($dados['paymentReference'] as $payment)
                 <p>ID da Venda: {{ $payment['sell_id'] }}</p>
-                <p>Pagamento: {{ $payment['pagamento'] }}</p>
-                <p>Preço: R$ {{ number_format($payment['preco'], 2, ',', '.') }}</p>
+                <p>Forma de Pagamento: {{ $payment['pagamento'] == 'debit' ? 'Débito' : ($payment['pagamento'] == 'credit' ? 'Crédito' : $payment['pagamento'] ) }}</p>
+                <p>Pagamento: R$ {{ number_format($payment['preco'], 2, ',', '.') }}</p>
                 @if ($payment['parcelas']??"")
                     <p>Parcelas: {{ $payment['parcelas'] ?? "" }}</p>
                 @endif
             @endforeach
         </div>
+        @if ($dados['troco']??"")
+                    <p>Troco: {{ number_format($dados['troco'], 2, ',', '.') ?? "" }}</p>
+                @endif
     </div>
 
     <div class="footer">
