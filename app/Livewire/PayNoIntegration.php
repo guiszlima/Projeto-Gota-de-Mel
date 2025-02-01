@@ -109,7 +109,7 @@ class PayNoIntegration extends Component
 
 
     }
-    
+    // Atualiza o estoque e coloca a compra como aprovada
     public function endPurchase(Client $woocommerce)
     {
         if ($this->total == 0.0) {

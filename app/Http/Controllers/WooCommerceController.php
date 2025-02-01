@@ -41,18 +41,21 @@ class WooCommerceController extends Controller
     
         // Debug: Mostra o conteúdo do array $sell
        
-    
+        
         if ($sell) {
             // Decodifica o JSON do carrinho e calcula o total
             $cartItems = json_decode($sell['cart'], true);
             $total = $this->getTotal($cartItems);
             $userId = auth()->id();
             $json_produtos = [];
+            $json_quantidade = [];
 
             foreach ($cartItems as $item) {
                 $json_produtos[] = $item['id'];
+                $json_quantidade[] = $item['quantidade'];
             }
             $produtosJson = json_encode($json_produtos);
+            $quantidadeJson = json_encode($json_quantidade);
             // Verifica se não há uma venda na sessão ou se o session_id não corresponde ao atual
             if (!session()->has('IdVenda') || session('session_id') !== $sell['session_id']) {
                 // Cria um registro de venda com o ID do usuário e o preço total
@@ -60,6 +63,7 @@ class WooCommerceController extends Controller
                     'user_id' => $userId,
                     'preco_total' => $total,
                     'produtos' => $produtosJson,
+                    'quantidade' =>$quantidadeJson,
                 ]);
                
                 // Insere cada item do carrinho na tabela ItensSell
