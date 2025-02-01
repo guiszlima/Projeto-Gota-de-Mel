@@ -1,54 +1,29 @@
 <div class="relative flex flex-col max-w-md w-full rounded-2xl bg-white shadow-lg p-6 self-center text-gray-700">
-    <nav class="flex flex-col gap-3">
+    <nav class="flex flex-col gap-4">
         <!-- Opção de Pagamento Reutilizável -->
-        <label for="pix" class="group flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer transition-all duration-200 hover:border-gray-400 peer-checked:bg-sky-200">
-            <input name="payment_method" id="pix" value="pix" type="radio" class="hidden peer" required />
-            <span class="w-5 h-5 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:bg-sky-200">
-                <svg class="w-3 h-3 text-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity duration-200" viewBox="0 0 16 16" fill="currentColor">
-                    <circle cx="8" cy="8" r="8" />
-                </svg>
-            </span>
-            <span class="text-gray-700 font-medium">Pix</span>
-        </label>
+        <div class="flex items-center">
+            <input id="pix" type="radio" value="pix" name="payment_method" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2" required />
+            <label for="pix" class="ms-2 text-lg font-medium text-gray-700">Pix</label>
+        </div>
 
-        <label for="credito" class="group flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer transition-all duration-200 hover:border-gray-400 peer-checked:bg-sky-200">
-            <input name="payment_method" id="credito" value="credit" type="radio" class="hidden peer" required />
-            <span class="w-5 h-5 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:bg-sky-200">
-                <svg class="w-3 h-3 text-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity duration-200" viewBox="0 0 16 16" fill="currentColor">
-                    <circle cx="8" cy="8" r="8" />
-                </svg>
-            </span>
-            <span class="text-gray-700 font-medium">Crédito</span>
-        </label>
+        <div class="flex items-center">
+            <input id="credito" type="radio" value="credit" name="payment_method" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2" required />
+            <label for="credito" class="ms-2 text-lg font-medium text-gray-700">Crédito</label>
+        </div>
 
-        <label for="debit" class="group flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer transition-all duration-200 hover:border-gray-400 peer-checked:bg-sky-200">
-            <input name="payment_method" id="debit" value="debit" type="radio" class="hidden peer" required />
-            <span class="w-5 h-5 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:bg-sky-200">
-                <svg class="w-3 h-3 text-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity duration-200" viewBox="0 0 16 16" fill="currentColor">
-                    <circle cx="8" cy="8" r="8" />
-                </svg>
-            </span>
-            <span class="text-gray-700 font-medium">Débito</span>
-        </label>
+        <div class="flex items-center">
+            <input id="debit" type="radio" value="debit" name="payment_method" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2" required />
+            <label for="debit" class="ms-2 text-lg font-medium text-gray-700">Débito</label>
+        </div>
 
-        <label for="dinheiro" class="group flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer transition-all duration-200 hover:border-gray-400 peer-checked:bg-sky-200">
-            <input name="payment_method" id="dinheiro" value="dinheiro" type="radio" class="hidden peer" required />
-            <span class="w-5 h-5 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:bg-sky-200">
-                <svg class="w-3 h-3 text-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity duration-200" viewBox="0 0 16 16" fill="currentColor">
-                    <circle cx="8" cy="8" r="8" />
-                </svg>
-            </span>
-            <span class="text-gray-700 font-medium">Dinheiro</span>
-        </label>
+        <div class="flex items-center">
+            <input id="dinheiro" type="radio" value="dinheiro" name="payment_method" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2" required />
+            <label for="dinheiro" class="ms-2 text-lg font-medium text-gray-700">Dinheiro</label>
+        </div>
 
-        <label for="voucher" class="group flex items-center gap-3 p-4 border border-gray-300 rounded-lg cursor-pointer transition-all duration-200 hover:border-gray-400 peer-checked:bg-sky-200">
-            <input name="payment_method" id="voucher" value="voucher" type="radio" class="hidden peer" required />
-            <span class="w-5 h-5 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:bg-sky-200">
-                <svg class="w-3 h-3 text-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity duration-200" viewBox="0 0 16 16" fill="currentColor">
-                    <circle cx="8" cy="8" r="8" />
-                </svg>
-            </span>
-            <span class="text-gray-700 font-medium">Voucher</span>
-        </label>
+        <div class="flex items-center">
+            <input id="voucher" type="radio" value="voucher" name="payment_method" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2" required />
+            <label for="voucher" class="ms-2 text-lg font-medium text-gray-700">Voucher</label>
+        </div>
     </nav>
 </div>

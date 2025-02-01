@@ -86,7 +86,7 @@ class ReportViewSells extends Component
                 'nome_produto' => $produto->name,
                 'preco_produto' => $produto->price,
                 'id_produto' => $produto->id,
-                'quantidade' => $produtoQtde[$index],
+                'quantidade' => $produtoQtde[$index]??null,
                 'cont' => 0
             ];
         }
