@@ -40,7 +40,7 @@ public function changeFormtype(){
             if(!empty($pedido)){
             $produto = $pedido[0];
             
-            $this->addToCart($produto->name,$produto->price,$produto->id);
+            $this->addToCart($produto->name,$produto->price,$produto->id,$produto->stock_quantity);
            
     }
 }
