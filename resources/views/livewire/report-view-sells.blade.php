@@ -212,9 +212,9 @@ $totalItems = count($items);
      <!-- Modal -->
      <div x-show="isOpen" x-transition class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/5 lg:w-2/5">
-        <h2 class="text-lg font-semibold mb-6 text-center">Itens a ser Trocado</h2>
-        <button x-on:click="isOpen = false" class="mt-4 mb-2 px-4 py-2 bg-red-500 text-white rounded">
-            Fechar Modal
+        <h2 class="text-lg font-semibold mb-6 text-center">Itens a serem Trocados</h2>
+        <button wire:click='fechaModal'  x-on:click="isOpen = false" class="mt-4 mb-2 px-4 py-2 bg-red-500 text-white rounded">
+            Fechar
         </button>
         @if($itensTrocar && count($itensTrocar) > 0)
             <!-- Flex Container para os itens -->
@@ -225,37 +225,75 @@ $totalItems = count($items);
                     <p class="text-md text-gray-600 mb-2"><strong>Preço do Produto:</strong> R$ {{ number_format($item['preco_produto'], 2, ',', '.') }}</p>
                     <p class="text-md text-gray-600 mb-2"><strong>ID do Produto:</strong> {{ $item['id_produto'] }}</p>
                     <p class="text-md text-gray-600 mb-2"><strong>Quantidade:</strong> {{ $item['quantidade'] }}</p>
+                    <p class="text-md text-gray-600 mb-2"><strong>Preço a ser trocado:</strong> {{ $item['cont'] *  $item['preco_produto']}}</p>
                     
                     <div class="flex flex-col items-center">
                         <div class="flex items-center gap-2">
                             <button
                                 class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center focus:outline-none"
-                                wire:click="increment({{ $item['venda_id'] }}, {{ $item['preco_produto'] }})">
+                                wire:click="increment( {{ $item['preco_produto'] }}, {{ $item['id_produto'] }})">
                                 +
                             </button>
-                            <div>{{$cont}}</div>
+                            <div>{{ $item['cont'] ?? '0' }}</div>
                             <button
                                 class="bg-red-600 text-white rounded-full h-8 w-8 flex items-center justify-center focus:outline-none"
-                                wire:click="decrement({{ $item['quantidade'] }}, {{ $item['preco_produto'] }})">
+                                wire:click="decrement( {{ $item['preco_produto'] }}, {{ $item['id_produto'] }})">
                                 -
                             </button>
                         </div>
+                        <button
+    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-2"
+    wire:click="realizarTroca({{ $item['venda_id'] }}, {{ $item['id_produto'] }}, {{ $item['cont'] }}, {{ $item['preco_produto'] }})">
+    Trocar
+</button>
                     </div>
                 </div>
             @endforeach
+            
             </div>
+
+            @if($isTrocado)
+            <div class="flex justify-center mt-4">
+                <button
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                    wire:click="venderTroca">
+                    Realizar Troca
+                </button>
+            </div>
+            @endif
         @else
-            <p class="text-gray-500">Nenhum item para troca.</p>
+            <p class="text-gray-500">Carregando. . ..</p>
         @endif
 
-        <!-- Botão para fechar -->
+        
       
     </div>
 </div>
 
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
 
+window.addEventListener('alreadyCancelled', function(event) {
+
+Swal.fire({
+    title: 'A venda não foi realizada',
+    icon: 'warning',
+    confirmButtonText: 'Entendido'
+});
+
+});
+
+window.addEventListener('productTooOld', function(event) {
+
+
+Swal.fire({
+    title: 'A venda ja aconteceu há mais de 7 dias',
+    icon: 'warning',
+    confirmButtonText: 'Entendido'
+});})
+</script>
 
 </div>
 </div>

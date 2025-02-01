@@ -27,9 +27,11 @@
                 <select wire:model="paymentmethod" id="payment-method"
                     class="w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
                     <option value="debito" {{$sell['payment_method'] === 'Débito' ? 'selected':''}}>Débito</option>
-                    <option value="credito" {{$sell['payment_method'] === 'Crédito' ? 'selected':''}}>Crédito</option>
+                    <option value="credit" {{$sell['payment_method'] === 'credit' ? 'selected':''}}>Crédito</option>
                     <option value="pix" {{$sell['payment_method'] === 'Pix' ? 'selected':''}}>Pix</option>
                     <option value="dinheiro" {{$sell['payment_method'] === 'Dinheiro' ? 'selected':''}}>Dinheiro
+                    </option>
+                    <option value="voucher" {{$sell['payment_method'] === 'voucher' ? 'selected':''}}>Voucher
                     </option>
                 </select>
             </div>
@@ -119,10 +121,13 @@
     document.addEventListener('DOMContentLoaded', () => {
         const paymentMethod = document.getElementById('payment-method');
         const parcelas = document.getElementById('parcelas');
-
+        if (paymentMethod.value === "credit") {
+                parcelas.classList.remove('hidden');
+                // Mostra o input de parcelas
+            }
         // Adiciona um evento de 'change'
         paymentMethod.addEventListener('change', () => {
-            if (paymentMethod.value === "credito") {
+            if (paymentMethod.value === "credit") {
                 parcelas.classList.remove('hidden');
                 // Mostra o input de parcelas
             } else {

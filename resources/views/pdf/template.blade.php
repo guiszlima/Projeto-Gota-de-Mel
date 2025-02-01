@@ -42,7 +42,7 @@
             <h3>Referencias de Pagamento</h3>
             @foreach ($dados['paymentReference'] as $payment)
                 <p>ID da Venda: {{ $payment['sell_id'] }}</p>
-                <p>Forma de Pagamento: {{ $payment['pagamento'] == 'debit' ? 'Débito' : ($payment['pagamento'] == 'credit' ? 'Crédito' : $payment['pagamento'] ) }}</p>
+                <p>Forma de Pagamento: {{ $payment['pagamento'] == '' ? 'Débito' : ($payment['pagamento'] == 'credit' ? 'Crédito' : $payment['pagamento'] ) }}</p>
                 <p>Pagamento: R$ {{ number_format($payment['preco'], 2, ',', '.') }}</p>
                 @if ($payment['parcelas']??"")
                     <p>Parcelas: {{ $payment['parcelas'] ?? "" }}</p>

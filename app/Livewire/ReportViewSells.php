@@ -32,6 +32,7 @@ class ReportViewSells extends Component
     public $selectedSellId; // ID da venda selecionada
     public $itensTrocar;
     public $cont;
+    public $isTrocado = false;
 
     public function applyFilters()
     {
@@ -44,52 +45,36 @@ class ReportViewSells extends Component
         $this->selectedPay = null; // Limpa a seleção
     }
 
-    public function openModal($id)
-    {
-        $this->selectedSellId = $id;
-        $this->isOpen = true;
+   public function fechaModal(){
+       $this->isTrocado = false;
     }
 
-    public function closeModal()
-    {
-        $this->isOpen = false;
-    }
-
-    public function trocaDeProduto()
-    {
-        $venda = Sell::find($this->selectedSellId);
-        if ($venda->cancelado == 1) {
-            $this->dispatch('alreadyCancelled');
-        } else {
-            $createdAt = $venda->created_at; // Obtém a data de criação
-            $currentDate = now(); // Data e hora atual
-
-            if ($createdAt->diffInDays($currentDate) > 7) {
-                $this->dispatch('productTooOld');
-            } else {
-                $venda->cancelado = 1; // Marca a venda como cancelada
-                $venda->save(); // Salva as alterações no banco de dados
-
-                session()->flash('alert', [
-                    'type' => 'success',
-                    'message' => 'Venda cancelada, o produto pode ser trocado'
-                ]);
-                return redirect()->route('products.sell');
-            }
-        }
-    }
-
+    
     public function trocaProduct(Client $woocommerce, $groupedItems)
     {
+
         $itens = $groupedItems[0];
 
+        $venda = Sell::find($itens['id']);
+        if ($venda->cancelado == 1) {
+            
+            $this->dispatch('alreadyCancelled');
+            return;
+        }
+        $createdAt = $venda->created_at; // Obtém a data de criação
+            $currentDate = now(); // Obtém a data atual
+        if ($createdAt->diffInDays($currentDate) > 7) {
+            $this->dispatch('productTooOld');
+            return;
+        }
         // Decodifica as strings JSON dos produtos e quantidades
         $produtos = json_decode($itens['produtos']);
         $produtoQtde = json_decode($itens['quantidade']);
     
+
         // Inicializa o array para armazenar os itens que vamos trocar
         $itensTrocar = [];
-    
+     
         // Loop pelos produtos e monta o array com nome, preço, ID e quantidade
         foreach ($produtos as $index => $produtoId) {
             // Realiza a solicitação ao WooCommerce para obter o produto pelo ID
@@ -101,7 +86,8 @@ class ReportViewSells extends Component
                 'nome_produto' => $produto->name,
                 'preco_produto' => $produto->price,
                 'id_produto' => $produto->id,
-                'quantidade' => $produtoQtde[$index]
+                'quantidade' => $produtoQtde[$index],
+                'cont' => 0
             ];
         }
     
@@ -111,31 +97,33 @@ class ReportViewSells extends Component
         // Notifica o frontend que os dados estão prontos
         $this->dispatch('itens-troca-atualizados');
     }
-
-    public function increment($id, $preco)
-    {
-      
-        foreach( $this->itensTrocar as $key=> &$item) {
-        
-            if($item['venda_id'] == $id && $this->cont > $item['quantidade']){
-                $this->cont +=1;
-                
-                
-                
-                
-            }    
-            
+    public function venderTroca(){
+        session()->flash('alert', [
+            'type' => 'success',
+            'message' => 'Produtos trocados, favor realizar a revenda se necessário'
+        ]);
+        return redirect()->route('products.sell');
     }
+    public function increment( $preco,$id_produto)
+    {
+
+        foreach ($this->itensTrocar as $key => &$item) {
+            if ($item['id_produto'] == $id_produto && $item['quantidade'] > $item['cont'] ) {
+
+                $item['cont'] += 1;
+                break;
+            }
+        }
     }
     
 
-    public function decrement($quantidade, $preco)
+    public function decrement($preco, $id_produto)
     {
      
         foreach( $this->itensTrocar as $key => &$item ) {
             
-            if($item['id'] == $id){
-                $item['quantidade'] -=1;
+            if($item['id_produto'] == $id_produto && $item['cont'] > 0){
+                $item['cont'] -=1;
             
                 break;
                 
@@ -143,14 +131,56 @@ class ReportViewSells extends Component
         }
      
     }
-    public function realizarTroca(Client $woocommerce, $id_venda, $id_produto, $quantidade, $preco)
+    public function realizarTroca(Client $woocommerce, $id_venda, $id_produto, $cont, $preco)
     {
-        // Implementar a lógica de troca de produto
+        $this->isTrocado = true;
+        // Obtém o produto no WooCommerce
+        $produto = $woocommerce->get('products/' . $id_produto);
+    
+        // Calcula o valor total da troca
+        $valorTotal = $cont * $preco;
+        
+        // Obtém a venda pelo ID
+        $venda = Sell::find($id_venda);
+        
+        if (!$venda) {
+            return response()->json(['error' => 'Venda não encontrada'], 404);
+        }
+    
+        // Decodifica os produtos e quantidades armazenados como JSON
+        $produtos = json_decode($venda->produtos, true) ?? [];
+        $quantidades = json_decode($venda->quantidade, true) ?? [];
+    
+        // Atualiza o estoque no WooCommerce
+        $woocommerce->put('products/' . $id_produto, [
+            'stock_quantity' => $produto->stock_quantity + $cont
+        ]);
+    
+        // Atualiza a quantidade do produto na venda
+        foreach ($produtos as $key => $produtoId) {
+            if ($produtoId == $id_produto && $quantidades[$key] > 0) {
+                $quantidades[$key] -= $cont;
+                $venda->preco_total -= $valorTotal;
+               
+                break;
+            }
+        }
+    
+        // Reindexa os arrays para garantir que os índices estejam corretos
+        $produtos = array_values($produtos);
+        $quantidades = array_values($quantidades);
+    
+        // Atualiza a venda com os novos valores
+        $venda->produtos = json_encode($produtos);
+        $venda->quantidade = json_encode($quantidades);
+        $venda->save();
+    
+        // Notifica o frontend
+        $this->dispatch('troca-realizada');
     }
 
     public function render()
     {
-        $this->cont = 0;
         // Aplicar os filtros e paginação
         $itemsQuery = Sell::query()
             ->join('users', 'sells.user_id', '=', 'users.id') // Join com a tabela 'users'
@@ -187,13 +217,13 @@ class ReportViewSells extends Component
             })
             ->orderBy('sells.created_at', 'desc')
             ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento', 'payments.preco', 'payments.preco', 'payments.troco');
-
+    
         // Aplicar paginação
         $itemsPaginate = $itemsQuery->paginate(50);
-
+    
         // Calcular o total de preços
         $totalPreco = $itemsQuery->where('sells.cancelado', 0)->sum('sells.preco_total');  // Calcular a soma antes da paginação
-
+    
         return view('livewire.report-view-sells', ['items' => $itemsPaginate, 'soma' => $totalPreco]);
     }
 }

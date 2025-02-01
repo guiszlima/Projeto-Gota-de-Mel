@@ -192,6 +192,8 @@ public function updatedPaymentmethod()
 
     public function render()
     {
+        $vendaAtual = Sell::find($this->sell['IdVenda']);
+       
         return view('livewire.pay-no-integration');
     }
 }
