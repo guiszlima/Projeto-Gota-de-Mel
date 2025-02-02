@@ -96,6 +96,25 @@ Route::middleware(['auth','check_pending'])->group(function () {
     // Retorna o PDF para visualização
     return $pdf->stream('nota-fiscal.pdf');
 })->name('generate.pdf');
+
+Route::get('/generate-pdf-troca', function (Request $request) {
+
+
+foreach ($request->all() as $item) {
+  $dados[] = [
+      'id' => $item['id_produto'],
+      'cont' => $item['cont'],
+      'preco_produto' => $item['preco_produto'],
+      
+  ];
+}
+
+  // Gera o PDF
+  $pdf = Pdf::loadView('pdf.template-troca', ['dados' => $dados]);
+
+  // Retorna o PDF para visualização
+  return $pdf->stream('nota-fiscal.pdf');
+})->name('generate.pdf.troca');
 });
 
    

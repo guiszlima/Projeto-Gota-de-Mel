@@ -243,7 +243,7 @@ $totalItems = count($items);
                         </div>
                         <button
     class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-2"
-    wire:click="realizarTroca({{ $item['venda_id'] }}, {{ $item['id_produto'] }}, {{ $item['cont'] }}, {{ $item['preco_produto'] }})">
+    wire:click="realizarTroca({{ $item['venda_id'] }}, {{ $item['id_produto'] }}, {{ $item['cont'] }}, {{ $item['preco_produto']}} , {{$item['quantidade']}} )">
     Trocar
 </button>
                     </div>
@@ -252,7 +252,14 @@ $totalItems = count($items);
             
             </div>
 
-            @if($isTrocado)
+           
+            <div class="flex justify-center mt-4">
+                <button
+                    class="bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                    wire:click="imprimirNota">
+                    Imprimir Nota
+                </button>
+            </div>
             <div class="flex justify-center mt-4">
                 <button
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
@@ -260,7 +267,8 @@ $totalItems = count($items);
                     Realizar Troca
                 </button>
             </div>
-            @endif
+            
+            
         @else
             <p class="text-gray-500">Carregando. . ..</p>
         @endif
@@ -273,6 +281,7 @@ $totalItems = count($items);
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 <script>
 
 window.addEventListener('alreadyCancelled', function(event) {
@@ -293,6 +302,39 @@ Swal.fire({
     icon: 'warning',
     confirmButtonText: 'Entendido'
 });})
+
+
+window.addEventListener('troca-nao-realizada', function(event) {
+
+
+Swal.fire({
+    title: 'A troca não foi realizada',
+    icon: 'warning',
+    confirmButtonText: 'Entendido'
+});})
+
+window.addEventListener('troca-realizada', function(event) {
+
+
+Swal.fire({
+    title: 'A troca foi realizada',
+    icon: 'success',
+    confirmButtonText: 'Entendido'
+});})
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    window.addEventListener('renderizar-pdf', (url) => {
+    const pdfUrl = url.detail[0].url;
+console.log('omg hii',pdfUrl);
+    // Use print.js para abrir e imprimir o PDF
+    printJS({
+        printable: pdfUrl,
+        type: 'pdf',
+        showModal: true,
+        });
+    });
+});
 </script>
 
 </div>

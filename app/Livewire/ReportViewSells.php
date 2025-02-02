@@ -34,6 +34,7 @@ class ReportViewSells extends Component
     public $cont;
     public $isTrocado = false;
 
+
     public function applyFilters()
     {
         $this->resetPage(); // Reseta a página para 1 ao aplicar filtros
@@ -86,18 +87,24 @@ class ReportViewSells extends Component
                 'nome_produto' => $produto->name,
                 'preco_produto' => $produto->price,
                 'id_produto' => $produto->id,
-                'quantidade' => $produtoQtde[$index],
+                'quantidade' => $produtoQtde[$index]??null,
                 'cont' => 0
             ];
+           
         }
     
         // Atualiza a propriedade $itensTrocar
         $this->itensTrocar = $itensTrocar;
-    
+       
         // Notifica o frontend que os dados estão prontos
         $this->dispatch('itens-troca-atualizados');
     }
     public function venderTroca(){
+        
+        if(!$this->isTrocado){
+            $this->dispatch('troca-nao-realizada');
+            return;
+        }
         session()->flash('alert', [
             'type' => 'success',
             'message' => 'Produtos trocados, favor realizar a revenda se necessário'
@@ -131,9 +138,13 @@ class ReportViewSells extends Component
         }
      
     }
-    public function realizarTroca(Client $woocommerce, $id_venda, $id_produto, $cont, $preco)
+    public function realizarTroca(Client $woocommerce, $id_venda, $id_produto, $cont, $preco,$quantidade)
     {
-        $this->isTrocado = true;
+        if($quantidade!=0 || $cont == 0){
+            $this->isTrocado = true;
+            $this->dispatch('troca-realizada');
+        }
+        
         // Obtém o produto no WooCommerce
         $produto = $woocommerce->get('products/' . $id_produto);
     
@@ -179,6 +190,17 @@ class ReportViewSells extends Component
         $this->dispatch('troca-realizada');
     }
 
+    public function imprimirNota(){
+        
+        if(!$this->isTrocado ){
+            $this->dispatch('troca-nao-realizada');
+            return;
+        }
+        $url = route('generate.pdf.troca') . '?' . http_build_query($this->itensTrocar);
+    
+        // Dispara o evento para o navegador abrir ou imprimir o PDF
+        $this->dispatch('renderizar-pdf', ['url' => $url]);
+    }
     public function render()
     {
         // Aplicar os filtros e paginação
