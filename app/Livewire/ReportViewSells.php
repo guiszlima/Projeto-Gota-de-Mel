@@ -140,7 +140,7 @@ class ReportViewSells extends Component
     }
     public function realizarTroca(Client $woocommerce, $id_venda, $id_produto, $cont, $preco,$quantidade)
     {
-        if($quantidade!=0 || $cont == 0){
+        if($quantidade!=0 || $cont != 0){
             $this->isTrocado = true;
             $this->dispatch('troca-realizada');
         }
@@ -187,7 +187,7 @@ class ReportViewSells extends Component
         $venda->save();
     
         // Notifica o frontend
-        $this->dispatch('troca-realizada');
+      
     }
 
     public function imprimirNota(){
