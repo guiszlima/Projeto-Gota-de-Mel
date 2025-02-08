@@ -4,13 +4,8 @@
 
 <x-button-back :route="route('barcode.index')"></x-button-back>
 
-
-
-
-
-
 <!-- SVG escondido para código de barras -->
-<div id="printable_div_id m-auto">
+<div id="printable_div_id" class="m-auto">
     <svg class="hidden" id="codBarras">{{$product['sku']}}</svg>
 </div>
 
@@ -20,23 +15,26 @@
 <!-- Canvas escondido -->
 <canvas id="canvas" style="display: none;"></canvas>
 
-<!-- Botão para baixar -->
+<!-- Botão para imprimir -->
 <button
     class="print-hidden absolute left-[43%] bg-blue-500 text-white m-auto px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
     id="printButton">
-    <span>Baixar</span>
+    <span>Imprimir</span>
 </button>
 
-
-
+<!-- Incluindo a biblioteca JsBarcode -->
 <script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>
+<!-- Incluindo a biblioteca print.js -->
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+<link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css">
+
 <script>
 const productId = document.getElementById('codBarras');
 const printButton = document.getElementById('printButton');
 const barcodeImage = document.getElementById('barcodeImage');
 
 function GerarCódigoDeBarras() {
-    /*A função JsBarcode não aceita string vazia*/
+    /* A função JsBarcode não aceita string vazia */
     if (!productId.innerHTML) {
         productId.innerHTML = 0;
     }
@@ -49,7 +47,7 @@ function GerarCódigoDeBarras() {
     convertSvgToPng('#codBarras');
 }
 
-function convertSvgToPng(svgSelector, boolean) {
+function convertSvgToPng(svgSelector) {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -59,13 +57,6 @@ function convertSvgToPng(svgSelector, boolean) {
         ctx.drawImage(img, 0, 0);
         const pngUrl = canvas.toDataURL('image/png');
         barcodeImage.src = pngUrl; // Mostra a imagem do código de barras
-
-        if (boolean == true) {
-            const downloadLink = document.createElement('a');
-            downloadLink.href = pngUrl;
-            downloadLink.download = "{{$product['name']}}" + '.png';
-            downloadLink.click();
-        }
     };
     img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
 }
@@ -75,7 +66,12 @@ GerarCódigoDeBarras();
 
 // Evento para imprimir ao clicar no botão
 printButton.addEventListener('click', function() {
-    convertSvgToPng('#codBarras', true);
+    // Usando print.js para imprimir a imagem do código de barras
+    printJS({
+        printable: barcodeImage.src, // Usa a URL da imagem gerada
+        type: 'image',
+        style: '@page { size: auto; margin: 0mm; }', // Remove margens para melhor impressão
+    });
 });
 </script>
 @endsection
