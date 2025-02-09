@@ -24,7 +24,12 @@ class BarCodeMakerController extends Controller
       
       // Obter o total de produtos a partir dos cabeçalhos de resposta
       $responseHeaders = $woocommerce->http->getResponse()->getHeaders();
-      $totalProducts = $responseHeaders['x-wp-total'];
+      try {
+         $totalProducts = $responseHeaders['X-WP-Total'];
+      } catch (\Throwable $th) {
+         $totalProducts = $responseHeaders['x-wp-total'];
+      }
+      
      
       // Calculando o número total de páginas
       $totalPages = ceil($totalProducts / $nmbrPerPage);
