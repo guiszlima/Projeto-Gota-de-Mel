@@ -34,7 +34,11 @@ class StockController extends Controller
         // Obter o total de produtos a partir dos cabeçalhos de resposta
         $responseHeaders = $woocommerce->http->getResponse()->getHeaders();
         
-        $totalProducts = $responseHeaders['x-wp-total'];
+        try {
+            $totalProducts = $responseHeaders['X-WP-Total'];
+         } catch (\Throwable $th) {
+            $totalProducts = $responseHeaders['x-wp-total'];
+         }
 
         // Calculando o número total de páginas
         $totalPages = ceil($totalProducts / $nmbrPerPage);
@@ -100,8 +104,8 @@ class StockController extends Controller
         // Caminho da imagem no seu projeto Laravel
        
         $e_commerce=env('WOOCOMMERCE_STORE_URL');
-        $request = '/wp-json/wp/v2/media';
-        $request_url = $e_commerce.$request;
+        $requestUrl = '/wp-json/wp/v2/media';
+        $request_url = $e_commerce.$requestUrl;
         // Fazer a requisição de upload da imagem
         
         $response = $wpService->request('POST', $request_url, [
@@ -113,7 +117,7 @@ class StockController extends Controller
             'auth' => [env('ADMIN_NAME'), env('ADMIN_APP_PASSWORD')], // Autenticação básica com usuário e senha
             
         ]);
-        
+
         $image_data = json_decode($response->getBody(), true);
         $image_id = $image_data['id']; // Obter o ID da imagem
         
@@ -173,7 +177,8 @@ class StockController extends Controller
     try {
         // Enviar a requisição para criar o produto na API do WooCommerce
         $response = $woocommerce->post('products', $productData);
-        ReportCreate::create([
+        
+      $testvar =  ReportCreate::create([
             'product_id' => $response->id,
             'nome' => $response->name,
             'estoque'=> $request->estoque,
@@ -182,11 +187,13 @@ class StockController extends Controller
             'preco' => $response->price,
             'type'=> 'simples'
         ]);
+       
+
         // Opcional: Verifique a resposta e execute ações conforme necessário
         return back()->with("warn", "Produto Registrado com sucesso");
     } catch (\Exception $e) {
         // Lide com exceções, como erros de rede ou falhas na API
-       
+     dd($e);
         return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
     }
 }
@@ -203,7 +210,7 @@ public function createVariableProduct(Client $woocommerce) {
 public function storeVariableproduct(Client $woocommerce, Request $request,WpClient $wpService){
     
     $data = $request->all();
-
+dd($request->all());
    $attribute_name = $data['nameAttribute'];
     $attribute_id =(int)$data['attribute_dad'][0];
 
