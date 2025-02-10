@@ -1,177 +1,134 @@
 @extends('layouts.main')
 
 @section('content')
-<x-button-back :route="route('stock.index')"></x-button-back>
-<main class="flex flex-col items-center p-4">
-    <h1 class="text-2xl font-bold mb-6">Criar</h1>
-    <div class="flex flex-col sm:flex-row justify-around w-full sm:w-1/3 mb-10">
-        <x-dynamic-link text="Produto sem Variações" route="{{$currentRoute}}" currentRoute="{{$currentRoute}}" />
-        <x-dynamic-link text="Produto com Variações" route="stock.create.var-product"
-            currentRoute="{{$currentRoute}}" />
-    </div>
+
+<main class="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Criar Produto</h1>
+
     <x-warning :warn="session('warn')" />
 
+    <div class="w-full max-w-lg bg-white p-6 rounded-xl shadow-lg">
+        <form id="myForm" action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
-    <form id="myForm" action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data"
-        class="w-full max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
-        @csrf
-        <div class="mb-4">
-            <label for="name" class="block text-gray-700 font-bold mb-2">
-                Nome <span class="text-red-500">*</span>
-            </label>
-            <input type="text" id="name" name="name"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Digite o nome do produto" required>
-        </div>
+            @isset ($mensagem)
+            <div class="my-4 p-3 bg-red-100 border border-red-400 text-red-600 rounded-md">
+                {{ $mensagem }}
+            </div>
+            @endisset
 
-
-        <div class="mb-4">
-            <label for="price" class="block text-gray-700 font-bold mb-2">
-                Preço <span class="text-red-500">*</span>
-            </label>
-            <input type="text" id="price" name="price"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Digite o preço" required>
-        </div>
-
-        <div class="mb-4">
-            <label for="stock_quantity" class="block text-gray-700 font-bold mb-2">
-                Quantidade em Estoque <span class="text-red-500">*</span>
-            </label>
-            <input type="number" id="stock_quantity" name="stock_quantity"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Digite a quantidade em estoque" required>
-        </div>
-
-        <div class="mb-4">
-            <label for="category" class="block text-gray-700 font-bold mb-2">
-                Categoria <span class="text-red-500">*</span>
-            </label>
-            <select id="category" name="category"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                required>
-                <option value="">Selecione uma categoria</option>
-                @foreach($categories as $category)
-                <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
-                @endforeach
-            </select>
-        </div>
-
-
-        <div class="mb-4">
-            <label for="description" class="block text-gray-700 font-bold mb-2">
-                Descrição
-            </label>
-            <textarea id="description" name="description"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="Digite a descrição do produto" rows="5"></textarea>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div>
-                <label for="height" class="block text-gray-700 font-bold mb-2">
-                    Altura (cm) <span class="text-red-500">*</span>
-                </label>
-                <input type="number" id="height" name="height"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="Digite a altura do produto" required>
+            <!-- Nome do Produto -->
+            <div class="mb-5">
+                <label for="product-name" class="block text-sm font-semibold text-gray-700">Nome do Produto</label>
+                <input required type="text" id="product-name" name="product_name" wire:model="nome_produto"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
             </div>
 
-            <div>
-                <label for="width" class="block text-gray-700 font-bold mb-2">
-                    Largura (cm) <span class="text-red-500">*</span>
-                </label>
-                <input type="number" id="width" name="width"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="Digite a largura do produto" required>
+            <!-- Marca do Produto -->
+            <div class="relative mb-5">
+                <label for="brandInput" class="block text-sm font-semibold text-gray-700">Marca</label>
+                <input type="text" id="brandInput" placeholder="Digite uma marca..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+                    oninput="filterBrands()">
+                <ul id="brandList"
+                    class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 hidden max-h-48 overflow-y-auto shadow-lg transition-all duration-200">
+                    <!-- Opções do select via JavaScript -->
+                </ul>
             </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <div>
-                <label for="depth" class="block text-gray-700 font-bold mb-2">
-                    Profundidade (cm)
-                </label>
-                <input type="number" id="depth" name="depth"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="Digite a profundidade do produto">
+            <div class="mb-4">
+                <label for="product-description" class="block text-sm font-medium text-gray-700">Descrição do
+                    Produto</label>
+                <textarea id="product-description"
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+                    rows="4"></textarea>
             </div>
-
-            <div>
-                <label for="weight" class="block text-gray-700 font-bold mb-2">
-                    Peso (kg) <span class="text-red-500">*</span>
-                </label>
-                <input type="number" id="weight" name="weight" step="0.01"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    placeholder="Digite o peso do produto" required>
-            </div>
-        </div>
-        <label for="estante" class="block text-gray-700 font-bold mb-2">
-            Estoque <span class="text-red-500">*</span>
-        </label>
-        <input type="input" id="estante" name="estoque"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Informe o Estoque" required>
-        <label for="estante" class="block text-gray-700 font-bold mb-2">
-            Estante <span class="text-red-500">*</span>
-        </label>
-        <input type="number" id="estante" name="estante"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Informe a Estante" required>
-        <label for="estante" class="block text-gray-700 font-bold mb-2">
-            Prateleira <span class="text-red-500">*</span>
-        </label>
-        <input type="number" id="estante" name="prateleira"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Número da Prateleira" required>
-        <div class="mb-4">
-            <label for="image" class="block text-gray-700 font-bold mb-2">
-                Imagem
-            </label>
-            <input type="file" id="image" name="image"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                accept="image/*">
-        </div>
-
-        <div class="flex items-center justify-between">
-            <button type="button" id="submitButton"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            <!-- Botão de Envio -->
+            <button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">
                 Salvar Produto
             </button>
-        </div>
 
-        <input type="hidden" id="sku" name="sku">
-    </form>
+
+
+        </form>
+    </div>
 </main>
 
+
 <script>
-const submitButton = document.getElementById('submitButton');
-const myForm = document.getElementById('myForm');
+const brands = [
+    // Roupas e sapatos
+    "Nike", "Adidas", "Puma", "Reebok", "Vans", "Converse", "New Balance", "Asics", "Under Armour", "Fila",
+    "Lacoste", "Timberland", "Balenciaga", "Louis Vuitton", "Gucci", "Prada", "Versace", "Dolce & Gabbana",
+    "Burberry", "Tommy Hilfiger", "Ralph Lauren", "Calvin Klein", "Diesel", "Levi's", "Off-White", "Supreme",
 
-submitButton.addEventListener("click", function() {
-    function generateSku() {
-        let now = new Date();
-        const year = now.getFullYear();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const seconds = now.getSeconds().toString().padStart(2, '0');
-        const milliseconds = now.getMilliseconds().toString().padStart(3, '0');
-        return `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
+    // Perfumes
+    "Chanel", "Dior", "Yves Saint Laurent", "Hugo Boss", "Armani", "Carolina Herrera", "Jean Paul Gaultier",
+    "Paco Rabanne", "Givenchy", "Hermès", "Bvlgari", "Montblanc", "Lancôme", "Narciso Rodriguez", "Thierry Mugler",
+    "Calvin Klein Perfume", "Dolce & Gabbana Perfume", "Versace Perfume"
+];
+
+const input = document.getElementById("brandInput");
+const list = document.getElementById("brandList");
+
+function filterBrands() {
+    const query = input.value.toLowerCase();
+    list.innerHTML = "";
+
+    if (query === "") {
+        list.classList.add("hidden");
+        return;
     }
-    document.getElementById("sku").value = generateSku();
-    myForm.submit();
 
-});
+    const filteredBrands = brands.filter(brand => brand.toLowerCase().includes(query));
 
-document.getElementById("price").addEventListener("input", function(e) {
-    let value = e.target.value;
-    value = value.replace(/\D/g, '');
-    value = (value / 100).toFixed(2) + '';
-    value = value.replace(".", ",");
-    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
-    e.target.value = value;
+    if (filteredBrands.length === 0) {
+        list.classList.add("hidden");
+        return;
+    }
+
+    filteredBrands.forEach(brand => {
+        const li = document.createElement("li");
+        li.textContent = brand;
+        li.className = "px-4 py-2 cursor-pointer hover:bg-gray-200";
+        li.onclick = () => selectBrand(brand);
+        list.appendChild(li);
+    });
+
+    list.classList.remove("hidden");
+}
+
+function selectBrand(brand) {
+    input.value = brand;
+    list.classList.add("hidden");
+}
+
+document.addEventListener("click", (event) => {
+    if (!input.contains(event.target) && !list.contains(event.target)) {
+        list.classList.add("hidden");
+    }
 });
+</script>
+<script>
+const brandInput = document.getElementById("brandInput");
+const productName = document.getElementById("product-name");
+
+// Função para capitalizar a primeira letra de cada palavra, incluindo caracteres acentuados
+function capitalizeInput(event) {
+    const inputValue = event.target.value;
+
+    // Dividindo o texto em palavras, capitalizando cada uma e juntando de volta
+    event.target.value = inputValue
+        .split(/\s+/) // Divide o texto por espaços
+        .map(word => {
+            return word.charAt(0).toLocaleUpperCase() + word.slice(1)
+        .toLocaleLowerCase(); // Capitaliza a primeira letra e mantém o restante em minúsculas
+        })
+        .join(" "); // Junta as palavras de volta
+}
+
+// Adicionando o evento 'input' ao input
+productName.addEventListener("input", capitalizeInput);
+brandInput.addEventListener("input", capitalizeInput);
 </script>
 @endsection
