@@ -52,6 +52,24 @@
                 </select>
             </div>
             
+            <div class="relative mb-5">
+    <label for="attributesInput" class="block text-sm font-semibold text-gray-700">Atributos</label>
+    
+
+    <div id="attributesInput" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        @foreach($attr as $attributes)
+            <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200">
+                <input type="checkbox" wire:model="atributosSelecionados" value="{{ $attributes['id'] }}" class="mr-2">
+                {{ $attributes['name'] }}
+            </label>
+        @endforeach
+    </div>
+    <button wire:click="selectVariations"
+                            class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+                            type="button">
+</button>
+</div>
+            
             <!-- Botão de Envio -->
             <button 
                 class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">
@@ -64,7 +82,18 @@
     </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+    window.addEventListener('no-selected-attr', function(event) {
+
+Swal.fire({
+    title: 'Nenhum atributo foi selecionado',
+    icon: 'warning',
+    confirmButtonText: 'Entendido'
+});
+    })
+</script>
 <script>
 const brands = [
     // Roupas e sapatos
@@ -119,6 +148,7 @@ document.addEventListener("click", (event) => {
     }
 });
 </script>
+
 <script>
 const brandInput = document.getElementById("brandInput");
 const productName = document.getElementById("product-name");
@@ -140,4 +170,19 @@ function capitalizeInput(event) {
 // Adicionando o evento 'input' ao input
 productName.addEventListener("input", capitalizeInput);
 brandInput.addEventListener("input", capitalizeInput);
+</script>
+<script>
+      function preencherInput(valor) {
+            document.getElementById("attributesInput").value = valor;
+        }
+        function mostrarAttrlist() {
+        document.getElementById("attrlist").classList.remove("hidden");
+    }
+
+    // Função para esconder a lista ao perder o foco do input
+    function ocultarAttrlist() {
+        setTimeout(function() {  // Adiciona um pequeno delay para não fechar imediatamente
+            document.getElementById("attrlist").classList.add("hidden");
+        }, 150);  // Delay de 150ms para não fechar imediatamente após o clique
+    }
 </script>
