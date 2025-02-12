@@ -28,7 +28,12 @@ class StockController extends Controller
         ];
 
         // Buscando produtos com os parâmetros definidos
-        $products = $woocommerce->get('products', $params);
+        try {
+            $products = $woocommerce->get('products', $params);
+        } catch (\Exception $e) {
+            dd($e);
+        }
+        
         
         
         // Obter o total de produtos a partir dos cabeçalhos de resposta
