@@ -16,7 +16,7 @@
             <!-- Nome do Produto -->
             <div class="mb-5">
                 <label for="product-name" class="block text-sm font-semibold text-gray-700">Nome do Produto</label>
-                <input required type="text" id="product-name" name="product_name" wire:model="nome_produto"
+                <input required type="text" id="product-name" name="product_name" wire:model="nomeProduto"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
             </div>
 
@@ -42,7 +42,7 @@
                 <label for="category" class="block text-sm font-medium text-gray-700">
                     Categoria <span class="text-red-500">*</span>
                 </label>
-                <select wire:model="categoryValue" id="category" name="category"
+                <select wire:model="categories" id="category" name="category"
                     class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                     required>
                     <option value="">Selecione uma categoria</option>
@@ -65,37 +65,42 @@
         @endforeach
     </div>
     <button wire:click="selectVariations"
+    id='selectVariations'
                             class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
                             type="button">
 </button>
 </div>
 @if (!empty($variationsData))
     <div class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
-        
         @foreach ($variationsData as $atributo)
-            <h2 class="font-semibold text-gray-700 mb-2">{{ $atributo['attribute']['name'] }}</h2>
+            <div class="mb-4"> 
+                <h2 class="font-semibold text-gray-700 mb-2">{{ $atributo['attribute']['name'] }}</h2>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                @foreach ($atributo['terms'] as $index => $atributoTerms)
-                    <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200 flex items-center">
-                        <input type="checkbox" wire:model="termosSelecionados" value="{{ $atributoTerms->name }}" class="mr-2" />
-                        {{ $atributoTerms->name }}
-                    </label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                    @foreach ($atributo['terms'] as $atributoTerms)
+                        <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200 flex items-center">
+                            <input type="checkbox" 
+                                   wire:model="termosSelecionados" 
+                                   value="{{ $atributoTerms->name }}" 
+                                   class="mr-2 checkbox-item" />
+                            {{ $atributoTerms->name }}
+                        </label>
+                    @endforeach
                     
-                    @if (($index + 1) % 5 === 0)
-                        </div><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                    @endif
+                    <!-- Botão Selecionar Todos -->
+                    <button type="button" wire:click="selectAll({{ $atributo['attribute']['id'] }})" class="selectAllBtn px-4 py-2 bg-blue-500 text-white rounded mt-2">
+    Selecionar Todos
+</button>
 
-                @endforeach
+                </div>
             </div>
         @endforeach
-
     </div>
 @endif
 
-
             <!-- Botão de Envio -->
             <button 
+         
                 class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">
                 Gerar Produtos
             </button>
@@ -106,6 +111,9 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
 
 <script>
     window.addEventListener('no-selected-attr', function(event) {

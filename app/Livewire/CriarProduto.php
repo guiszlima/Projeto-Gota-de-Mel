@@ -6,9 +6,11 @@ use Livewire\Component;
 use Automattic\WooCommerce\Client;
 class CriarProduto extends Component
 {
+    public $nomeProduto;
     public $categories;
     public $attr;
     public $atributosSelecionados = []; // Armazenar os IDs dos atributos selecionados
+    public $termosSelecionados = []; // Armazenar os IDs dos termos selecionados
     public $variationsData = []; // Armazenar os dados das variações
     public function render()
     {
@@ -84,10 +86,28 @@ public function selectVariations(Client $woocommerce)
 }
 
 
-
     // Método para adicionar ou remover um atributo selecionado
   
-
+    public function selectAll($atributoId)
+    {
+        // Pegue os termos de todos os atributos e adicione à seleção atual
+        $novosTermosSelecionados = collect($this->variationsData)
+            ->where('attribute.id', $atributoId)
+            ->flatMap(function ($atributo) {
+                return collect($atributo['terms'])->pluck('name');
+            })
+            ->all();
+    
+        // Adicione os novos termos aos já selecionados, sem remover os existentes
+        if (count(array_intersect($novosTermosSelecionados, $this->termosSelecionados)) === count($novosTermosSelecionados)) {
+            // Se todos os termos do atributo já estiverem selecionados, desmarque-os
+            $this->termosSelecionados = array_diff($this->termosSelecionados, $novosTermosSelecionados);
+        } else {
+            // Caso contrário, adicione-os à seleção
+            $this->termosSelecionados = array_unique(array_merge($this->termosSelecionados, $novosTermosSelecionados));
+        }
+    }
+    
 public function mount(Client $woocommerce)
 {
   

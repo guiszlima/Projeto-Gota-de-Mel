@@ -2,5 +2,7 @@
 
 @section('content')
 
+
 @livewire('criar-produto')
+
 @endsection
