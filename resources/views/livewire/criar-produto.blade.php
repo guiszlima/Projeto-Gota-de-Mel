@@ -59,7 +59,7 @@
     <div id="attributesInput" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
         @foreach($attr as $attributes)
             <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200">
-                <input type="checkbox" wire:model="atributosSelecionados" value="{{ $attributes['id'] }}" class="mr-2">
+                <input type="checkbox" wire:model="atributosSelecionados" value='@json(["id" => $attributes["id"], "name" => $attributes["name"]])'  class="mr-2">
                 {{ $attributes['name'] }}
             </label>
         @endforeach
@@ -69,13 +69,36 @@
                             type="button">
 </button>
 </div>
-            
+@if (!empty($variationsData))
+    <div class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        
+        @foreach ($variationsData as $atributo)
+            <h2 class="font-semibold text-gray-700 mb-2">{{ $atributo['attribute']['name'] }}</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                @foreach ($atributo['terms'] as $index => $atributoTerms)
+                    <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200 flex items-center">
+                        <input type="checkbox" wire:model="termosSelecionados" value="{{ $atributoTerms->name }}" class="mr-2" />
+                        {{ $atributoTerms->name }}
+                    </label>
+                    
+                    @if (($index + 1) % 5 === 0)
+                        </div><div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                    @endif
+
+                @endforeach
+            </div>
+        @endforeach
+
+    </div>
+@endif
+
+
             <!-- Botão de Envio -->
             <button 
                 class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">
                 Gerar Produtos
             </button>
-
 
 
         </form>

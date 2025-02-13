@@ -9,6 +9,7 @@ class CriarProduto extends Component
     public $categories;
     public $attr;
     public $atributosSelecionados = []; // Armazenar os IDs dos atributos selecionados
+    public $variationsData = []; // Armazenar os dados das variações
     public function render()
     {
         return view('livewire.criar-produto');
@@ -42,13 +43,44 @@ public function getAttr(Client $woocommerce){
 }
 
 
-public function selectVariations(){
+public function selectVariations(Client $woocommerce)
+{
+    // Verifica se há atributos selecionados
+    if (empty($this->atributosSelecionados)) {
+        $this->dispatch('no-selected-attr');
+        return;
+    }
 
-if(empty($this->atributosSelecionados)){
-$this->dispatch('no-selected-attr');
-};
+    // Reseta o array para evitar duplicações
+    $this->variationsData = [];
 
+    // Para cada ID de atributo selecionado, obtém os dados do atributo e os seus termos
+    foreach ($this->atributosSelecionados as $attrJson) {
+        // Decodifica o JSON para um array associativo
+        $attr = json_decode($attrJson, true);
 
+        // Verifica se a decodificação foi bem-sucedida
+        if (!$attr || !isset($attr['id'])) {
+            continue;
+        }
+
+        // Obtem os termos do atributo
+        $terms = $woocommerce->get("products/attributes/{$attr['id']}/terms", [
+            'per_page' => 100,
+        ]);
+
+        // Junta os dados do atributo com os seus termos
+        $this->variationsData[] = [
+            'attribute' => [
+                'id'   => $attr['id'],
+                'name' => $attr['name'],
+            ],
+            'terms' => $terms, // Contém o array de termos relacionados a esse atributo
+        ];
+    }
+   
+    // Opcional: Limpa os atributos selecionados se necessário
+    $this->atributosSelecionados = [];
 }
 
 
