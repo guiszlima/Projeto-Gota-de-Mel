@@ -23,7 +23,7 @@
             <!-- Marca do Produto -->
             <div class="relative mb-5">
                 <label for="brandInput" class="block text-sm font-semibold text-gray-700">Marca</label>
-                <input type="text" id="brandInput" placeholder="Digite uma marca..."
+                <input type="text" id="brandInput" wire:model="brand" placeholder="Digite uma marca..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
                     oninput="filterBrands()">
                 <ul id="brandList"
@@ -31,100 +31,95 @@
                     <!-- Opções do select via JavaScript -->
                 </ul>
             </div>
+
+            <!-- Descrição do Produto -->
             <div class="mb-4">
-                <label for="product-description" class="block text-sm font-medium text-gray-700">Descrição do
-                    Produto</label>
-                <textarea id="product-description"
+                <label for="product-description" class="block text-sm font-medium text-gray-700">Descrição do Produto</label>
+                <textarea id="product-description" name="product_description"
                     class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
                     rows="4"></textarea>
             </div>
+
+            <!-- Categoria -->
             <div class="mb-10">
                 <label for="category" class="block text-sm font-medium text-gray-700">
                     Categoria <span class="text-red-500">*</span>
                 </label>
-                <select wire:model="categories" id="category" name="category"
+                <select wire:model="categorySelected" id="category" name="category"
                     class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                     required>
                     <option value="">Selecione uma categoria</option>
-                    @foreach($categories as $category)
-                    <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
-                    @endforeach
+                    @if(is_array($categories) || is_object($categories))
+                        @foreach($categories as $category)
+                            <option value='@json(["id" => $category["id"], "name" => $category["name"]])'>
+                                {{ $category['name'] }}
+                            </option>
+                        @endforeach
+                    @endif
                 </select>
             </div>
-            
+
+            <!-- Atributos -->
             <div class="relative mb-5">
-    <label for="attributesInput" class="block text-sm font-semibold text-gray-700">Atributos</label>
-    
-
-    <div id="attributesInput" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
-        @foreach($attr as $attributes)
-            <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200">
-                <input type="checkbox" wire:model="atributosSelecionados" value='@json(["id" => $attributes["id"], "name" => $attributes["name"]])'  class="mr-2">
-                {{ $attributes['name'] }}
-            </label>
-        @endforeach
-    </div>
-    <button wire:click="selectVariations"
-    id='selectVariations'
-                            class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
-                            type="button">
-</button>
-</div>
-@if (!empty($variationsData))
-    <div class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
-        @foreach ($variationsData as $atributo)
-            <div class="mb-4"> 
-                <h2 class="font-semibold text-gray-700 mb-2">{{ $atributo['attribute']['name'] }}</h2>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                    @foreach ($atributo['terms'] as $atributoTerms)
-                        <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200 flex items-center">
-                            <input type="checkbox" 
-                                   wire:model="termosSelecionados" 
-                                   value="{{ $atributoTerms->name }}" 
-                                   class="mr-2 checkbox-item" />
-                            {{ $atributoTerms->name }}
+                <label for="attributesInput" class="block text-sm font-semibold text-gray-700">Atributos</label>
+                <div id="attributesInput" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+                    @foreach($attr as $attributes)
+                        <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200">
+                            <input type="checkbox" wire:model="atributosSelecionados" name="attributes[]" value='@json(["id" => $attributes["id"], "name" => $attributes["name"]])' class="mr-2">
+                            {{ $attributes['name'] }}
                         </label>
                     @endforeach
-                    
-                    <!-- Botão Selecionar Todos -->
-                    <button type="button" wire:click="selectAll({{ $atributo['attribute']['id'] }})" class="selectAllBtn px-4 py-2 bg-blue-500 text-white rounded mt-2">
-    Selecionar Todos
-</button>
-
                 </div>
+                <button wire:click="selectVariations" id='selectVariations'
+                    class="fa fa-refresh p-2 mt-1 bg-amber-200 text-white rounded-md hover:bg-amber-300 hover:text-black transition duration-300"
+                    type="button">
+                </button>
             </div>
-        @endforeach
-    </div>
-@endif
+
+            @if (!empty($variationsData))
+                <div class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+                    @foreach ($variationsData as $atributo)
+                        <div class="mb-4">
+                            <h2 class="font-semibold text-gray-700 mb-2">{{ $atributo['attribute']['name'] }}</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                                @foreach ($atributo['terms'] as $atributoTerms)
+                                    <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200 flex items-center">
+                                        <input type="checkbox" wire:model="termosSelecionados" name="terms[]" value='@json(["id" => $atributo["attribute"]["id"], "name" => $atributoTerms->name])' class="mr-2 checkbox-item" />
+                                        {{ $atributoTerms->name }}
+                                    </label>
+                                @endforeach
+                                <!-- Botão Selecionar Todos -->
+                                <button type="button" wire:click="selectAll({{ $atributo['attribute']['id'] }})" class="selectAllBtn px-4 py-2 bg-blue-500 text-white rounded mt-2 w-min"
+                                onclick="selecionarTodos">
+
+                                    Selecionar Todos
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
 
             <!-- Botão de Envio -->
-            <button 
-         
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">
+            <button wire:click="generateProducts" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200" type="button">
                 Gerar Produtos
             </button>
-
-
         </form>
     </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-
-
 <script>
     window.addEventListener('no-selected-attr', function(event) {
-
-Swal.fire({
-    title: 'Nenhum atributo foi selecionado',
-    icon: 'warning',
-    confirmButtonText: 'Entendido'
-});
-    })
+        Swal.fire({
+            title: 'Nenhum atributo foi selecionado',
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+    });
 </script>
+
 <script>
 const brands = [
     // Roupas e sapatos
@@ -192,8 +187,7 @@ function capitalizeInput(event) {
     event.target.value = inputValue
         .split(/\s+/) // Divide o texto por espaços
         .map(word => {
-            return word.charAt(0).toLocaleUpperCase() + word.slice(1)
-        .toLocaleLowerCase(); // Capitaliza a primeira letra e mantém o restante em minúsculas
+            return word.charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase(); // Capitaliza a primeira letra e mantém o restante em minúsculas
         })
         .join(" "); // Junta as palavras de volta
 }
@@ -202,18 +196,19 @@ function capitalizeInput(event) {
 productName.addEventListener("input", capitalizeInput);
 brandInput.addEventListener("input", capitalizeInput);
 </script>
-<script>
-      function preencherInput(valor) {
-            document.getElementById("attributesInput").value = valor;
-        }
-        function mostrarAttrlist() {
-        document.getElementById("attrlist").classList.remove("hidden");
-    }
 
-    // Função para esconder a lista ao perder o foco do input
-    function ocultarAttrlist() {
-        setTimeout(function() {  // Adiciona um pequeno delay para não fechar imediatamente
-            document.getElementById("attrlist").classList.add("hidden");
-        }, 150);  // Delay de 150ms para não fechar imediatamente após o clique
-    }
+<script>
+function preencherInput(valor) {
+    document.getElementById("attributesInput").value = valor;
+}
+function mostrarAttrlist() {
+    document.getElementById("attrlist").classList.remove("hidden");
+}
+
+// Função para esconder a lista ao perder o foco do input
+function ocultarAttrlist() {
+    setTimeout(function() {  // Adiciona um pequeno delay para não fechar imediatamente
+        document.getElementById("attrlist").classList.add("hidden");
+    }, 150);  // Delay de 150ms para não fechar imediatamente após o clique
+}
 </script>
