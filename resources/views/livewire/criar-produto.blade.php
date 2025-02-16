@@ -25,7 +25,8 @@
                 <label for="brandInput" class="block text-sm font-semibold text-gray-700">Marca</label>
                 <input type="text" id="brandInput" wire:model="brand" placeholder="Digite uma marca..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
-                    oninput="filterBrands()">
+                    oninput="filterBrands()"
+                    autocomplete="off">
                 <ul id="brandList"
                     class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 hidden max-h-48 overflow-y-auto shadow-lg transition-all duration-200">
                     <!-- Opções do select via JavaScript -->
@@ -35,7 +36,7 @@
             <!-- Descrição do Produto -->
             <div class="mb-4">
                 <label for="product-description" class="block text-sm font-medium text-gray-700">Descrição do Produto</label>
-                <textarea id="product-description" name="product_description"
+                <textarea id="product-description" wire:model="description" name="product_description"
                     class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
                     rows="4"></textarea>
             </div>
@@ -59,22 +60,63 @@
                 </select>
             </div>
 
-            <!-- Atributos -->
-            <div class="relative mb-5">
-                <label for="attributesInput" class="block text-sm font-semibold text-gray-700">Atributos</label>
-                <div id="attributesInput" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
-                    @foreach($attr as $attributes)
-                        <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200">
-                            <input type="checkbox" wire:model="atributosSelecionados" name="attributes[]" value='@json(["id" => $attributes["id"], "name" => $attributes["name"]])' class="mr-2">
-                            {{ $attributes['name'] }}
-                        </label>
-                    @endforeach
-                </div>
-                <button wire:click="selectVariations" id='selectVariations'
-                    class="fa fa-refresh p-2 mt-1 bg-amber-200 text-white rounded-md hover:bg-amber-300 hover:text-black transition duration-300"
-                    type="button">
-                </button>
+            <div>
+    <!-- Checkbox -->
+    <div>
+    <!-- Botão para mostrar/ocultar a lista de cores -->
+   
+
+    <div class="relative mb-5">
+    <button type='button' wire:click="toggleCores" class="px-4 py-2 bg-blue-500 text-white rounded-md">
+        {{ $mostrarCores ? 'Ocultar Cores' : 'Mostrar Cores' }}
+    </button>
+
+    <!-- Lista de cores (só aparece se $mostrarCores for true) -->
+    @if ($mostrarCores)
+        <div class="mt-4 p-4 border rounded bg-gray-100">
+            <h3 class="font-bold mb-2">Cores Disponíveis:</h3>
+
+            <!-- Grid de duas colunas -->
+            <div class="grid grid-cols-2 gap-2">
+                @foreach ($cores as $cor)
+                    <label class="flex items-center space-x-2 px-4 py-2 cursor-pointer bg-white border rounded-md shadow-sm hover:bg-gray-200">
+                        <input type="checkbox" wire:model="coresSelecionadas.14" 
+                               value='{{$cor["name"]}}' 
+                               class="form-checkbox h-5 w-5 text-blue-500">
+                        <span class="text-gray-700">{{ $cor['name'] }}</span>
+                    </label>
+                @endforeach
             </div>
+        </div>
+    @endif
+</div>
+
+
+</div>
+          <!-- Atributos -->
+<div class="relative mb-5">
+    <label for="attributesInput" class="block text-sm font-semibold text-gray-700">Atributos</label>
+    <div id="attributesInput" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        @foreach($attr as $attributes)
+        
+        @if($attributes['name'] !== 'Cor')
+            <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200">
+                <input type="radio" wire:model="atributosSelecionados" name="attribute"
+                    value='@json(["id" => $attributes["id"], "name" => $attributes["name"]])' 
+                    class="mr-2">
+                    
+                {{ $attributes['name'] }}
+               
+            </label>
+            @endif
+        @endforeach
+    </div>
+    <button wire:click="selectVariations" id='selectVariations'
+        class="fa fa-refresh p-2 mt-1 bg-amber-200 text-white rounded-md hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button">
+    </button>
+</div>
+
 
             @if (!empty($variationsData))
                 <div class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
@@ -90,7 +132,7 @@
                                 @endforeach
                                 <!-- Botão Selecionar Todos -->
                                 <button type="button" wire:click="selectAll({{ $atributo['attribute']['id'] }})" class="selectAllBtn px-4 py-2 bg-blue-500 text-white rounded mt-2 w-min"
-                                onclick="selecionarTodos">
+                               >
 
                                     Selecionar Todos
                                 </button>
