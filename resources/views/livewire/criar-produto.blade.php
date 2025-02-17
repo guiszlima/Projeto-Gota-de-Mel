@@ -163,8 +163,8 @@
 
 </main>
 @if (isset($requestData['combination']) || isset($requestData['single']))
-<form action="">
-<div class="flex justify-center mt-6">
+<form action="" method="POST" enctype="multipart/form-data">
+    <div class="flex justify-center mt-6">
         <button
             class="cursor-pointer bg-gradient-to-b from-yellow-400 to-yellow-500 shadow-[0px_4px_32px_0_rgba(99,102,241,.70)] px-6 py-3 rounded-xl border-[1px] border-yellow-400 text-white font-medium group"
         >
@@ -182,6 +182,7 @@
             </div>
         </button>
     </div>
+    
     <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">{{ $nomeProduto . " " . $brand }}</h2>
         <table class="w-full border border-gray-300 rounded-lg overflow-hidden">
@@ -193,6 +194,7 @@
                     <th class="p-2 border">Estoque</th>
                     <th class="p-2 border">Estante</th>
                     <th class="p-2 border">Prateleira</th>
+                    <th class="p-2 border">Imagem</th>
                 </tr>
             </thead>
             <tbody>
@@ -209,6 +211,9 @@
                                         <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                     </td>
                                 @endforeach
+                                <td class="p-2 border">
+                                    <input type="file" name="imagem[]" accept="image/*" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                </td>
                             </tr>
                         @endforeach
                     @endforeach
@@ -226,13 +231,16 @@
                                     <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                 </td>
                             @endforeach
+                            <td class="p-2 border">
+                                <input type="file" name="imagem[]" accept="image/*" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                            </td>
                         </tr>
                     @endforeach
                 @endif
             </tbody>
         </table>
     </div>
-    </form>
+</form>
 @endif
 
 

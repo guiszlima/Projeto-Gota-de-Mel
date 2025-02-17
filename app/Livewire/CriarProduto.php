@@ -212,6 +212,11 @@ class CriarProduto extends Component
 
     public function generateProducts()
     {
+
+        
+
+
+
         // Verifica se o nome do produto ou a categoria não foram selecionados
         if (!$this->nomeProduto || !$this->categorySelected) {
             $this->dispatch('no-product-name-or-category');
