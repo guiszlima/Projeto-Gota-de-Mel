@@ -1,11 +1,12 @@
+<div>
 <main class="flex flex-col items-center p-6 bg-gray-100 min-h-screen">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Criar Produto</h1>
 
     <x-warning :warn="session('warn')" />
 
     <div class="w-full max-w-lg bg-white p-6 rounded-xl shadow-lg">
-        <form id="myForm" action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+       
+       
 
             @isset ($mensagem)
             <div class="my-4 p-3 bg-red-100 border border-red-400 text-red-600 rounded-md">
@@ -16,7 +17,7 @@
             <!-- Nome do Produto -->
             <div class="mb-5">
                 <label for="product-name" class="block text-sm font-semibold text-gray-700">Nome do Produto</label>
-                <input required type="text" id="product-name" name="product_name" wire:model="nomeProduto"
+                <input required type="text" id="product-name" name="product_name" placeholder="Digite o nome do produto..." wire:model="nomeProduto"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
             </div>
 
@@ -146,10 +147,74 @@
             <button wire:click="generateProducts" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200" type="button">
                 Gerar Produtos
             </button>
-        </form>
+        
     </div>
+
+
+
+
+
 </main>
 
+@if (isset($requestData['combination']) || isset($requestData['single']))
+    <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">{{$nomeProduto . " " . $brand}}</h2>
+        <table class="w-full border border-gray-300 rounded-lg overflow-hidden">
+            <thead>
+                <tr class="bg-gray-100 text-gray-700 text-left">
+                    <th class="p-2 border">Produto</th>
+                    <th class="p-2 border">Preço</th>
+                    <th class="p-2 border">Quantidade</th>
+                    <th class="p-2 border">Estoque</th>
+                    <th class="p-2 border">Estante</th>
+                    <th class="p-2 border">Prateleira</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{-- Para combinação de cor + tamanho --}}
+                @if (isset($requestData['combination']))
+                    @foreach ($requestData['combination'] as $idTamanho => $combinacoes)
+                        @foreach ($combinacoes as $combinacao)
+                            <tr class="border-b">
+                                <td class="p-2 border font-semibold text-gray-800">
+                                    {{ $combinacao[0] . " " . $combinacao[1] }}
+                                </td>
+                                @foreach (['preco', 'quantidade', 'estoque', 'estante', 'prateleira'] as $field)
+                                    <td class="p-2 border">
+                                        <input type="text" name="{{ $field }}[]" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                    </td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    @endforeach
+                @endif
+
+                {{-- Para lista simples de cores/tamanhos --}}
+                @if (isset($requestData['single']))
+                    @foreach ($requestData['single'] as $item)
+                    
+                        <tr class="border-b">
+                            <td class="p-2 border font-semibold text-gray-800">
+                                {{ $item }}
+                            </td>
+                            @foreach (['preco', 'quantidade', 'estoque', 'estante', 'prateleira'] as $field)
+                                <td class="p-2 border">
+                                    <input type="text" name="{{ $field }}[]" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                </td>
+                            @endforeach
+                        </tr>
+                    @endforeach
+                @endif
+            </tbody>
+        </table>
+    </div>
+@endif
+
+// variação só cor ou tamanho
+
+
+
+</div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -207,8 +272,11 @@ function filterBrands() {
 
 function selectBrand(brand) {
     input.value = brand;
+    // Dispara um evento 'input' para notificar o Livewire
+    input.dispatchEvent(new Event('input'));
     list.classList.add("hidden");
 }
+
 
 document.addEventListener("click", (event) => {
     if (!input.contains(event.target) && !list.contains(event.target)) {

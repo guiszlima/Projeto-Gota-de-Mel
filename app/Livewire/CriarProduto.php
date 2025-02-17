@@ -17,9 +17,13 @@ class CriarProduto extends Component
     public $atributosSelecionados = []; // Armazenar os IDs dos atributos selecionados
     public $termosSelecionados = []; // Armazenar os IDs dos termos selecionados
     public $variationsData = []; // Armazenar os dados das variações
+    public $choosedVariationId;
     public $cores ; 
     public $mostrarCores = false;
+    public $showTable = false;
     public $coresSelecionadas = [];
+    public $requestData;
+    
 
 
     public function render()
@@ -152,17 +156,11 @@ public function selectColorVars(Client $woocommerce){
             $this->termosSelecionados = array_unique(array_merge($this->termosSelecionados, $novosTermosSelecionados));
         }
     }
-    private function getRequestData()
-    {
-        $arrayAttr = [];
-    
-        // Decodifica a categoria selecionada (JSON para array associativo)
-        $jsonCategories = json_decode($this->categorySelected, true);
-    
-        // Percorre os termos selecionados e os converte para array associativo
-        foreach ($this->termosSelecionados as $atributo) {
+    private function generateArrayAttr($termosSelec){
+        foreach ($termosSelec as $atributo) {
             $jsonAttr = json_decode($atributo, true);
-    
+            
+            $this->choosedVariationId = $jsonAttr['id'];
             // Adiciona o nome ao array correspondente ao id
             if (isset($arrayAttr[$jsonAttr['id']])) {
                 // Se o id já existe, adiciona o nome ao array
@@ -172,7 +170,18 @@ public function selectColorVars(Client $woocommerce){
                 $arrayAttr[$jsonAttr['id']] = [$jsonAttr['name']];
             }
         }
+        return $arrayAttr;
+    }
+    private function getRequestDataCorETamanho()
+    {
+        
     
+        // Decodifica a categoria selecionada (JSON para array associativo)
+        $jsonCategories = json_decode($this->categorySelected, true);
+    
+        // Percorre os termos selecionados e os converte para array associativo
+       
+        $arrayAttr = $this->generateArrayAttr($this->termosSelecionados);
         // Ordena o array de atributos pelo ID (ordem crescente)
      $combinations =  $this->gerarCombinacoes( $arrayAttr, $this->coresSelecionadas);
   
@@ -181,8 +190,7 @@ public function selectColorVars(Client $woocommerce){
             'name' => $this->nomeProduto . " " . $this->brand, // Nome do produto
             'descricao' => $this->description, // Descrição do produto
             'categoria' => $jsonCategories, // Categorias selecionadas
-            'attributes' => $arrayAttr, // Atributos formatados
-            'cores' => $this->coresSelecionadas // Cores selecionadas (possivelmente NULL)
+            'combination' => $combinations, // Combinações de atributos
         ];
     }
     
@@ -209,8 +217,8 @@ public function selectColorVars(Client $woocommerce){
             }
         }
     
-        // Usando dd() para exibir as combinações
-        dd($combinacoes);
+        
+        return $combinacoes;
     }
     
     
@@ -219,9 +227,30 @@ public function selectColorVars(Client $woocommerce){
 
     public function generateProducts()
     {
-        $request_data = $this->getRequestData();
-       // $combinations = $this->generateCombinations($request_data['attributes']);
+        $showTable = true;
+      
+        if(!empty($this->coresSelecionadas[14]) && !empty($this->termosSelecionados )){
+            $this->requestData = $this->getRequestDataCorETamanho();
+            return;
+
+        } else{ 
+
+
+            if(!empty($this->coresSelecionadas[14])){
+                $this->requestData['single'] = $this->coresSelecionadas[env("COR_ID")];
+                
+                return;
+            }
+          $arrayAttr =   $this->generateArrayAttr($this->termosSelecionados);
+         
+            $this->requestData['single'] = $arrayAttr[$this->choosedVariationId] ;
+            
+            return;
+        }
+       
+       
         
-        dd($request_data);
+        
+        
     }
 }
