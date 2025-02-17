@@ -7,7 +7,6 @@ use Automattic\WooCommerce\Client;
 
 class CriarProduto extends Component
 {
-    
     public $nomeProduto;
     public $description;
     public $categories;
@@ -18,13 +17,11 @@ class CriarProduto extends Component
     public $termosSelecionados = []; // Armazenar os IDs dos termos selecionados
     public $variationsData = []; // Armazenar os dados das variações
     public $choosedVariationId;
-    public $cores ; 
+    public $cores;
     public $mostrarCores = false;
     public $showTable = false;
     public $coresSelecionadas = [];
     public $requestData;
-    
-
 
     public function render()
     {
@@ -35,9 +32,7 @@ class CriarProduto extends Component
     {
         $this->categories = $this->getCategories($woocommerce);
         $this->attr = $this->getAttr($woocommerce);
-
-
-        $this->cores = $this->getCores($woocommerce); 
+        $this->cores = $this->getCores($woocommerce);
         $this->coresSelecionadas = [env("COR_ID") => []];
     }
 
@@ -57,14 +52,7 @@ class CriarProduto extends Component
     public function getAttr(Client $woocommerce)
     {
         $attributes_data = [];
-        
-        
-        
-        
-            $wooattributes = $woocommerce->get('products/attributes');
-        
-        
-       
+        $wooattributes = $woocommerce->get('products/attributes');
         foreach ($wooattributes as $attribute) {
             $attributes_data[] = [
                 'id' => $attribute->id,
@@ -73,27 +61,31 @@ class CriarProduto extends Component
         }
         return $attributes_data;
     }
- public function getCores(Client $woocommerce){
-    $cor_id = env("COR_ID");
-    $cores_data = [];
-    $woocores = $woocommerce->get("products/attributes/$cor_id/terms"); // 14 é o Id do atributo cor no Woocomerce
-    foreach ($woocores as $cor) {
-        $cores_data[] = [
-            'id' => $cor->id,
-            'name' => $cor->name
-        ];
-    }
-    return $cores_data;
-}
 
-public function toggleCores()
+    public function getCores(Client $woocommerce)
+    {
+        $cor_id = env("COR_ID");
+        $cores_data = [];
+        $woocores = $woocommerce->get("products/attributes/$cor_id/terms"); // 14 é o Id do atributo cor no Woocomerce
+        foreach ($woocores as $cor) {
+            $cores_data[] = [
+                'id' => $cor->id,
+                'name' => $cor->name
+            ];
+        }
+        return $cores_data;
+    }
+
+    public function toggleCores()
     {
         $this->mostrarCores = !$this->mostrarCores;
     }
 
-public function selectColorVars(Client $woocommerce){
-    
-}
+    public function resetAttributes()
+    {
+        $this->atributosSelecionados = null; // Reinicia a variável
+        $this->variationsData = null;
+    }
 
     public function selectVariations(Client $woocommerce)
     {
@@ -102,23 +94,23 @@ public function selectColorVars(Client $woocommerce){
             $this->dispatch('no-selected-attr');
             return;
         }
-    
+
         // Reseta o array para evitar duplicações
         $this->variationsData = [];
-    
+
         // Decodifica o JSON do atributo selecionado
         $attr = json_decode($this->atributosSelecionados, true);
-    
+
         // Verifica se a decodificação foi bem-sucedida
         if (!$attr || !isset($attr['id'])) {
             return;
         }
-    
+
         // Obtem os termos do atributo
         $terms = $woocommerce->get("products/attributes/{$attr['id']}/terms", [
             'per_page' => 100,
         ]);
-    
+
         // Junta os dados do atributo com os seus termos
         $this->variationsData[] = [
             'attribute' => [
@@ -127,11 +119,10 @@ public function selectColorVars(Client $woocommerce){
             ],
             'terms' => $terms,
         ];
-    
+
         // Limpa os termos selecionados ao mudar o atributo
         $this->termosSelecionados = [];
     }
-    
 
     // Método para adicionar ou remover um atributo selecionado
     public function selectAll($atributoId)
@@ -156,10 +147,12 @@ public function selectColorVars(Client $woocommerce){
             $this->termosSelecionados = array_unique(array_merge($this->termosSelecionados, $novosTermosSelecionados));
         }
     }
-    private function generateArrayAttr($termosSelec){
+
+    private function generateArrayAttr($termosSelec)
+    {
+        $arrayAttr = [];
         foreach ($termosSelec as $atributo) {
             $jsonAttr = json_decode($atributo, true);
-            
             $this->choosedVariationId = $jsonAttr['id'];
             // Adiciona o nome ao array correspondente ao id
             if (isset($arrayAttr[$jsonAttr['id']])) {
@@ -172,19 +165,17 @@ public function selectColorVars(Client $woocommerce){
         }
         return $arrayAttr;
     }
+
     private function getRequestDataCorETamanho()
     {
-        
-    
         // Decodifica a categoria selecionada (JSON para array associativo)
         $jsonCategories = json_decode($this->categorySelected, true);
-    
+
         // Percorre os termos selecionados e os converte para array associativo
-       
         $arrayAttr = $this->generateArrayAttr($this->termosSelecionados);
         // Ordena o array de atributos pelo ID (ordem crescente)
-     $combinations =  $this->gerarCombinacoes( $arrayAttr, $this->coresSelecionadas);
-  
+        $combinations = $this->gerarCombinacoes($arrayAttr, $this->coresSelecionadas);
+
         // Retorna os dados formatados para a requisição
         return [
             'name' => $this->nomeProduto . " " . $this->brand, // Nome do produto
@@ -193,15 +184,14 @@ public function selectColorVars(Client $woocommerce){
             'combination' => $combinations, // Combinações de atributos
         ];
     }
-    
 
     public function gerarCombinacoes($attributes, $cores)
     {
         $combinacoes = [];
-    
+
         // Fixando o ID da cor como 14
         $idCor = env("COR_ID");
-        
+
         // Percorre todos os tamanhos (attributes)
         foreach ($attributes as $idTamanho => $tamanhos) {
             // Adiciona o array de combinações para o tamanho atual
@@ -216,41 +206,40 @@ public function selectColorVars(Client $woocommerce){
                 }
             }
         }
-    
-        
+
         return $combinacoes;
     }
-    
-    
-
-    
 
     public function generateProducts()
     {
-        $showTable = true;
-      
-        if(!empty($this->coresSelecionadas[14]) && !empty($this->termosSelecionados )){
-            $this->requestData = $this->getRequestDataCorETamanho();
-            return;
-
-        } else{ 
-
-
-            if(!empty($this->coresSelecionadas[14])){
-                $this->requestData['single'] = $this->coresSelecionadas[env("COR_ID")];
-                
-                return;
-            }
-          $arrayAttr =   $this->generateArrayAttr($this->termosSelecionados);
-         
-            $this->requestData['single'] = $arrayAttr[$this->choosedVariationId] ;
-            
+        // Verifica se o nome do produto ou a categoria não foram selecionados
+        if (!$this->nomeProduto || !$this->categorySelected) {
+            $this->dispatch('no-product-name-or-category');
             return;
         }
-       
-       
-        
-        
-        
+
+        // Verifica a seleção de cores e atributos
+        if (empty($this->coresSelecionadas[14]) && empty($this->termosSelecionados)) {
+            $this->dispatch('no-selected-color-or-attr');
+            return;
+        }
+
+        // Caso tenha tanto a cor quanto o atributo selecionado
+        if (!empty($this->coresSelecionadas[14]) && !empty($this->termosSelecionados)) {
+            $this->requestData = $this->getRequestDataCorETamanho();
+            return;
+        }
+
+        // Caso tenha apenas a cor selecionada
+        if (!empty($this->coresSelecionadas[14])) {
+            $this->requestData['single'] = $this->coresSelecionadas[env("COR_ID")];
+            return;
+        }
+
+        // Caso tenha apenas os atributos selecionados
+        $arrayAttr = $this->generateArrayAttr($this->termosSelecionados);
+        $this->requestData['single'] = $arrayAttr[$this->choosedVariationId];
+
+        return;
     }
 }

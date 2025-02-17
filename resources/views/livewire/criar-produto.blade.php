@@ -94,29 +94,36 @@
 
 
 </div>
-          <!-- Atributos -->
 <div class="relative mb-5">
     <label for="attributesInput" class="block text-sm font-semibold text-gray-700">Atributos</label>
     <div id="attributesInput" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
         @foreach($attr as $attributes)
-        
-        @if($attributes['name'] !== 'Cor')
-            <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200">
-                <input type="radio" wire:model="atributosSelecionados" name="attribute"
-                    value='@json(["id" => $attributes["id"], "name" => $attributes["name"]])' 
-                    class="mr-2">
-                    
-                {{ $attributes['name'] }}
-               
-            </label>
+            @if($attributes['name'] !== 'Cor')
+                <label class="block px-4 py-2 cursor-pointer hover:bg-gray-200">
+                    <input type="radio" wire:model="atributosSelecionados" name="attribute"
+                        value='@json(["id" => $attributes["id"], "name" => $attributes["name"]])' 
+                        class="mr-2">
+                    {{ $attributes['name'] }}
+                </label>
             @endif
         @endforeach
     </div>
+
+    <!-- Botão para selecionar as variações -->
     <button wire:click="selectVariations" id='selectVariations'
         class="fa fa-refresh p-2 mt-1 bg-amber-200 text-white rounded-md hover:bg-amber-300 hover:text-black transition duration-300"
         type="button">
+        Selecionar Variações
+    </button>
+
+    <!-- Botão para reiniciar os atributos -->
+    <button wire:click="resetAttributes" id='resetAttributes'
+        class="fa fa-refresh p-2 mt-1 bg-red-200 text-white rounded-md hover:bg-red-300 hover:text-black transition duration-300"
+        type="button">
+        Reiniciar Atributos
     </button>
 </div>
+
 
 
             @if (!empty($variationsData))
@@ -155,10 +162,28 @@
 
 
 </main>
-
 @if (isset($requestData['combination']) || isset($requestData['single']))
+<form action="">
+<div class="flex justify-center mt-6">
+        <button
+            class="cursor-pointer bg-gradient-to-b from-yellow-400 to-yellow-500 shadow-[0px_4px_32px_0_rgba(99,102,241,.70)] px-6 py-3 rounded-xl border-[1px] border-yellow-400 text-white font-medium group"
+        >
+            <div class="relative overflow-hidden">
+                <p
+                    class="group-hover:-translate-y-7 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]"
+                >
+                    Enviar
+                </p>
+                <p
+                    class="absolute top-7 left-0 group-hover:top-0 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]"
+                >
+                    Enviar
+                </p>
+            </div>
+        </button>
+    </div>
     <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">{{$nomeProduto . " " . $brand}}</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">{{ $nomeProduto . " " . $brand }}</h2>
         <table class="w-full border border-gray-300 rounded-lg overflow-hidden">
             <thead>
                 <tr class="bg-gray-100 text-gray-700 text-left">
@@ -174,14 +199,14 @@
                 {{-- Para combinação de cor + tamanho --}}
                 @if (isset($requestData['combination']))
                     @foreach ($requestData['combination'] as $idTamanho => $combinacoes)
-                        @foreach ($combinacoes as $combinacao)
-                            <tr class="border-b">
+                        @foreach ($combinacoes as $index => $combinacao)
+                            <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
                                 <td class="p-2 border font-semibold text-gray-800">
                                     {{ $combinacao[0] . " " . $combinacao[1] }}
                                 </td>
                                 @foreach (['preco', 'quantidade', 'estoque', 'estante', 'prateleira'] as $field)
                                     <td class="p-2 border">
-                                        <input type="text" name="{{ $field }}[]" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                        <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                     </td>
                                 @endforeach
                             </tr>
@@ -191,15 +216,14 @@
 
                 {{-- Para lista simples de cores/tamanhos --}}
                 @if (isset($requestData['single']))
-                    @foreach ($requestData['single'] as $item)
-                    
-                        <tr class="border-b">
+                    @foreach ($requestData['single'] as $index => $item)
+                        <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
                             <td class="p-2 border font-semibold text-gray-800">
                                 {{ $item }}
                             </td>
                             @foreach (['preco', 'quantidade', 'estoque', 'estante', 'prateleira'] as $field)
                                 <td class="p-2 border">
-                                    <input type="text" name="{{ $field }}[]" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                    <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                 </td>
                             @endforeach
                         </tr>
@@ -208,9 +232,8 @@
             </tbody>
         </table>
     </div>
+    </form>
 @endif
-
-// variação só cor ou tamanho
 
 
 
@@ -218,13 +241,33 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    window.addEventListener('no-selected-attr', function(event) {
-        Swal.fire({
-            title: 'Nenhum atributo foi selecionado',
-            icon: 'warning',
-            confirmButtonText: 'Entendido'
-        });
+   // Evento para quando o nome do produto ou categoria não forem selecionados
+window.addEventListener('no-product-name-or-category', function(event) {
+    Swal.fire({
+        title: 'Nome do produto ou categoria não selecionados',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
     });
+});
+
+// Evento para quando não houver atributo selecionado
+window.addEventListener('no-selected-attr', function(event) {
+    Swal.fire({
+        title: 'Nenhum atributo foi selecionado',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+    });
+});
+
+// Evento para quando não houver cor ou atributo selecionado
+window.addEventListener('no-selected-color-or-attr', function(event) {
+    Swal.fire({
+        title: 'Nenhuma cor ou atributo foi selecionado',
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
+    });
+});
+
 </script>
 
 <script>
