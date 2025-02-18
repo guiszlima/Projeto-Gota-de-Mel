@@ -163,7 +163,8 @@
 
 </main>
 @if (isset($requestData['combination']) || isset($requestData['single']))
-<form action="" method="POST" enctype="multipart/form-data">
+<form action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data">
+    
     <div class="flex justify-center mt-6">
         <button
             class="cursor-pointer bg-gradient-to-b from-yellow-400 to-yellow-500 shadow-[0px_4px_32px_0_rgba(99,102,241,.70)] px-6 py-3 rounded-xl border-[1px] border-yellow-400 text-white font-medium group"
@@ -199,7 +200,7 @@
             </thead>
             <tbody>
                 {{-- Para combinação de cor + tamanho --}}
-                @if (isset($requestData['combination']))
+                @if (!empty($requestData['combination']))
                     @foreach ($requestData['combination'] as $idTamanho => $combinacoes)
                         @foreach ($combinacoes as $index => $combinacao)
                             <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
@@ -220,7 +221,7 @@
                 @endif
 
                 {{-- Para lista simples de cores/tamanhos --}}
-                @if (isset($requestData['single']))
+                @if (!empty($requestData['single']))
                     @foreach ($requestData['single'] as $index => $item)
                         <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
                             <td class="p-2 border font-semibold text-gray-800">
@@ -237,6 +238,32 @@
                         </tr>
                     @endforeach
                 @endif
+                @if (!empty($requestData['simples']))
+    @foreach ($requestData['simples'] as $index => $item)
+        <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
+            <td class="p-2 border font-semibold text-gray-800">
+                {{ $item }}
+            </td>
+                        <td class="p-2 border">
+                <input type="text" name="preco[]" placeholder="Digite o preço" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" >
+            </td>
+            <td class="p-2 border">
+                <input type="number" name="quantidade[]" placeholder="Digite a quantidade" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+            </td>
+            <td class="p-2 border">
+                <input type="text" name="estoque[]" placeholder="Digite o estoque" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+            </td>
+            <td class="p-2 border">
+                <input type="number" name="estante[]" placeholder="Digite a estante" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+            </td>
+            <td class="p-2 border">
+                <input type="number" name="prateleira[]" placeholder="Digite a prateleira" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+            </td>
+
+        </tr>
+    @endforeach
+@endif
+
             </tbody>
         </table>
     </div>
@@ -372,4 +399,15 @@ function ocultarAttrlist() {
         document.getElementById("attrlist").classList.add("hidden");
     }, 150);  // Delay de 150ms para não fechar imediatamente após o clique
 }
+</script>
+
+<script>
+    function maskFloat(e) {
+    let value = e.target.value;
+    value = value.replace(/\D/g, '');
+    value = (value / 100).toFixed(2) + '';
+    value = value.replace(".", ",");
+    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+    e.target.value = value;
+}''
 </script>

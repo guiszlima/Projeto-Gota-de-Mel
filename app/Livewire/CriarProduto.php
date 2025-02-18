@@ -83,8 +83,9 @@ class CriarProduto extends Component
 
     public function resetAttributes()
     {
-        $this->atributosSelecionados = null; // Reinicia a variável
-        $this->variationsData = null;
+        $this->atributosSelecionados = []; // Reinicia a variável para um array vazio
+        $this->variationsData = []; // Reinicia a variável para um array vazio
+        $this->termosSelecionados = [];
     }
 
     public function selectVariations(Client $woocommerce)
@@ -212,39 +213,51 @@ class CriarProduto extends Component
 
     public function generateProducts()
     {
-
-        
-
-
-
+        $this->requestData['simples'] = [];
+        $this->requestData['single'] = [];
+        $this->requestData['combination'] = [];
+          
         // Verifica se o nome do produto ou a categoria não foram selecionados
         if (!$this->nomeProduto || !$this->categorySelected) {
             $this->dispatch('no-product-name-or-category');
             return;
         }
-
         // Verifica a seleção de cores e atributos
         if (empty($this->coresSelecionadas[14]) && empty($this->termosSelecionados)) {
-            $this->dispatch('no-selected-color-or-attr');
+            $this->requestData['simples'] = [
+                $this->nomeProduto . " " . $this->brand, // Nome do produto
+                 // Categorias selecionadas
+            ];
+           
             return;
         }
-
+    
         // Caso tenha tanto a cor quanto o atributo selecionado
         if (!empty($this->coresSelecionadas[14]) && !empty($this->termosSelecionados)) {
             $this->requestData = $this->getRequestDataCorETamanho();
             return;
         }
-
+    
         // Caso tenha apenas a cor selecionada
         if (!empty($this->coresSelecionadas[14])) {
             $this->requestData['single'] = $this->coresSelecionadas[env("COR_ID")];
+       
             return;
         }
-
+    
         // Caso tenha apenas os atributos selecionados
         $arrayAttr = $this->generateArrayAttr($this->termosSelecionados);
         $this->requestData['single'] = $arrayAttr[$this->choosedVariationId];
-
-        return;
+    
+       
     }
+
+    private function clearVariables()
+{
+    $this->coresSelecionadas = [env("COR_ID") => []];;
+    $this->termosSelecionados = [];
+    $this->atributosSelecionados = []; 
+    $this->variationsData = [];      
+}
+
 }

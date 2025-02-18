@@ -74,7 +74,7 @@ class StockController extends Controller
      */
     public function store(Client $woocommerce, Request $request, WpClient $wpService )
 {
-    // Validação dos dados
+    dd($request->all());
   
 }
 
