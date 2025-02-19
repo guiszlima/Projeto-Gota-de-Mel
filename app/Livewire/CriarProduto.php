@@ -21,6 +21,7 @@ class CriarProduto extends Component
     public $mostrarCores = false;
     public $showTable = false;
     public $coresSelecionadas = [];
+    public $tipoProduto;
     public $requestData;
 
     public function render()
@@ -226,28 +227,29 @@ class CriarProduto extends Component
         if (empty($this->coresSelecionadas[14]) && empty($this->termosSelecionados)) {
             $this->requestData['simples'] = [
                 $this->nomeProduto . " " . $this->brand, // Nome do produto
-                 // Categorias selecionadas
             ];
-           
+            $this->tipoProduto = 'simple';
             return;
         }
     
         // Caso tenha tanto a cor quanto o atributo selecionado
         if (!empty($this->coresSelecionadas[14]) && !empty($this->termosSelecionados)) {
             $this->requestData = $this->getRequestDataCorETamanho();
+            $this->tipoProduto = 'variable';
             return;
         }
     
         // Caso tenha apenas a cor selecionada
         if (!empty($this->coresSelecionadas[14])) {
             $this->requestData['single'] = $this->coresSelecionadas[env("COR_ID")];
-       
+            $this->tipoProduto = 'variable';
             return;
         }
     
         // Caso tenha apenas os atributos selecionados
         $arrayAttr = $this->generateArrayAttr($this->termosSelecionados);
         $this->requestData['single'] = $arrayAttr[$this->choosedVariationId];
+        $this->tipoProduto = 'variable';
     
        
     }

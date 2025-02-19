@@ -164,28 +164,21 @@
 </main>
 @if (isset($requestData['combination']) || isset($requestData['single']))
 <form action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data">
-    
+    @csrf
     <div class="flex justify-center mt-6">
         <button
             class="cursor-pointer bg-gradient-to-b from-yellow-400 to-yellow-500 shadow-[0px_4px_32px_0_rgba(99,102,241,.70)] px-6 py-3 rounded-xl border-[1px] border-yellow-400 text-white font-medium group"
         >
             <div class="relative overflow-hidden">
-                <p
-                    class="group-hover:-translate-y-7 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]"
-                >
-                    Enviar
-                </p>
-                <p
-                    class="absolute top-7 left-0 group-hover:top-0 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]"
-                >
-                    Enviar
-                </p>
+                <p class="group-hover:-translate-y-7 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]">Enviar</p>
+                <p class="absolute top-7 left-0 group-hover:top-0 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]">Enviar</p>
             </div>
         </button>
     </div>
     
     <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">{{ $nomeProduto . " " . $brand }}</h2>
+        <input type="hidden" name="product_name" value="{{ $nomeProduto . ' ' . $brand }}">
         <table class="w-full border border-gray-300 rounded-lg overflow-hidden">
             <thead>
                 <tr class="bg-gray-100 text-gray-700 text-left">
@@ -204,13 +197,26 @@
                     @foreach ($requestData['combination'] as $idTamanho => $combinacoes)
                         @foreach ($combinacoes as $index => $combinacao)
                             <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
-                                <td class="p-2 border font-semibold text-gray-800">
-                                    {{ $combinacao[0] . " " . $combinacao[1] }}
+                            <td class="p-2 border font-semibold text-gray-800">
+                                {{ $combinacao[0] . " " . $combinacao[1] }}
+                                <input type="hidden" name="{{ $choosedVariationId }}[]" value="{{ $combinacao[0] }}">
+                                <input type="hidden" name="14[]" value="{{ $combinacao[1] }}">
+                            </td>
+                                <td class="p-2 border">
+                                    <input type="text" name="preco[]" placeholder="Digite o preço" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
                                 </td>
-                                @foreach (['preco', 'quantidade', 'estoque', 'estante', 'prateleira'] as $field)
+                                @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
+                                @if($field !== 'estoque')
+                                        
+                                <td class="p-2 border">
+                                        <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                    </td>
+                                    
+                                    @else
                                     <td class="p-2 border">
                                         <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                     </td>
+                                    @endif
                                 @endforeach
                                 <td class="p-2 border">
                                     <input type="file" name="imagem[]" accept="image/*" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
@@ -224,13 +230,25 @@
                 @if (!empty($requestData['single']))
                     @foreach ($requestData['single'] as $index => $item)
                         <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
-                            <td class="p-2 border font-semibold text-gray-800">
+                        <td class="p-2 border font-semibold text-gray-800">
                                 {{ $item }}
+                                <input type="hidden" name="color_or_attr[{{ $choosedVariationId ?? 14 }}]" value="{{ $item }}">
+                        </td>
+                            <td class="p-2 border">
+                                <input type="text" name="preco[]" placeholder="Digite o preço" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
                             </td>
-                            @foreach (['preco', 'quantidade', 'estoque', 'estante', 'prateleira'] as $field)
-                                <td class="p-2 border">
-                                    <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
-                                </td>
+                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
+                            @if($field !== 'estoque')
+                                        
+                                        <td class="p-2 border">
+                                                <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                            </td>
+                                            
+                                            @else
+                                            <td class="p-2 border">
+                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                            </td>
+                                            @endif
                             @endforeach
                             <td class="p-2 border">
                                 <input type="file" name="imagem[]" accept="image/*" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
@@ -238,37 +256,45 @@
                         </tr>
                     @endforeach
                 @endif
+
+                {{-- Para produtos simples --}}
                 @if (!empty($requestData['simples']))
-    @foreach ($requestData['simples'] as $index => $item)
-        <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
-            <td class="p-2 border font-semibold text-gray-800">
-                {{ $item }}
-            </td>
-                        <td class="p-2 border">
-                <input type="text" name="preco[]" placeholder="Digite o preço" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" >
-            </td>
-            <td class="p-2 border">
-                <input type="number" name="quantidade[]" placeholder="Digite a quantidade" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
-            </td>
-            <td class="p-2 border">
-                <input type="text" name="estoque[]" placeholder="Digite o estoque" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
-            </td>
-            <td class="p-2 border">
-                <input type="number" name="estante[]" placeholder="Digite a estante" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
-            </td>
-            <td class="p-2 border">
-                <input type="number" name="prateleira[]" placeholder="Digite a prateleira" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
-            </td>
-
-        </tr>
-    @endforeach
-@endif
-
+                    @foreach ($requestData['simples'] as $index => $item)
+                        <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
+                            <td class="p-2 border font-semibold text-gray-800">
+                                {{ $item }}
+                                
+                            </td>
+                            <td class="p-2 border">
+                                <input type="text" name="preco[]" placeholder="Digite o preço" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
+                            </td>
+                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
+                            @if($field !== 'estoque')
+                                        
+                                        <td class="p-2 border">
+                                                <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                            </td>
+                                            
+                                            @else
+                                            <td class="p-2 border">
+                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                            </td>
+                                            @endif
+                            @endforeach
+                            <td class="p-2 border">
+                                <input type="file" name="imagem[]" accept="image/*" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
     </div>
 </form>
 @endif
+
+
+
 
 
 
