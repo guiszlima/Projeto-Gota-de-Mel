@@ -23,6 +23,10 @@ class CriarProduto extends Component
     public $coresSelecionadas = [];
     public $tipoProduto;
     public $requestData;
+    public $allPrice;
+    public $allQuantity;
+    public $allEstoque;
+    public $allPrateleira;
 
     public function render()
     {

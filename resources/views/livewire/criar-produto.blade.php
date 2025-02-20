@@ -176,9 +176,76 @@
         </button>
     </div>
     
-    <div class="mt-6 bg-white p-6 rounded-lg shadow-md">
+    <div class="mt-6 bg-white p-6 rounded-lg shadow-md ">
+
+
+<div class="flex flex-col space-y-4 mb-2">
+
+<div class="flex flex-row space-x-4">
+    <input  id="all-price" placeholder="Preço de Todos"
+        class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        oninput="maskFloat(event)">
+    <button id="insert-price"
+        class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button" onclick="insertPrice(document.getElementById('all-price').value)" >
+    </button>
+</div>
+
+<div class="flex flex-row space-x-4">
+    <input type="text" id="all-quantity" 
+        class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder="Quantidade de todos">
+    <button id="insert-quantity"
+        class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button" onclick="insertQuantity(document.getElementById('all-quantity').value)">
+    </button>
+</div>
+
+<div class="flex flex-col space-y-6">
+    <div class="flex flex-row mt-3 space-x-4">
+        <input type="text" id="all-estoque" 
+            class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Definir Estoques">
+        <button id="insert-estoque"
+            class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+            type="button" onclick="insertEstoque(document.getElementById('all-estoque').value)">
+        </button>
+    </div>
+    <div class="flex flex-row space-x-4">
+        <input type="number" id="all-estante" 
+            class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Definir Estantes">
+        <button id="insert-estante"
+            class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+            type="button" onclick="insertEstante(document.getElementById('all-estante').value)">
+        </button>
+    </div>
+    <div class="flex flex-row space-x-4">
+        <input type="number" id="all-prateleira" 
+            class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Definir Prateleiras">
+        <button id="insert-prateleira"
+            class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+            type="button" onclick="insertPrateleira(document.getElementById('all-prateleira').value)">
+        </button>
+    </div>
+    <div class="flex flex-row space-x-4">
+    <input type="file" id="all-imagem"  accept="image/*"
+        class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+    <button id="insert-imagem"
+        class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button" onclick="insertImagem(document.getElementById('all-imagem').files)">
+    </button>
+</div>
+
+</div>
+
+</div>
+
+
         <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">{{ $nomeProduto . " " . $brand }}</h2>
         <input type="hidden" name="product_name" value="{{ $nomeProduto . ' ' . $brand }}">
+
         <table class="w-full border border-gray-300 rounded-lg overflow-hidden">
             <thead>
                 <tr class="bg-gray-100 text-gray-700 text-left">
@@ -192,6 +259,7 @@
                 </tr>
             </thead>
             <tbody>
+                
                 {{-- Para combinação de cor + tamanho --}}
                 @if (!empty($requestData['combination']))
                     @foreach ($requestData['combination'] as $idTamanho => $combinacoes)
@@ -203,23 +271,23 @@
                                 <input type="hidden" name="14[]" value="{{ $combinacao[1] }}">
                             </td>
                                 <td class="p-2 border">
-                                    <input type="text" name="preco[]" placeholder="Digite o preço" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
+                                    <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
                                 </td>
                                 @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
                                 @if($field !== 'estoque')
                                         
                                 <td class="p-2 border">
-                                        <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
-                                    </td>
+                                        <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                </td>
                                     
                                     @else
                                     <td class="p-2 border">
-                                        <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                        <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}   w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                     </td>
                                     @endif
                                 @endforeach
                                 <td class="p-2 border">
-                                    <input type="file" name="imagem[]" accept="image/*" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                    <input type="file" name="imagem[]" accept="image/*" class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                 </td>
                             </tr>
                         @endforeach
@@ -235,23 +303,23 @@
                                 <input type="hidden" name="color_or_attr[{{ $choosedVariationId ?? 14 }}]" value="{{ $item }}">
                         </td>
                             <td class="p-2 border">
-                                <input type="text" name="preco[]" placeholder="Digite o preço" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
+                                <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
                             </td>
                             @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
                             @if($field !== 'estoque')
                                         
                                         <td class="p-2 border">
-                                                <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                                <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                             </td>
                                             
                                             @else
                                             <td class="p-2 border">
-                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}   w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                             </td>
                                             @endif
                             @endforeach
                             <td class="p-2 border">
-                                <input type="file" name="imagem[]" accept="image/*" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                <input type="file" name="imagem[]" accept="image/*" class=" imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                             </td>
                         </tr>
                     @endforeach
@@ -266,23 +334,23 @@
                                 
                             </td>
                             <td class="p-2 border">
-                                <input type="text" name="preco[]" placeholder="Digite o preço" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
+                                <input type="text" name="preco[]" placeholder="Digite o preço" class="preco  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
                             </td>
                             @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
                             @if($field !== 'estoque')
                                         
                                         <td class="p-2 border">
-                                                <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                                <input type="number" name="[]" placeholder="Digite o {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                             </td>
                                             
                                             @else
                                             <td class="p-2 border">
-                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                             </td>
                                             @endif
                             @endforeach
                             <td class="p-2 border">
-                                <input type="file" name="imagem[]" accept="image/*" class="w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                <input type="file" name="imagem[]" accept="image/*" class="imagem  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                             </td>
                         </tr>
                     @endforeach
@@ -435,5 +503,41 @@ function ocultarAttrlist() {
     value = value.replace(".", ",");
     value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
     e.target.value = value;
-}''
+}
+</script>
+
+
+<script>
+
+
+
+function insertPrice(value) {
+    document.querySelectorAll('.preco').forEach(input => input.value = value);
+}
+
+function insertQuantity(value) {
+    document.querySelectorAll('.quantidade').forEach(input => input.value = value);
+}
+
+function insertEstoque(value) {
+    document.querySelectorAll('.estoque').forEach(input => input.value = value);
+}
+
+function insertEstante(value) {
+    document.querySelectorAll('.estante').forEach(input => input.value = value);
+}
+
+function insertPrateleira(value) {
+    document.querySelectorAll('.prateleira').forEach(input => input.value = value);
+}
+function insertImagem(files) {
+    if (files.length > 0) {
+        // Aqui você pode, por exemplo, adicionar o arquivo à lista de imagens ou processá-lo
+        document.querySelectorAll('.imagem').forEach(input => {
+            input.files = files; // Atribui os arquivos ao input
+        });
+    }
+}
+
+
 </script>
