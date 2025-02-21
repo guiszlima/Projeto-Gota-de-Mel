@@ -53,7 +53,7 @@
                     <option value="">Selecione uma categoria</option>
                     @if(is_array($categories) || is_object($categories))
                         @foreach($categories as $category)
-                            <option value='@json(["id" => $category["id"], "name" => $category["name"]])'>
+                            <option value='{{ $category["id"]}}'>
                                 {{ $category['name'] }}
                             </option>
                         @endforeach
@@ -245,7 +245,10 @@
 
         <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">{{ $nomeProduto . " " . $brand }}</h2>
         <input type="hidden" name="product_name" value="{{ $nomeProduto . ' ' . $brand }}">
-
+        <input type="hidden" name="product_type" value="{{ $tipoProduto }}">
+        <input type="hidden" name="attribute_id" value="{{ $choosedVariationId }}">
+        <input type="hidden" name="description" value="{{ $description }}">
+        <input type="hidden" name="category" value="{{ $categorySelected }}">
         <table class="w-full border border-gray-300 rounded-lg overflow-hidden">
             <thead>
                 <tr class="bg-gray-100 text-gray-700 text-left">
@@ -277,12 +280,12 @@
                                 @if($field !== 'estoque')
                                         
                                 <td class="p-2 border">
-                                        <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                        <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                                 </td>
                                     
                                     @else
                                     <td class="p-2 border">
-                                        <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}   w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                        <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}   w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                                     </td>
                                     @endif
                                 @endforeach
@@ -303,18 +306,18 @@
                                 <input type="hidden" name="color_or_attr[{{ $choosedVariationId ?? 14 }}]" value="{{ $item }}">
                         </td>
                             <td class="p-2 border">
-                                <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
+                                <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
                             </td>
                             @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
                             @if($field !== 'estoque')
                                         
                                         <td class="p-2 border">
-                                                <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                                <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                                             </td>
                                             
                                             @else
                                             <td class="p-2 border">
-                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}   w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}   w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                                             </td>
                                             @endif
                             @endforeach
@@ -334,18 +337,18 @@
                                 
                             </td>
                             <td class="p-2 border">
-                                <input type="text" name="preco[]" placeholder="Digite o preço" class="preco  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
+                                <input type="text" name="preco[]" placeholder="Digite o preço" class="preco  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
                             </td>
                             @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
                             @if($field !== 'estoque')
                                         
                                         <td class="p-2 border">
-                                                <input type="number" name="[]" placeholder="Digite o {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                                <input type="number" name="{{$field}}" placeholder="Digite o {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                                             </td>
                                             
                                             @else
                                             <td class="p-2 border">
-                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required >
                                             </td>
                                             @endif
                             @endforeach

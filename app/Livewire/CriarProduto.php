@@ -54,6 +54,8 @@ class CriarProduto extends Component
         return $categories_data;
     }
 
+    
+
     public function getAttr(Client $woocommerce)
     {
         $attributes_data = [];
@@ -186,7 +188,7 @@ class CriarProduto extends Component
         return [
             'name' => $this->nomeProduto . " " . $this->brand, // Nome do produto
             'descricao' => $this->description, // Descrição do produto
-            'categoria' => $jsonCategories, // Categorias selecionadas
+            
             'combination' => $combinations, // Combinações de atributos
         ];
     }
