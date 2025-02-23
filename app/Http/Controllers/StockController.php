@@ -92,6 +92,7 @@ class StockController extends Controller
 
     private function postSimpleProduct(Client $woocommerce, Request $request)
     {
+        
         // Converter o preço de "22,22" para "22.22"
         $preco = str_replace(',', '.', $request->input('preco')[0]);
         $preco = floatval($preco);
@@ -100,9 +101,9 @@ class StockController extends Controller
 
         // Verifica se a imagem foi enviada corretamente
         $image_id = null;
-        if ($request->hasFile('imagem.0')) {
+        if ($request->hasFile('image.0')) {
             $wpService = new WpClient();
-            $imageFile = $request->file('imagem.0');
+            $imageFile = $request->file('image.0');
             $wordpressServiceProvider = new WordpressServiceProvider(app());
             $image_id = $wordpressServiceProvider->uploadWP($imageFile, $request->input('product_name'), $wpService);
         }
@@ -133,12 +134,15 @@ class StockController extends Controller
                     'value' => $request->input('prateleira')[0] ?? '',
                 ]
             ]
+            
         ];
 
         if (!empty($image_id)) {
-            $productData['images'] = [['id' => $image_id]];
+            $productData['images'] = [
+                ['id' => $image_id]
+            ];
         }
-
+           
         try {
             // Envia o produto para o WooCommerce
             $response = $woocommerce->post('products', $productData);
@@ -152,10 +156,11 @@ class StockController extends Controller
                 'preco' => $response->regular_price,
                 'type'=> 'simples'
             ]);
-
+            
             return response()->json(['message' => 'Produto criado com sucesso!', 'data' => $response]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao criar o produto', 'details' => $e->getMessage()], 500);
+         
         }
     }
 
@@ -194,7 +199,7 @@ class StockController extends Controller
     
     private function createVariations(Client $woocommerce, Request $request, $product_id, WpClient $wpService) {
         $variations = [];
-    dd($request->all());
+        
         foreach ($request->input('preco') as $index => $preco) {
             $precoFormatado = str_replace(',', '.', $preco); // Convertendo "23,23" para "23.23"
     
@@ -212,12 +217,14 @@ class StockController extends Controller
 
             $sku = strtoupper(substr($request->input('product_name'), 0, 3)) . '-' . time() . '-' . $index;
            
-            if (isset($request->input('image')[$index]) && $request->input('images')[$index] instanceof \Illuminate\Http\UploadedFile) {
-                // Enviar a imagem e obter o ID da imagem
-                $wordpressServiceProvider = new WordpressServiceProvider(app());
-                $imageIds[] = $wordpressServiceProvider->uploadWP($request->('images')[$index], $data['id'][$i], $wpService); 
-                dd($imageIds);
+            if ($request->hasFile("image.{$index}")) {
+                $uploadedFile = $request->file("image.{$index}");
+                if ($uploadedFile instanceof \Illuminate\Http\UploadedFile) {
+                    $wordpressServiceProvider = new WordpressServiceProvider(app());
+                    $imageIds[$index] = $wordpressServiceProvider->uploadWP($uploadedFile, $request->input('product_name'), $wpService);
+                }
             }
+            
             $variations[] = [
                 'regular_price' => (string) floatval($precoFormatado),
                 'sku' => $sku,
@@ -231,18 +238,19 @@ class StockController extends Controller
                 ]
             ];
             if (!empty($imageIds[$index])) {
-                $variations['image'] = ['id' => $imageIds[$index]];
+                $variations[$index]['image'] = ['id' => $imageIds[$index]];
             }
+            
 
         
         
         }
-    dd( $variations);
+    
         // Enviar todas as variações para o WooCommerce de uma vez
        $response =  $woocommerce->post("products/{$product_id}/variations/batch", [
             'create' => $variations
         ]);
-        dd($response);
+        
         foreach ($response->create as $variation) {
             ReportCreate::create([
                 'product_id' => $variation->id,
@@ -337,10 +345,10 @@ class StockController extends Controller
          $imageIds = [];
      
          // Se o nome do produto pai foi alterado, faz um PUT para atualizar
-         if ($data['new_parent_name'] != $data['parent_name']) {
+         if ($data['old_parent_name'] != $data['parent_name']) {
              try {
                  $woocommerce->put("products/{$data['parent_id']}", [
-                     'name' => $data['new_parent_name']
+                     'name' => $data['parent_name']
                  ]);
              } catch (\Exception $e) {
                  return back()->with('error', 'Erro ao atualizar o nome do produto pai.');

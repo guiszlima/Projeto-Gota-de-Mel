@@ -168,7 +168,7 @@ $variante = 'true'
 
                     <input type="hidden" readonly name="type" value="variation">
                     <input name="parent_id" type="hidden" readonly value="{{ $parent_id }}">
-                    <input type="hidden" readonly name="new_parent_name" value="{{$parent_name}}">
+                    <input type="hidden" readonly name="old_parent_name" value="{{$parent_name}}">
     </div>
 </div>
 @endif
