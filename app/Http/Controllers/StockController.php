@@ -82,7 +82,7 @@ class StockController extends Controller
             return view('stock.create.create');
 
         } elseif ($request->input('product_type') === 'variable') {
-            $this->postVariableProduct($woocommerce, $request);
+            $this->postVariableProduct($woocommerce, $request, $wpService);
             
             return view('stock.create.create');
         }
@@ -159,7 +159,7 @@ class StockController extends Controller
         }
     }
 
-    private function postVariableProduct(Client $woocommerce, Request $request) { 
+    private function postVariableProduct(Client $woocommerce, Request $request, WpClient $wpService) { 
         // Criar os atributos do produto pai dinamicamente
         $attributes = [];
         foreach ($request->all() as $key => $values) {
@@ -188,13 +188,13 @@ class StockController extends Controller
     
         // Criar variações do produto PAI
         if (!empty($productResponse->id)) {
-            $this->createVariations($woocommerce, $request, $productResponse->id);
+            $this->createVariations($woocommerce, $request, $productResponse->id, $wpService);
         }
     }
     
-    private function createVariations(Client $woocommerce, Request $request, $product_id) {
+    private function createVariations(Client $woocommerce, Request $request, $product_id, WpClient $wpService) {
         $variations = [];
-    
+    dd($request->all());
         foreach ($request->input('preco') as $index => $preco) {
             $precoFormatado = str_replace(',', '.', $preco); // Convertendo "23,23" para "23.23"
     
@@ -211,7 +211,13 @@ class StockController extends Controller
 
 
             $sku = strtoupper(substr($request->input('product_name'), 0, 3)) . '-' . time() . '-' . $index;
-
+           
+            if (isset($request->input('image')[$index]) && $request->input('images')[$index] instanceof \Illuminate\Http\UploadedFile) {
+                // Enviar a imagem e obter o ID da imagem
+                $wordpressServiceProvider = new WordpressServiceProvider(app());
+                $imageIds[] = $wordpressServiceProvider->uploadWP($request->('images')[$index], $data['id'][$i], $wpService); 
+                dd($imageIds);
+            }
             $variations[] = [
                 'regular_price' => (string) floatval($precoFormatado),
                 'sku' => $sku,
@@ -224,17 +230,19 @@ class StockController extends Controller
                     ['key' => 'prateleira', 'value' => $request->input('prateleira')[$index] ?? '']
                 ]
             ];
-           
+            if (!empty($imageIds[$index])) {
+                $variations['image'] = ['id' => $imageIds[$index]];
+            }
 
         
         
         }
-    
+    dd( $variations);
         // Enviar todas as variações para o WooCommerce de uma vez
        $response =  $woocommerce->post("products/{$product_id}/variations/batch", [
             'create' => $variations
         ]);
-        
+        dd($response);
         foreach ($response->create as $variation) {
             ReportCreate::create([
                 'product_id' => $variation->id,
@@ -323,6 +331,7 @@ class StockController extends Controller
  
      private function updateVariations($data, Client $woocommerce, WpClient $wpService)
      {
+      
          $variantData = [];
          $count = count($data['variant_price']);
          $imageIds = [];
@@ -370,11 +379,11 @@ class StockController extends Controller
          try {
              // Chamada à API WooCommerce para atualizar as variações
              $response = $woocommerce->post("products/{$data['parent_id']}/variations/batch", $req);
-            dd($response);
+            
              if (isset($response->update)) {
                  foreach ($variantData as $index => $var) {
                      ReportCreate::where('product_id', $var['id'])->update([
-                         'nome' => $data['variant_name'][$index] ?? '',
+                         'nome' => $data['parent_name'] ." ".$data['variant_name'][$index] ?? '',
                          'preco' => $var['regular_price'],
                          'estoque' => $data['variant_stock_quantity'][$index],
                          'estante' => $data['estante'][$index],

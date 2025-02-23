@@ -289,7 +289,7 @@
                                     @endif
                                 @endforeach
                                 <td class="p-2 border">
-                                    <input type="file" name="imagem[]" accept="image/*" class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                    <input type="file" name="image[]" accept="image/*" class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                 </td>
                             </tr>
                         @endforeach
@@ -321,7 +321,7 @@
                                             @endif
                             @endforeach
                             <td class="p-2 border">
-                                <input type="file" name="imagem[]" accept="image/*" class=" imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                <input type="file" name="image[]" accept="image/*" class=" imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                             </td>
                         </tr>
                     @endforeach
@@ -352,7 +352,7 @@
                                             @endif
                             @endforeach
                             <td class="p-2 border">
-                                <input type="file" name="imagem[]" accept="image/*" class="imagem  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
+                                <input type="file" name="image[]" accept="image/*" class="imagem  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                             </td>
                         </tr>
                     @endforeach

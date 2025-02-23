@@ -160,6 +160,7 @@ $variante = 'true'
                 </div>
 
                 <input name="id[]" type="hidden" readonly value="{{ $variant->id }}">
+                <input name="variant_name[]" type="hidden" readonly value="{{ $variant->name }}">
             </div>
         </div>
     </div>
