@@ -37,10 +37,6 @@ class StockController extends Controller
 
         // Obter o total de produtos a partir dos cabeçalhos de resposta
         $responseHeaders = $woocommerce->http->getResponse()->getHeaders();
-<<<<<<< HEAD
-        
-=======
->>>>>>> feature/add-new-feature-register-products
         try {
             $totalProducts = $responseHeaders['X-WP-Total'];
          } catch (\Throwable $th) {
@@ -87,28 +83,6 @@ class StockController extends Controller
         if ($request->input('product_type') === 'simple') {
             $this->postSimpleProduct($woocommerce, $request);
 
-<<<<<<< HEAD
-        // Caminho da imagem no seu projeto Laravel
-       
-        $e_commerce=env('WOOCOMMERCE_STORE_URL');
-        $requestUrl = '/wp-json/wp/v2/media';
-        $request_url = $e_commerce.$requestUrl;
-        // Fazer a requisição de upload da imagem
-        
-        $response = $wpService->request('POST', $request_url, [
-            'headers' => [
-                'Content-Disposition' => 'attachment; filename="' . basename($imgPath) . '"',
-                'Content-Type' => "image/$extension",
-            ],
-            'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
-            'auth' => [env('ADMIN_NAME'), env('ADMIN_APP_PASSWORD')], // Autenticação básica com usuário e senha
-            
-        ]);
-
-        $image_data = json_decode($response->getBody(), true);
-        $image_id = $image_data['id']; // Obter o ID da imagem
-        
-=======
             return view('stock.create.create');
 
         } elseif ($request->input('product_type') === 'variable') {
@@ -116,7 +90,6 @@ class StockController extends Controller
             
             return view('stock.create.create');
         }
->>>>>>> feature/add-new-feature-register-products
 
         return response()->json(['message' => 'Tipo de produto não suportado'], 400);
     }
@@ -268,104 +241,9 @@ class StockController extends Controller
                     ['key' => 'prateleira', 'value' => $request->input('prateleira')[$index] ?? '']
                 ]
             ];
-<<<<<<< HEAD
-    
-    }
-
-    else{
-        $productData = [
-            'name' => $validatedData['name'],
-            'sku' => $validatedData['sku'],
-            'regular_price' => $validatedData['price'],
-            'manage_stock'=>true,
-            'stock_quantity' => $validatedData['stock_quantity'],
-            'description' => $validatedData['description'],
-            'dimensions' => [
-                'height' => $validatedData['height'] ?? '',
-                'width' => $validatedData['width'] ?? '',
-                'length' => $validatedData['depth'] ?? '',
-            ],
-            'weight' => $validatedData['weight'] ?? '',
-            'categories' => [
-                [
-                    'id' => $validatedData['category']
-                ],
-            ],
-           
-            ]; 
-    }
-        
-    try {
-        // Enviar a requisição para criar o produto na API do WooCommerce
-        $response = $woocommerce->post('products', $productData);
-        
-      $testvar =  ReportCreate::create([
-            'product_id' => $response->id,
-            'nome' => $response->name,
-            'estoque'=> $request->estoque,
-            'estante' => $request->estante,
-            'prateleira'=>$request->prateleira,
-            'preco' => $response->price,
-            'type'=> 'simples'
-        ]);
-       
-
-        // Opcional: Verifique a resposta e execute ações conforme necessário
-        return back()->with("warn", "Produto Registrado com sucesso");
-    } catch (\Exception $e) {
-        // Lide com exceções, como erros de rede ou falhas na API
-     dd($e);
-        return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsavel' );
-    }
-}
-public function createVariableProduct(Client $woocommerce) {
-    // Obter os atributos de produtos
-    $currentRoute = Route::currentRouteName();
-   
-
-    
-    // Passar os atributos organizados para a view
-    return view('stock.create-variable-product')->with('currentRoute',$currentRoute); 
-}
-
-public function storeVariableproduct(Client $woocommerce, Request $request,WpClient $wpService){
-    
-    $data = $request->all();
-dd($request->all());
-   $attribute_name = $data['nameAttribute'];
-    $attribute_id =(int)$data['attribute_dad'][0];
-
-    // Processar o upload da imagem
-    if ($request->hasFile('imagem')) {
-        // Obtém o caminho do arquivo da imagem
-        $requestImage = $request->imagem;
-        $extension = $requestImage->extension();
-        $imageName = $request['productName'] . strtotime('now') . '.' . $extension;
-        $imgPath = public_path('img/temp_imgs/' . $imageName);
-        $requestImage->move(public_path('img/temp_imgs'), $imageName);
-       
-        // Caminho da imagem no seu projeto Laravel
-
-
-        // Caminho da imagem no seu projeto Laravel
-       
-        $e_commerce=env('WOOCOMMERCE_STORE_URL');
-        $request = '/wp-json/wp/v2/media';
-        $request_url = $e_commerce.$request;
-        // Fazer a requisição de upload da imagem
-        
-        $response = $wpService->request('POST', $request_url, [
-            'headers' => [
-                'Content-Disposition' => 'attachment; filename="' . basename($imgPath) . '"',
-                'Content-Type' => "image/$extension",
-            ],
-            'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
-            'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
-=======
             if (!empty($imageIds[$index])) {
                 $variations[$index]['image'] = ['id' => $imageIds[$index]];
             }
->>>>>>> feature/add-new-feature-register-products
             
 
         
