@@ -29,10 +29,6 @@ class BarCodeMakerController extends Controller
       } catch (\Throwable $th) {
          $totalProducts = $responseHeaders['x-wp-total'];
       }
-<<<<<<< HEAD
-      
-=======
->>>>>>> feature/add-new-feature-register-products
      
       // Calculando o número total de páginas
       $totalPages = ceil($totalProducts / $nmbrPerPage);
