@@ -28,11 +28,12 @@ $variante = 'true'
                         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Editar</button>
                 </div>
             </div>
-
+<!-- Não é variação -->
             @if ($tipoProduto !== 'variation')
             @php
             $variante = 'falso';
             @endphp
+
             <div id="divChangeImg" class="flex flex-row hidden ">
                 <input name="image" type="file"
                     class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-min mb-4" placeholder="
@@ -48,15 +49,12 @@ $variante = 'true'
             </div>
 
             <div class="flex flex-row justify-between w-50% space-x-10 mt-10">
-                <div class="flex flex-col w-1/2">
-                    <label for="sku" class="text-gray-700 mb-2">Identificador de Produto</label>
-                    <input id="sku" name="sku" type="text" readonly value="{{ $product->sku }}"
-                        class="editInput text-center border border-gray-300 p-3 rounded w-full">
-                </div>
+               
                 <div class="flex flex-col w-full">
                     <label for="price" class="text-gray-700 mb-2">Preço</label>
                     <input id="price" name="price" type="text" readonly value="{{ $product->price }}"
-                        class="price editInput text-center border border-gray-300 p-3 rounded w-full">
+                        class="price editInput text-center border border-gray-300 p-3 rounded w-full"
+                        oninput="maskFloat(event)">
                 </div>
 
                 <div class="flex flex-col">
@@ -67,13 +65,13 @@ $variante = 'true'
                     </div>
                     <div class="flex flex-col w-full">
                         <label for="estante" class="text-gray-700 mb-2">Estante</label>
-                        <input id="estante" name="estante" type="text" readonly value="{{ $product->estante??""  }}"
+                        <input id="estante" name="estante" type="number" readonly value="{{ $product->estante??""  }}"
                             class="  editInput text-center border border-gray-300 p-3 rounded w-full">
                     </div>
 
                     <div class="flex flex-col w-full">
                         <label for="prateleira" class=" text-gray-700 mb-2">Prateleira</label>
-                        <input id="prateleira" name="prateleira" type="text" readonly
+                        <input id="prateleira" name="prateleira" type="number" readonly
                             value="{{ $product->prateleira??""  }}"
                             class="editInput text-center border border-gray-300 p-3 rounded w-full">
                     </div>
@@ -85,103 +83,97 @@ $variante = 'true'
                         class="editInput text-center border border-gray-300 p-3 rounded w-full">
                 </div>
                 <input name="id" type="hidden" readonly value="{{ $product->id }}">
-                @else
+                <input type="hidden" readonly name="type" value="simple">
+<!-- É variação -->
+@else
+<div class="flex flex-col">
+    <div id="divChangePrices" class="flex flex-row hidden mb-6">
+        <input type="number" id="inputChangePrice"
+            class="text-center text-xl font-semibold border border-gray-300 p-3 rounded-md w-2/5 mb-4 focus:ring-2 focus:ring-blue-500"
+            placeholder="Mudar todos preços">
+        <button id="changeButton" type="button"
+            class="bg-blue-500 text-white px-4 py-3 rounded-md hover:bg-blue-600 transition-colors duration-300 focus:ring-2 focus:ring-blue-500">
+            Atualizar
+        </button>
+    </div>
 
-                <div class="flex flex-col ">
-                    <div id="divChangePrices" class="flex flex-row hidden ">
-                        <input type="number" id="inputChangePrice"
-                            class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-2/5 mb-4"
-                            placeholder="
-                Mudar todos preços ">
-                        <button id="changeButton" type="button"
-                            class="bg-blue-500 text-white px-4 py-3 h-max ml-2 rounded hover:bg-blue-600 transition-colors duration-300">
-                            Atualizar
-                        </button>
-                    </div>
+    <!-- Input único para o nome do produto pai -->
+    <div class="flex flex-col w-full mb-8">
+        <label for="parent_name" class="text-gray-700 font-semibold mb-2">Nome do Produto Pai</label>
+        <input id="parent_name" name="parent_name" type="text" readonly value="{{ $parent_name }}"
+            class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full font-semibold bg-gray-100 ">
+    </div>
 
-                    <div id="divChangeImgVar" class="flex flex-row hidden ">
-                        <input name="image" type="file"
-                            class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-2/5 mb-4"
-                            placeholder="
-                Inserir imagem">
+    <div class="flex flex-wrap gap-6">
+    @foreach ($product as $variant)
+    <div class="flex flex-col items-center w-full lg:w-1/4 md:w-1/2">
+        <button type="button"
+            class="toggleBtn w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300">
+            {{ $variant->name }}
+        </button>
+        <div class="content hidden w-full mt-4 p-6 bg-white shadow-xl rounded-lg flex flex-col items-center justify-center text-lg fade-in">
+            <img src="{{ $variant->image->src ?? '' }}" alt="{{ $variant->name }}"
+                class="w-3/4 h-auto object-contain mb-4 rounded-lg shadow-md">
 
-                    </div>
-                    <div class="flex flex-wrap  gap-6">
-                        @foreach ($product as $variant)
-
-                        <div class=" flex flex-col items-center">
-                            <button type="button"
-                                class="toggleBtn w-80 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">{{ $variant->name }}</button>
-                            <div
-                                class="content hidden w-80 mt-4 p-4 bg-white shadow-lg rounded-lg flex flex-col items-center justify-center text-lg fade-in">
-                                <img src="{{ $variant->image->src ??'' }}" alt="{{ $variant->name }}"
-                                    class="w-3/4 h-auto object-contain mb-4 rounded-lg shadow-md">
-                                <input type="text" name="variant_name[]" readonly value="{{ $variant->name }}"
-                                    class="editInputVar   text-center text-xl font-semibold border border-gray-300 p-3 rounded w-full mb-4">
-
-                                <div class="flex flex-col w-full space-y-2">
-
-
-                                    <div class="flex flex-col w-full">
-                                        <label for="sku_{{ $loop->index }}" class="text-gray-700 mb-2">Identificador de
-                                            Produto</label>
-                                        <input id="sku_{{ $loop->index }}" name="variant_sku[]" type="text" readonly
-                                            value="{{ $variant->sku }}"
-                                            class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
-                                    </div>
-
-                                    <div class="flex flex-col w-full">
-                                        <label for="price_{{ $loop->index }}" class="text-gray-700 mb-2">Preço</label>
-                                        <input id="price_{{ $loop->index }}" name="variant_price[]" type="text" readonly
-                                            value="{{ $variant->price }}"
-                                            class="precos  editInputVar text-center border border-gray-300 p-3 rounded w-full">
-                                    </div>
-
-
-
-                                    <div class="flex flex-col w-full">
-                                        <label for="price_{{ $loop->index }}"
-                                            class="text-gray-700 mb-2">Quantidade</label>
-                                        <input id="price_{{ $loop->index }}" name="variant_stock_quantity[]" type="text"
-                                            readonly value="{{ $variant->stock_quantity }}"
-                                            class="editInputVar text-center border border-gray-300 p-3 rounded w-full">
-
-                                        <div class="flex flex-col w-full">
-                                            <label for="price_{{ $loop->index }}"
-                                                class="text-gray-700 mb-2">Estoque</label>
-                                            <input id="price_{{ $loop->index }}" name="estoque[]" type="text" readonly
-                                                value="{{ $variant->estoque }}"
-                                                class="  editInputVar text-center border border-gray-300 p-3 rounded w-full">
-                                        </div>
-
-                                        <div class="flex flex-col w-full">
-                                            <label for="price_{{ $loop->index }}"
-                                                class="text-gray-700 mb-2">Estante</label>
-                                            <input id="price_{{ $loop->index }}" name="estante[]" type="text" readonly
-                                                value="{{ $variant->estante }}"
-                                                class="  editInputVar text-center border border-gray-300 p-3 rounded w-full">
-                                        </div>
-
-                                        <div class="flex flex-col w-full">
-                                            <label for="preateleira_{{ $loop->index }}"
-                                                class="text-gray-700 mb-2">Prateleira</label>
-                                            <input id="prateleira_{{ $loop->index }}" name="prateleira[]" type="text"
-                                                readonly value="{{ $variant->prateleira }}"
-                                                class="  editInputVar text-center border border-gray-300 p-3 rounded w-full">
-                                        </div>
-
-
-                                        <input name="id[]" type="hidden" readonly value="{{ $variant->id }}">
-                                        <input name="parent_id" type="hidden" readonly
-                                            value="{{ $variant->parent_id }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
+            <div class="flex flex-col w-full space-y-4">
+                <div class="flex flex-col w-full">
+                    <label for="price_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Preço</label>
+                    <input id="price_{{ $loop->index }}" name="variant_price[]" type="text" readonly
+                        value="{{ $variant->price }}"
+                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full"
+                        oninput="maskFloat(event)">
                 </div>
-                @endif
+
+                <div class="flex flex-col w-full">
+                    <label for="stock_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Quantidade</label>
+                    <input id="stock_{{ $loop->index }}" name="variant_stock_quantity[]" type="text" readonly
+                        value="{{ $variant->stock_quantity }}"
+                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full">
+                </div>
+
+                <div class="flex flex-col w-full">
+                    <label for="estoque_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Estoque</label>
+                    <input id="estoque_{{ $loop->index }}" name="estoque[]" type="text" readonly
+                        value="{{ $variant->estoque }}"
+                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full">
+                </div>
+
+                <div class="flex flex-col w-full">
+                    <label for="estante_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Estante</label>
+                    <input id="estante_{{ $loop->index }}" name="estante[]" type="number" readonly
+                        value="{{ $variant->estante }}"
+                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full">
+                </div>
+
+                <div class="flex flex-col w-full">
+                    <label for="prateleira_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Prateleira</label>
+                    <input id="prateleira_{{ $loop->index }}" name="prateleira[]" type="number" readonly
+                        value="{{ $variant->prateleira }}"
+                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full">
+                </div>
+
+                <!-- Input para imagem -->
+                <div class="flex flex-col w-full">
+                    <label for="image_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Inserir Imagem</label>
+                    <input name="images[{{ $loop->index }}]" type="file" id="image_{{ $loop->index }}"
+                        class="text-center text-xl font-semibold border border-gray-300 p-3 rounded-md w-full mb-4">
+                </div>
+
+                <input name="id[]" type="hidden" readonly value="{{ $variant->id }}">
+                <input name="variant_name[]" type="hidden" readonly value="{{ $variant->name }}">
+            </div>
+        </div>
+    </div>
+@endforeach
+
+                    <input type="hidden" readonly name="type" value="variation">
+                    <input name="parent_id" type="hidden" readonly value="{{ $parent_id }}">
+                    <input type="hidden" readonly name="old_parent_name" value="{{$parent_name}}">
+    </div>
+</div>
+@endif
+
+
         </form>
     </div>
 </div>
@@ -288,6 +280,18 @@ if ("{{$variante}}" !== "falso") {
 
 
     });
+}
+</script>
+
+
+<script>
+    function maskFloat(e) {
+    let value = e.target.value;
+    value = value.replace(/\D/g, '');
+    value = (value / 100).toFixed(2) + '';
+    value = value.replace(".", ",");
+    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+    e.target.value = value;
 }
 </script>
 @endsection

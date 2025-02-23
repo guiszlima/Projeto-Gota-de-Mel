@@ -29,7 +29,10 @@ class BarCodeMakerController extends Controller
       } catch (\Throwable $th) {
          $totalProducts = $responseHeaders['x-wp-total'];
       }
+<<<<<<< HEAD
       
+=======
+>>>>>>> feature/add-new-feature-register-products
      
       // Calculando o número total de páginas
       $totalPages = ceil($totalProducts / $nmbrPerPage);
@@ -41,14 +44,21 @@ class BarCodeMakerController extends Controller
       ]);
    }
 
-   public function generate(Request $request){
-      $nome_sem_espacos = str_replace(' ', '_', trim($request->name));
+   public function generate(Request $request , Client $woocommerce){
       
+      $nome_sem_espacos = str_replace(' ', '_', trim($request->name));
+      if ($request->type == 'variable') {
+         $variations = $woocommerce->get("products/{$request->id}/variations");
+         
+         return view('barcode.generate-var')->with('variations', $variations)->with('parent_name',$request->name);
+
+      }else{
       $product = [
          'sku'=>$request->sku,
          'price'=> $request->price,
          'name' => $nome_sem_espacos
       ];
       return view('barcode.generate')->with('product', $product);
+   }
    }
 }

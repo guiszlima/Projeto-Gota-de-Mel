@@ -27,6 +27,8 @@
                         <input type="hidden" name="sku" value="{{ $product->sku }}">
                         <input type="hidden" name="price" value="{{ $product->price }}">
                         <input type="hidden" name="name" value="{{ $product->name }}">
+                        <input type="hidden" name="type" value="{{$product->type}}">
+                        <input type="hidden" name="id" value="{{$product->id}}">
                         <button type="submit"
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Gerar Código de Barras
