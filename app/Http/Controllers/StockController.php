@@ -33,7 +33,6 @@ class StockController extends Controller
         try {
             $products = $woocommerce->get('products', $params);
         } catch (\Exception $e) {
-            dd($e);
         }
 
         // Obter o total de produtos a partir dos cabeçalhos de resposta
@@ -65,7 +64,7 @@ class StockController extends Controller
                 'name' => $category->name
             ];
         }
-        return view('stock.create.create')->with('currentRoute', $currentRoute)->with('categories', $categories_data)->with('currentRoute', $currentRoute);
+        return view('stock.create.create')->with('categories', $categories_data)->with('currentRoute', $currentRoute);
     }
 
     /**
@@ -74,13 +73,18 @@ class StockController extends Controller
     public function store(Client $woocommerce, Request $request, WpClient $wpService)
     {
         // Debug para verificar os dados recebidos
-        //dd($request->all());
+        
 
         // Verifica se o tipo de produto é "simple"
         if ($request->input('product_type') === 'simple') {
-            return $this->postSimpleProduct($woocommerce, $request);
+            $this->postSimpleProduct($woocommerce, $request);
+
+            return view('stock.create.create');
+
         } elseif ($request->input('product_type') === 'variable') {
-            return $this->postVariableProduct($woocommerce, $request);
+            $this->postVariableProduct($woocommerce, $request);
+            
+            return view('stock.create.create');
         }
 
         return response()->json(['message' => 'Tipo de produto não suportado'], 400);
@@ -107,6 +111,7 @@ class StockController extends Controller
             'name' => $request->input('product_name'),
             'type' => 'simple',
             'sku' => $sku,
+            'manage_stock' =>true,
             'regular_price' => (string) $preco, // WooCommerce exige string numérica
             'stock_quantity' => (int) $request->input('quantidade'),
             'categories' => [
@@ -121,11 +126,11 @@ class StockController extends Controller
                 ],
                 [
                     'key' => 'estante',
-                    'value' => $request->input('estante') ?? '',
+                    'value' => $request->input('estante')[0] ?? '',
                 ],
                 [
                     'key' => 'prateleira',
-                    'value' => $request->input('prateleira') ?? '',
+                    'value' => $request->input('prateleira')[0] ?? '',
                 ]
             ]
         ];
@@ -137,6 +142,17 @@ class StockController extends Controller
         try {
             // Envia o produto para o WooCommerce
             $response = $woocommerce->post('products', $productData);
+            
+            ReportCreate::create([
+                'product_id' => $response->id,
+                'nome' => $request->input('product_name'),
+                'estoque'=> $request->input('estoque')[0],
+                'estante' => $request->input('estante')[0],
+                'prateleira'=>$request->input('prateleira')[0],
+                'preco' => $response->regular_price,
+                'type'=> 'simples'
+            ]);
+
             return response()->json(['message' => 'Produto criado com sucesso!', 'data' => $response]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erro ao criar o produto', 'details' => $e->getMessage()], 500);
@@ -147,10 +163,9 @@ class StockController extends Controller
         // Criar os atributos do produto pai dinamicamente
         $attributes = [];
         foreach ($request->all() as $key => $values) {
-            if (is_array($values) && is_numeric($key)) { // Verifica se é um atributo
+            if (is_array($values) && is_numeric($key) ) { // Verifica se é um atributo
                 $attributes[] = [
                     'id' => (int) $key, // ID do atributo no WooCommerce
-                    'name' => '', // Nome não é necessário, pois já temos o ID
                     'variation' => true,
                     'options' => array_unique($values) // Evita valores repetidos
                 ];
@@ -193,10 +208,15 @@ class StockController extends Controller
                     ];
                 }
             }
-    
+
+
+            $sku = strtoupper(substr($request->input('product_name'), 0, 3)) . '-' . time() . '-' . $index;
+
             $variations[] = [
                 'regular_price' => (string) floatval($precoFormatado),
-                'stock_quantity' => (int) $request->input('quantidade')[$index],
+                'sku' => $sku,
+                'stock_quantity' => (string) $request->input('quantidade')[$index],
+                'manage_stock' =>true,
                 'attributes' => $variationAttributes,
                 'meta_data' => [
                     ['key' => 'estoque', 'value' => $request->input('estoque')[$index] ?? ''],
@@ -204,12 +224,30 @@ class StockController extends Controller
                     ['key' => 'prateleira', 'value' => $request->input('prateleira')[$index] ?? '']
                 ]
             ];
+           
+
+        
+        
         }
     
         // Enviar todas as variações para o WooCommerce de uma vez
-        $woocommerce->post("products/{$product_id}/variations/batch", [
+       $response =  $woocommerce->post("products/{$product_id}/variations/batch", [
             'create' => $variations
         ]);
+        
+        foreach ($response->create as $variation) {
+            ReportCreate::create([
+                'product_id' => $variation->id,
+                'nome' => $request->input('product_name'),
+                'estoque'=> $request->input('estoque')[$index],
+                'estante' => $request->input('estante')[$index],
+                'prateleira'=>$request->input('prateleira')[$index],
+                'preco' => (string) $request->input('quantidade')[$index],
+                'type'=> 'variable'
+            ]);
+        }
+       
+
     }
     
     
@@ -219,18 +257,19 @@ class StockController extends Controller
     public function show(Client $woocommerce, string $id)
     {
         $product = $woocommerce->get("products/{$id}");
-
+    
+        // Define o nome do produto pai antes do loop
+        $parent_name = $product->name;
+        $parent_id = $product->id;
         if (!empty($product->variations)) {
             $variations = $woocommerce->get("products/{$id}/variations");
-
+    
             foreach ($variations as $variation) {
                 // Busca o relatório de criação baseado no ID da variação
                 $repProd = ReportCreate::where('product_id', $variation->id)->first();
-
-                $variation->parent_name = $product->name;
-                $variation->name = $variation->parent_name . " " . $variation->name;
-                $variation->parent_id = $product->id;
-
+    
+               
+    
                 // Verifica se repProd foi encontrado
                 if ($repProd) {
                     $variation->estoque = $repProd->estoque;
@@ -238,7 +277,7 @@ class StockController extends Controller
                     $variation->prateleira = $repProd->prateleira;
                 }
             }
-
+    
             $product = $variations;
         } else {
             $repProd = ReportCreate::where('product_id', $id)->first();
@@ -249,10 +288,14 @@ class StockController extends Controller
                 $product->prateleira = $repProd->prateleira;
             }
         }
-
-        return view("stock.stock-show")->with('product', $product);
+    
+        return view("stock.stock-show")->with([
+            'product' => $product,
+            'parent_name' => $parent_name,
+            'parent_id' => $parent_id
+        ]);
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      */
@@ -264,86 +307,129 @@ class StockController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Client $woocommerce, WpClient $wpService)
-    {
-        $data = $request->all();
-
-        if ($request->hasFile('image')) {
-            $wpClass = new WordpressClass($request->all(), $woocommerce, $wpService);
-            $wpClass->EditarImagem();
-        }
-        if (isset($data['variant_name'])) {
-            $variantData = [];
-            $repItemUpdt = [];
-            $count = count($data['variant_name']);
-
-            for ($i = 0; $i < $count; $i++) {
-                $variantData[] = [
-                    'id' => $data['id'][$i],
-                    'name' => $data['variant_name'][$i],
-                    'sku' => $data['variant_sku'][$i],
-                    'regular_price' => $data['variant_price'][$i],
-                    'price' => $data['variant_price'][$i],
-                    'stock_quantity' => $data['variant_stock_quantity'][$i],
-                ];
-            }
-
-            // Estrutura correta da requisição
-            $req = [
-                'update' => $variantData,
+    
+     public function update(Request $request, Client $woocommerce, WpClient $wpService, )
+     {
+         $data = $request->all();
+         if ($data['type'] === 'simple') {
+             $this->updateSimple($request, $woocommerce, $wpService, );
+             return redirect()->route('stock.show', ['id' => $data['id']]);
+         } else {
+           
+             $this->updateVariations($data, $woocommerce,$wpService);
+             return redirect()->route('stock.show', ['id' => $data['parent_id']]);
+         }
+     }
+ 
+     private function updateVariations($data, Client $woocommerce, WpClient $wpService)
+     {
+         $variantData = [];
+         $count = count($data['variant_price']);
+         $imageIds = [];
+     
+         // Se o nome do produto pai foi alterado, faz um PUT para atualizar
+         if ($data['new_parent_name'] != $data['parent_name']) {
+             try {
+                 $woocommerce->put("products/{$data['parent_id']}", [
+                     'name' => $data['new_parent_name']
+                 ]);
+             } catch (\Exception $e) {
+                 return back()->with('error', 'Erro ao atualizar o nome do produto pai.');
+             }
+         }
+         
+         // Loop para preparar os dados das variações
+         for ($i = 0; $i < $count; $i++) {
+             // Verificar se há imagens para a variação
+             if (isset($data['images'][$i]) && $data['images'][$i] instanceof \Illuminate\Http\UploadedFile) {
+                 // Enviar a imagem e obter o ID da imagem
+                 $wordpressServiceProvider = new WordpressServiceProvider(app());
+                 $imageIds[] = $wordpressServiceProvider->uploadWP($data['images'][$i], $data['id'][$i], $wpService); 
+                 
+             }
+     
+             // Preparar os dados da variação
+             $variant = [
+                'id' => $data['id'][$i],  // O id diretamente aqui
+                
+                'regular_price' => (string)str_replace(',', '.', $data['variant_price'][$i]),
+                'stock_quantity' => $data['variant_stock_quantity'][$i],
             ];
-
-            try {
-                // Chamada à API WooCommerce
-                $response = $woocommerce->post("products/{$data['parent_id']}/variations/batch", $req);
-
-                // Verifica se a resposta contém atualizações
-                if (isset($response->update)) {
-                    foreach ($variantData as $index => $var) {
-                        $estoque = $data['estoque'][$index];
-                        $estante = $data['estante'][$index];
-                        $prateleira = $data['prateleira'][$index];
-                        ReportCreate::where('product_id', $var['id'])->update([
-                            'nome' => $var['name'],
-                            'preco' => $var['regular_price'],
-                            'estoque' => $estoque,
-                            'estante' => $estante,
-                            'prateleira' => $prateleira,
-                        ]);
-                    }
-                }
-
-                return back()->with('warn', 'Produto editado com sucesso');
-            } catch (\Exception $e) {
-                return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsável');
+    
+            // Só adiciona o campo 'images' se houver imagens
+            if (!empty($imageIds[$i])) {
+                $variant['image'] = ['id' => $imageIds[$i]];
             }
-        } else {
-            // Não é variação
-            try {
-                $id = $data['id'];
-                $produto = [
-                    'name' => $data['name'],
-                    'regular_price' => $data['price'],
-                    'price' => $data['price'],
-                    'stock_quantity' => $data['quantity'],
-                    'sku' => $data['sku'],
-                ];
-                $woocommerce->put("products/$id", $produto);
-                ReportCreate::where('product_id', $id)->update([
-                    'nome' => $data['name'],
-                    'preco' => $data['price'],
-                    'estoque' => $data['estoque'],
-                    'estante' => $data['estante'],
-                    'prateleira' => $data['prateleira']
-                ]);
-
-                return back()->with("warn", "Produto Editado com sucesso");
-            } catch (\Exception $e) {
-                return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsável');
-            }
+    
+            // Adiciona a variação aos dados
+            $variantData[] = $variant;
         }
-    }
-
+         // Estrutura da requisição para atualizar as variações
+         $req = ['update' => $variantData];
+  
+         try {
+             // Chamada à API WooCommerce para atualizar as variações
+             $response = $woocommerce->post("products/{$data['parent_id']}/variations/batch", $req);
+            dd($response);
+             if (isset($response->update)) {
+                 foreach ($variantData as $index => $var) {
+                     ReportCreate::where('product_id', $var['id'])->update([
+                         'nome' => $data['variant_name'][$index] ?? '',
+                         'preco' => $var['regular_price'],
+                         'estoque' => $data['variant_stock_quantity'][$index],
+                         'estante' => $data['estante'][$index],
+                         'prateleira' => $data['prateleira'][$index],
+                     ]);
+                 }
+             }
+     
+             return back()->with('success', 'Produto e variações atualizados com sucesso!');
+         } catch (\Exception $e) {
+             return back()->with('error', 'Erro ao atualizar as variações do produto.');
+         }
+     }
+     
+ 
+     private function updateSimple(Request $request, Client $woocommerce, WpClient $wpService)
+     {
+         $data = $request->all();
+         $image_id = null;
+         if ($request->hasFile('image')) {
+             $imageFile = $request->file('image');
+             $wordpressServiceProvider = new WordpressServiceProvider(app());
+             $image_id = $wordpressServiceProvider->uploadWP($imageFile,$data['name'], $wpService) ;
+             
+         }
+         try {
+             $id = $data['id'];
+             $produto = [
+                 'name' => $data['name'],
+                 'regular_price' => (string)str_replace(',', '.', $data['price']),
+                 'stock_quantity' => $data['quantity'],
+                
+             ];
+             if($image_id){
+                 $produto['images'] = [['id' => $image_id]];
+             }
+             
+             $woocommerce->put("products/$id", $produto);
+             ReportCreate::where('product_id', $id)->update([
+                'nome' => $data['name'],
+                'preco' => (string)str_replace(',', '.', $data['price']),
+                'estoque' => $data['estoque'],
+                'estante' => $data['estante'],
+                'prateleira' => $data['prateleira']
+            ]);
+            
+ 
+             return back()->with("warn", "Produto Editado com sucesso");
+         } catch (\Exception $e) {
+            
+             return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsável');
+         }
+     }
+ 
+    
     /**
      * Remove the specified resource from storage.
      */

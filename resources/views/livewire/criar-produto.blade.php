@@ -141,7 +141,6 @@
                                 <!-- Botão Selecionar Todos -->
                                 <button type="button" wire:click="selectAll({{ $atributo['attribute']['id'] }})" class="selectAllBtn px-4 py-2 bg-blue-500 text-white rounded mt-2 w-min"
                                >
-
                                     Selecionar Todos
                                 </button>
                             </div>
@@ -303,7 +302,7 @@
                         <tr class="{{ $index % 2 == 0 ? 'bg-gray-100' : 'bg-white' }} border-b">
                         <td class="p-2 border font-semibold text-gray-800">
                                 {{ $item }}
-                                <input type="hidden" name="color_or_attr[{{ $choosedVariationId ?? 14 }}]" value="{{ $item }}">
+                                <input type="hidden" name="{{ $choosedVariationId ?? 14 }}[]" value="{{ $item }}">
                         </td>
                             <td class="p-2 border">
                                 <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
