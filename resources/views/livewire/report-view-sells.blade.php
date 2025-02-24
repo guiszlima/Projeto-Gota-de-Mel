@@ -123,7 +123,12 @@ $totalItems = count($items);
             Aplicar Filtros
         </button>
     </div>
-
+    <div class="mb-6 text-right">
+    <button wire:click="downloadExcel"
+        class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
+        Baixar Vendas de Hoje
+    </button>
+</div>
     <!-- Exibição do total de itens e soma de preços -->
     <div class="mb-4 bg-gray-100 p-4 rounded-lg shadow-md">
         <p class="text-lg font-semibold text-gray-800">Total de itens: <span
@@ -282,6 +287,8 @@ $totalItems = count($items);
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
 <script>
 
 window.addEventListener('alreadyCancelled', function(event) {
@@ -336,6 +343,79 @@ console.log('omg hii',pdfUrl);
     });
 });
 </script>
+<script>
 
+
+window.addEventListener('export-sales', event => {
+    // Obtendo os dados das vendas
+    const sales = event.detail[0].sales;
+    console.log(sales);
+    // Convertendo os dados para um formato que o Excel entende
+    const rows = sales.map(sale => [
+        `Venda ID: ${sale.id}`,
+        sale.created_at,
+        sale.user_name,
+        sale.user_cpf,
+        sale.pagamento,
+        sale.preco,
+
+        sale.produtos ? JSON.parse('[' + sale.produtos + ']').join(', ') : '',
+        sale.troco
+    ]);
+
+    // Estilos para o cabeçalho
+    const headerStyle = {
+        font: { bold: true, color: { rgb: "FFFFFF" }, sz: 12, name: "Arial" },
+        fill: { fgColor: { rgb: "4F81BD" } }, // Azul de fundo
+        alignment: { horizontal: "center", vertical: "center", wrapText: true },
+        border: { top: { style: "thin", color: { rgb: "000000" } }, bottom: { style: "thin", color: { rgb: "000000" } }, left: { style: "thin", color: { rgb: "000000" } }, right: { style: "thin", color: { rgb: "000000" } } }
+    };
+
+    // Estilos para as células de dados
+    const dataStyle = {
+        alignment: { horizontal: "center", vertical: "center", wrapText: true },
+        border: { top: { style: "thin", color: { rgb: "000000" } }, bottom: { style: "thin", color: { rgb: "000000" } }, left: { style: "thin", color: { rgb: "000000" } }, right: { style: "thin", color: { rgb: "000000" } } }
+    };
+
+    // Criando a planila com os estilos
+    const ws = XLSX.utils.aoa_to_sheet([['Id de Venda', 'Data', 'Nome', 'CPF', 'Tipo de pagamento', 'Preço', 'Id De Produtos','Troco'], ...rows]);
+
+    // Estilo para o cabeçalho
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let col = range.s.c; col <= range.e.c; col++) {
+        const cell = ws[XLSX.utils.encode_cell({ r: 0, c: col })];
+        if (cell) {
+            cell.s = headerStyle;
+        }
+    }
+
+    // Estilo para as células de dados
+    for (let row = 1; row <= range.e.r; row++) {
+        for (let col = range.s.c; col <= range.e.c; col++) {
+            const cell = ws[XLSX.utils.encode_cell({ r: row, c: col })];
+            if (cell) {
+                cell.s = dataStyle;
+            }
+        }
+    }
+
+    // Ajustando a largura das colunas automaticamente
+    const columnWidths = [20, 25, 20, 15, 20, 15, 20, 20, 15];
+    for (let col = range.s.c; col <= range.e.c; col++) {
+        const colLetters = XLSX.utils.encode_col(col);
+        ws['!cols'] = ws['!cols'] || [];
+        ws['!cols'][col] = { width: columnWidths[col] };
+    }
+
+    // Criando o arquivo Excel
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Vendas de Hoje');
+
+    // Gerando o arquivo Excel
+    XLSX.writeFile(wb, 'vendas-hoje-' + new Date().toISOString().split('T')[0] + '.xlsx');
+});
+
+
+</script>
 </div>
 </div>

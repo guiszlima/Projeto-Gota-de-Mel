@@ -15,6 +15,7 @@
         "laravel/ui": "*",
         "laravellegends/pt-br-validator": "^11.0",
         "livewire/livewire": "^3.5",
+        "maatwebsite/excel": "^1.1",
         "mike42/escpos-php": "^4.0"
     },
     "require-dev": {
