@@ -215,13 +215,18 @@ $totalItems = count($items);
  
  
      <!-- Modal -->
-     <div x-show="isOpen" x-transition class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+     <div x-show="isOpen" x-transition 
+     x-data 
+     x-on:close-modal.window="isOpen = false"
+     class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+
     <div class="bg-white p-6 rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/5 lg:w-2/5">
         <h2 class="text-lg font-semibold mb-6 text-center">Itens a serem Trocados</h2>
         <button wire:click='fechaModal'  x-on:click="isOpen = false" class="mt-4 mb-2 px-4 py-2 bg-red-500 text-white rounded">
             Fechar
         </button>
         @if($itensTrocar && count($itensTrocar) > 0)
+        
             <!-- Flex Container para os itens -->
             <div class="flex flex-wrap gap-6 justify-start">
             @foreach($itensTrocar as $item)
@@ -231,7 +236,7 @@ $totalItems = count($items);
                     <p class="text-md text-gray-600 mb-2"><strong>ID do Produto:</strong> {{ $item['id_produto'] }}</p>
                     <p class="text-md text-gray-600 mb-2"><strong>Quantidade:</strong> {{ $item['quantidade'] }}</p>
                     <p class="text-md text-gray-600 mb-2"><strong>Preço a ser trocado:</strong> {{ $item['cont'] *  $item['preco_produto']}}</p>
-                    
+            
                     <div class="flex flex-col items-center">
                         <div class="flex items-center gap-2">
                             <button
@@ -247,10 +252,18 @@ $totalItems = count($items);
                             </button>
                         </div>
                         <button
-    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-2"
-    wire:click="realizarTroca({{ $item['venda_id'] }}, {{ $item['id_produto'] }}, {{ $item['cont'] }}, {{ $item['preco_produto']}} , {{$item['quantidade']}} )">
-    Trocar
-</button>
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mt-2"
+                            wire:click="realizarTroca(
+                                {{ $item['venda_id'] }},
+                                {{ $item['id_produto'] }},
+                                {{ $item['cont'] ?? 0 }},
+                                {{ $item['preco_produto'] }},
+                                {{ $item['quantidade'] }},
+                                '{{ $item['tipo'] ?? 'simple' }}',
+                                {{ $item['parent_id'] ?? 'null' }}
+                            )">
+                        Trocar
+                    </button>
                     </div>
                 </div>
             @endforeach

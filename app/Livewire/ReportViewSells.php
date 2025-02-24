@@ -47,21 +47,24 @@ class ReportViewSells extends Component
 
     public function fechaModal(){
         $this->isTrocado = false;
+        $this->itensTrocar = null;
     }
 
     public function trocaProduct(Client $woocommerce, $groupedItems)
     {
         $itens = $groupedItems[0];
-
+        
         $venda = Sell::find($itens['id']);
         if ($venda->cancelado == 1) {
             $this->dispatch('alreadyCancelled');
+            $this->dispatch('closeModal');
             return;
         }
         $createdAt = $venda->created_at; // Obtém a data de criação
         $currentDate = now(); // Obtém a data atual
         if ($createdAt->diffInDays($currentDate) > 7) {
             $this->dispatch('productTooOld');
+            $this->dispatch('closeModal');
             return;
         }
         // Decodifica as strings JSON dos produtos e quantidades
@@ -83,13 +86,17 @@ class ReportViewSells extends Component
                 'preco_produto' => $produto->price,
                 'id_produto' => $produto->id,
                 'quantidade' => $produtoQtde[$index] ?? null,
+                'tipo' => $produto->type,
                 'cont' => 0
             ];
+            if($produto->type == 'variation'){
+             $itensTrocar[$index]['parent_id'] = $produto->parent_id;
+            }
         }
 
         // Atualiza a propriedade $itensTrocar
         $this->itensTrocar = $itensTrocar;
-
+        $produtos = "";
         // Notifica o frontend que os dados estão prontos
         $this->dispatch('itens-troca-atualizados');
     }
@@ -127,55 +134,77 @@ class ReportViewSells extends Component
         }
     }
 
-    public function realizarTroca(Client $woocommerce, $id_venda, $id_produto, $cont, $preco, $quantidade)
-    {
-        if ($quantidade != 0 || $cont != 0) {
-            $this->isTrocado = true;
-            $this->dispatch('troca-realizada');
+    public function realizarTroca(Client $woocommerce, $id_venda, $id_produto, $cont, $preco, $quantidade, $tipo, $parent_id)
+    {   
+
+
+        
+        if ($cont <= 0) {
+            return response()->json(['error' => 'Quantidade de troca inválida'], 400);
         }
-
-        // Obtém o produto no WooCommerce
-        $produto = $woocommerce->get('products/' . $id_produto);
-
-        // Calcula o valor total da troca
-        $valorTotal = $cont * $preco;
-
+    
+        // Marca a troca como realizada
+        $this->isTrocado = true;
+        $this->dispatch('troca-realizada');
+    
         // Obtém a venda pelo ID
         $venda = Sell::find($id_venda);
-
         if (!$venda) {
             return response()->json(['error' => 'Venda não encontrada'], 404);
         }
-
+    
         // Decodifica os produtos e quantidades armazenados como JSON
         $produtos = json_decode($venda->produtos, true) ?? [];
         $quantidades = json_decode($venda->quantidade, true) ?? [];
-
-        // Atualiza o estoque no WooCommerce
-        $woocommerce->put('products/' . $id_produto, [
-            'stock_quantity' => $produto->stock_quantity + $cont
-        ]);
-
+    
+        // Calcula o valor total da troca
+        $valorTotal = $cont * $preco;
+    
+        if ($tipo === 'variation') {
+            // Busca as variações do produto pai
+            $variacoes = $woocommerce->get("products/{$parent_id}/variations");
+    
+            foreach ($variacoes as $variacao) {
+                if ($variacao->id == $id_produto) {
+                    // Atualiza o estoque da variação específica
+                    $woocommerce->put("products/{$parent_id}/variations/{$id_produto}", [
+                        'stock_quantity' => max(0, $variacao->stock_quantity + $cont) // Evita estoque negativo
+                    ]);
+                    break;
+                }
+            }
+        } else {
+            // Obtém o produto no WooCommerce (produto simples)
+            $produto = $woocommerce->get("products/{$id_produto}");
+            if (!$produto) {
+                return response()->json(['error' => 'Produto não encontrado'], 404);
+            }
+    
+            // Atualiza o estoque do produto simples
+            $woocommerce->put("products/{$id_produto}", [
+                'stock_quantity' => max(0, $produto->stock_quantity + $cont) // Evita estoque negativo
+            ]);
+        }
+    
         // Atualiza a quantidade do produto na venda
         foreach ($produtos as $key => $produtoId) {
             if ($produtoId == $id_produto && $quantidades[$key] > 0) {
-                $quantidades[$key] -= $cont;
-                $venda->preco_total -= $valorTotal;
+                $quantidades[$key] = max(0, $quantidades[$key] - $cont); // Evita valores negativos
+                $venda->preco_total = max(0, $venda->preco_total - $valorTotal); // Evita valores negativos
                 break;
             }
         }
-
-        // Reindexa os arrays para garantir que os índices estejam corretos
+    
+        // Reindexa os arrays para manter a estrutura correta
         $produtos = array_values($produtos);
         $quantidades = array_values($quantidades);
-
+    
         // Atualiza a venda com os novos valores
         $venda->produtos = json_encode($produtos);
         $venda->quantidade = json_encode($quantidades);
         $venda->save();
-
-        // Notifica o frontend
     }
+    
 
     public function imprimirNota()
     {
