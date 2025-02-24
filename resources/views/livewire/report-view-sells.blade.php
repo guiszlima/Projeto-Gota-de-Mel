@@ -125,9 +125,11 @@ $totalItems = count($items);
     </div>
     <div class="mb-6 text-right">
     <button wire:click="downloadExcel"
-        class="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
-        Baixar Vendas de Hoje
-    </button>
+    class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
+    Baixar Vendas de Hoje
+</button>
+
+
 </div>
     <!-- Exibição do total de itens e soma de preços -->
     <div class="mb-4 bg-gray-100 p-4 rounded-lg shadow-md">
@@ -170,10 +172,11 @@ $totalItems = count($items);
                      <td class="px-2 py-1 whitespace-nowrap">
                      
     <!-- Botão para abrir o modal -->
-        <button x-on:click="isOpen = true" wire:click="trocaProduct({{ $groupedItems}})"
-            class="text-sm text-blue-500 hover:text-blue-700 focus:outline-none">
-            Troca de Produto
-        </button>
+    <button x-on:click="isOpen = true" wire:click="trocaProduct({{ $groupedItems }})"
+    class="text-sm text-blue-600 hover:text-blue-800 focus:outline-none">
+    Troca de Produto
+</button>
+
     
 </td>
                 </tr>
