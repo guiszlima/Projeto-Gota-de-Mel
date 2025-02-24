@@ -165,16 +165,17 @@
 <form action="{{ route('stock.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="flex justify-center mt-6">
-        <button
-            class="cursor-pointer bg-gradient-to-b from-yellow-400 to-yellow-500 shadow-[0px_4px_32px_0_rgba(99,102,241,.70)] px-6 py-3 rounded-xl border-[1px] border-yellow-400 text-white font-medium group"
-        >
-            <div class="relative overflow-hidden">
-                <p class="group-hover:-translate-y-7 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]">Enviar</p>
-                <p class="absolute top-7 left-0 group-hover:top-0 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]">Enviar</p>
-            </div>
-        </button>
-    </div>
-    
+    <button
+        class="cursor-pointer bg-blue-600 shadow-[0px_4px_32px_0_rgba(59,130,246,.70)] px-6 py-3 rounded-xl border-[1px] border-blue-600 text-white font-medium group"
+    >
+        <div class="relative overflow-hidden">
+            <p class="group-hover:-translate-y-7 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]">Enviar</p>
+            <p class="absolute top-7 left-0 group-hover:top-0 duration-[1.125s] ease-[cubic-bezier(0.19,1,0.22,1)]">Enviar</p>
+        </div>
+    </button>
+</div>
+
+
     <div class="mt-6 bg-white p-6 rounded-lg shadow-md ">
 
 
