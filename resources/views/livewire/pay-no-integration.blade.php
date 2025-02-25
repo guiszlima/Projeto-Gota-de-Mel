@@ -55,7 +55,7 @@
     </div>
 
     <!-- Div de Aplicar Desconto (sobreposta no canto direito) -->
-    <div class="absolute top-0 right-0 p-4 bg-white border border-gray-200 rounded-lg shadow-xl transform -translate-x-4 translate-y-4 transition-all duration-300 hover:shadow-2xl">
+    <div class="absolute top-0 w-max right-0 p-4 bg-white border border-gray-200 rounded-lg shadow-xl transform -translate-x-4 translate-y-4 transition-all duration-300 hover:shadow-2xl">
     <label for="desconto" class="block text-sm font-medium text-gray-700 mb-2">Desconto</label>
     <input
         wire:model="desconto"
@@ -63,7 +63,7 @@
         id="desconto"
         name="desconto"
         placeholder="Digite o desconto"
-        class="w-32 p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+        class="w-max p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
         
     >
 
