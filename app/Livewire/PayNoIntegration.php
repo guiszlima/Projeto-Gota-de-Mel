@@ -22,6 +22,8 @@ class PayNoIntegration extends Component
     public $totalReference;
     public $paymentReference;
     public $dados;
+    public $descontoTotal;
+    public $desconto;
 
     // Método para inicializar o componente com o valor de sell
     public function mount($sell)
@@ -109,6 +111,43 @@ class PayNoIntegration extends Component
 
 
     }
+    public function applyDiscount()
+    {
+        // Recupera a venda atual
+        $cleanDiscount = str_replace(['.', ' '], '', $this->desconto); // Remove pontos e espaços
+        $cleanDiscount = str_replace(',', '.', $cleanDiscount); // Troca vírgula por ponto
+        // Converte para float
+        $discountValue = (float)$cleanDiscount;
+        
+        // Se o desconto atual for nulo, define o valor inicial do desconto
+        if (empty($this->desconto) || !is_numeric($discountValue)) {
+            $this->dispatch("noInsertDiscount"); // Caso o valor de desconto não tenha sido inicializado corretamente
+            return;
+        }
+        if ($this->total < $discountValue) {
+            $this->dispatch("tooBigDiscount");
+            return;
+        }
+
+        $vendaAtual = Sell::find($this->sell['IdVenda']);
+        // Inicializa descontoTotal se não for numérico
+        $this->descontoTotal = is_numeric($this->descontoTotal) ? $this->descontoTotal : 0;
+        
+        // Soma o valor do desconto total com o novo desconto
+        $this->descontoTotal += $discountValue;
+    
+        // Subtrai o valor do desconto da venda
+        $this->total -= $discountValue;
+    
+        // Verifica se o valor do desconto é maior que o total da venda
+     
+    
+        // Se não, aplica o desconto na venda
+        $vendaAtual->desconto = $this->descontoTotal;  // Armazena o valor total de descontos no banco de dados
+        
+        $vendaAtual->save();
+    }
+    
     // Atualiza o estoque e coloca a compra como aprovada
     public function endPurchase(Client $woocommerce)
     {

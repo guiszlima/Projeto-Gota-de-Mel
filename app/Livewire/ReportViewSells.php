@@ -28,6 +28,7 @@ class ReportViewSells extends Component
     public $prateleira;
     public $searchPayment;
     public $searchTroco;
+    public $searchDiscount;
     public $isOpen = false; 
     public $selectedSellId; // ID da venda selecionada
     public $itensTrocar;
@@ -312,9 +313,12 @@ class ReportViewSells extends Component
             ->when($this->searchTroco, function ($query) {
                 $query->where('payments.troco', $this->searchTroco); // Filtro correto no campo troco
             })
+            ->when($this->searchDiscount, function ($query) {
+                $query->where('payments.desconto', $this->searchDiscount); // Filtro por desconto
+            })
             ->when($this->searchStartDate && $this->searchEndDate, function ($query) {
                 $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtra pela data de criação
-            })
+            })->when()
             ->orderBy('sells.created_at', 'desc')
             ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento', 'payments.preco', 'payments.preco', 'payments.troco');
 

@@ -101,7 +101,13 @@ $totalItems = count($items);
                 <label class="block text-sm font-medium text-gray-700">Preço de Troco</label>
                 <input type="search" wire:model="searchTroco" placeholder="Preço do Troco"
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+
             </div>
+            <div>
+        <label class="block text-sm font-medium text-gray-700">Desconto</label>
+        <input type="number" wire:model="searchDiscount" placeholder="Filtrar por desconto"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+    </div>
             <!-- Inputs para Data Início e Data Fim agrupados -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Período</label>
@@ -153,6 +159,7 @@ $totalItems = count($items);
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Pagamento</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">CPF</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Troco</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Desconto</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Data</th>
                 </tr>
             </thead>
@@ -202,6 +209,9 @@ $totalItems = count($items);
                     </td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{$item->troco}}
+                    </td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                        {{$item->desconto?? ""}}
                     </td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s') }}

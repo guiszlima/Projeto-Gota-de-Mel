@@ -73,7 +73,9 @@ class CriarProduto extends Component
     {
         $cor_id = env("COR_ID");
         $cores_data = [];
-        $woocores = $woocommerce->get("products/attributes/$cor_id/terms"); // 14 é o Id do atributo cor no Woocomerce
+        $woocores = $woocommerce->get("products/attributes/{$cor_id}/terms", [
+            'per_page' => 100,
+        ]);// 14 é o Id do atributo cor no Woocomerce
         foreach ($woocores as $cor) {
             $cores_data[] = [
                 'id' => $cor->id,

@@ -71,7 +71,7 @@
     <button type='button' wire:click="toggleCores" class="px-4 py-2 bg-blue-500 text-white rounded-md">
         {{ $mostrarCores ? 'Ocultar Cores' : 'Mostrar Cores' }}
     </button>
-
+    
     <!-- Lista de cores (só aparece se $mostrarCores for true) -->
     @if ($mostrarCores)
         <div class="mt-4 p-4 border rounded bg-gray-100">
@@ -230,6 +230,41 @@
         </button>
     </div>
     <div class="flex flex-row space-x-4">
+    <input type="number" id="all-comprimento" placeholder="Comprimento de todos"
+        class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+    <button id="insert-comprimento"
+        class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button" onclick="insertComprimento(document.getElementById('all-comprimento').value)">
+    </button>
+</div>
+
+<div class="flex flex-row space-x-4">
+    <input type="number" id="all-largura" placeholder="Largura de todos"
+        class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+    <button id="insert-largura"
+        class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button" onclick="insertLargura(document.getElementById('all-largura').value)">
+    </button>
+</div>
+
+<div class="flex flex-row space-x-4">
+    <input type="number" id="all-altura" placeholder="Altura de todos"
+        class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+    <button id="insert-altura"
+        class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button" onclick="insertAltura(document.getElementById('all-altura').value)">
+    </button>
+</div>
+<div class="flex flex-row space-x-4">
+    <input type="number" id="all-peso" placeholder="Peso de todos"
+        class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+    <button id="insert-altura"
+        class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button" onclick="insertPeso(document.getElementById('all-peso').value)">
+    </button>
+</div>
+
+    <div class="flex flex-row space-x-4">
     <input type="file" id="all-imagem"  accept="image/*"
         class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
     <button id="insert-imagem"
@@ -258,6 +293,10 @@
                     <th class="p-2 border">Estoque</th>
                     <th class="p-2 border">Estante</th>
                     <th class="p-2 border">Prateleira</th>
+                    <th class="p-2 border">Comprimento</th>
+                    <th class="p-2 border">Largura</th>
+                    <th class="p-2 border">Altura</th>
+                    <th class="p-2 border">Peso(G)</th>
                     <th class="p-2 border">Imagem</th>
                 </tr>
             </thead>
@@ -276,19 +315,21 @@
                                 <td class="p-2 border">
                                     <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
                                 </td>
-                                @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
-                                @if($field !== 'estoque')
-                                        
-                                <td class="p-2 border">
-                                        <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                </td>
-                                    
-                                    @else
-                                    <td class="p-2 border">
-                                        <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}   w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                    </td>
-                                    @endif
-                                @endforeach
+                                @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
+                                            @if ($field === 'estoque')
+                                                <td class="p-2 border">
+                                                    <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                                </td>
+                                            @elseif ($field === 'peso')
+                                                <td class="p-2 border">
+                                                    <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }} (g)" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="1" required>
+                                                </td>
+                                            @else
+                                                <td class="p-2 border">
+                                                    <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                                </td>
+                                            @endif
+                            @endforeach
                                 <td class="p-2 border">
                                     <input type="file" name="image[]" accept="image/*" class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                 </td>
@@ -308,18 +349,20 @@
                             <td class="p-2 border">
                                 <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
                             </td>
-                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
-                            @if($field !== 'estoque')
-                                        
+                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
+                                    @if ($field === 'estoque')
                                         <td class="p-2 border">
-                                                <input type="number" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                            </td>
-                                            
-                                            @else
-                                            <td class="p-2 border">
-                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}   w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                            </td>
-                                            @endif
+                                            <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                        </td>
+                                    @elseif ($field === 'peso')
+                                        <td class="p-2 border">
+                                            <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }} (g)" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="1" required>
+                                        </td>
+                                    @else
+                                        <td class="p-2 border">
+                                            <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                        </td>
+                                    @endif
                             @endforeach
                             <td class="p-2 border">
                                 <input type="file" name="image[]" accept="image/*" class=" imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
@@ -339,19 +382,22 @@
                             <td class="p-2 border">
                                 <input type="text" name="preco[]" placeholder="Digite o preço" class="preco  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
                             </td>
-                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira'] as $field)
-                            @if($field !== 'estoque')
-                                        
+                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
+                                    @if ($field === 'estoque')
                                         <td class="p-2 border">
-                                                <input type="number" name="{{$field}}" placeholder="Digite o {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                            </td>
-                                            
-                                            @else
-                                            <td class="p-2 border">
-                                                <input type="text" name="{{ $field }}[]" placeholder="Digite o {{ $field }}" class="{{ $field }}  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required >
-                                            </td>
-                                            @endif
-                            @endforeach
+                                            <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                        </td>
+                                    @elseif ($field === 'peso')
+                                        <td class="p-2 border">
+                                            <input type="number" name="{{ $field }}" placeholder="Insira {{ $field }} (g)" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="1" required>
+                                        </td>
+                                    @else
+                                        <td class="p-2 border">
+                                            <input type="number" name="{{ $field }}" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                        </td>
+                                    @endif
+                        @endforeach
+
                             <td class="p-2 border">
                                 <input type="file" name="image[]" accept="image/*" class="imagem  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                             </td>
@@ -533,6 +579,23 @@ function insertEstante(value) {
 function insertPrateleira(value) {
     document.querySelectorAll('.prateleira').forEach(input => input.value = value);
 }
+
+function insertComprimento(value) {
+    document.querySelectorAll('.comprimento').forEach(input => input.value = value);
+}
+
+function insertAltura(value) {
+    document.querySelectorAll('.altura').forEach(input => input.value = value);
+}
+
+function insertLargura(value) {
+    document.querySelectorAll('.largura').forEach(input => input.value = value);
+}
+
+function insertPeso(value) {
+    document.querySelectorAll('.peso').forEach(input => input.value = value);
+}
+
 function insertImagem(files) {
     if (files.length > 0) {
         // Aqui você pode, por exemplo, adicionar o arquivo à lista de imagens ou processá-lo
