@@ -120,7 +120,7 @@ class PayNoIntegration extends Component
         $discountValue = (float)$cleanDiscount;
         
         // Se o desconto atual for nulo, define o valor inicial do desconto
-        if (empty($this->desconto) || !is_numeric($discountValue)) {
+        if (empty($this->desconto) || !is_numeric($discountValue) || $this->desconto == '0,00' ) {
             $this->dispatch("noInsertDiscount"); // Caso o valor de desconto não tenha sido inicializado corretamente
             return;
         }
