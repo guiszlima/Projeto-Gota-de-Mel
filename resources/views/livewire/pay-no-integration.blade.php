@@ -67,9 +67,10 @@
         
     >
 
-    <button wire:click="applyDiscount()" class="w-full p-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-md mt-3 hover:bg-gradient-to-r hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 transform hover:scale-105">
-        Aplicar Desconto
-    </button>
+    <button wire:click="applyDiscount()" class="w-full p-2 bg-blue-500 text-white rounded-md mt-3 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 transform hover:scale-105">
+    Aplicar Desconto
+</button>
+
 </div>
 </div>
 
