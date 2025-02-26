@@ -119,6 +119,13 @@ class StockController extends Controller
             'manage_stock' =>true,
             'regular_price' => (string) $preco, // WooCommerce exige string numérica
             'stock_quantity' => (int) $request->input('quantidade'),
+           'weight' => (string) ((float)$request->input('peso')/1000)?? '',
+
+           "dimensions" => [
+                    "length" => (string) $request->input('comprimento')??'',
+                    "width" => (string) $request->input('largura')??'',
+                    "height" => (string) $request->input('altura')??''
+                ],
             'categories' => [
                 [
                     'id' => (int) $request->input('category'),
@@ -235,6 +242,13 @@ class StockController extends Controller
                 'stock_quantity' => (string) $request->input('quantidade')[$index],
                 'manage_stock' =>true,
                 'attributes' => $variationAttributes,
+               'weight' => (string) ((float)$request->input('peso')[$index] / 1000) ?? '',
+
+                'dimensions' => [
+                    'length' => (string) $request->input('comprimento')[$index] ?? '',
+                    'width' => (string) $request->input('largura')[$index] ?? '',
+                    'height' => (string) $request->input('altura')[$index] ?? ''
+                ],
                 'meta_data' => [
                     ['key' => 'estoque', 'value' => $request->input('estoque')[$index] ?? ''],
                     ['key' => 'estante', 'value' => $request->input('estante')[$index] ?? ''],
@@ -256,6 +270,7 @@ class StockController extends Controller
         ]);
         
         foreach ($response->create as $variation) {
+            
             ReportCreate::create([
                 'product_id' => $variation->id,
                 'nome' => $request->input('product_name'),
@@ -282,7 +297,9 @@ class StockController extends Controller
         $parent_name = $product->name;
         $parent_id = $product->id;
         if (!empty($product->variations)) {
-            $variations = $woocommerce->get("products/{$id}/variations");
+            $variations = $woocommerce->get("products/{$id}/variations",[
+                'per_page' => 100,
+            ]);
     
             foreach ($variations as $variation) {
                 // Busca o relatório de criação baseado no ID da variação
@@ -343,7 +360,7 @@ class StockController extends Controller
  
      private function updateVariations($data, Client $woocommerce, WpClient $wpService)
      {
-      
+         
          $variantData = [];
          $count = count($data['variant_price']);
          $imageIds = [];
@@ -372,7 +389,12 @@ class StockController extends Controller
              // Preparar os dados da variação
              $variant = [
                 'id' => $data['id'][$i],  // O id diretamente aqui
-                
+              'weight' => (string)((float)$data['peso'][$i] / 1000) ?? '',
+                'dimensions'=>[
+                    'length'=>$data['comprimento'][$i]??'',
+                    'width'=> $data['largura'][$i]??'',
+                    'height'=> $data['altura'][$i]??''
+                ],
                 'regular_price' => (string)str_replace(',', '.', $data['variant_price'][$i]),
                 'stock_quantity' => $data['variant_stock_quantity'][$i],
             ];
@@ -427,6 +449,12 @@ class StockController extends Controller
                  'name' => $data['name'],
                  'regular_price' => (string)str_replace(',', '.', $data['price']),
                  'stock_quantity' => $data['quantity'],
+                 'weight'=> (string)((float)$data['peso']/1000)??'',
+                 'dimensions'=>[
+                     'length'=>$data['comprimento']??'',
+                     'width'=> $data['largura']??'',
+                     'height'=> $data['altura']??''
+                 ],
                 
              ];
              if($image_id){

@@ -82,6 +82,36 @@ $variante = 'true'
                     <input id="quantity" name="quantity" type="number" readonly value="{{ $product->stock_quantity }}"
                         class="editInput text-center border border-gray-300 p-3 rounded w-full">
                 </div>
+
+                  <!-- Peso -->
+                   <div class="flex flex-col space-y-6">
+                        <div class="flex flex-col w-full">
+                            <label for="peso" class="text-gray-700 mb-2">Peso (g)</label>
+                            <input id="peso" name="peso" type="text" readonly value="{{ $product->weight * 1000 }}"
+                                class="editInput text-center border border-gray-300 p-3 rounded w-full">
+                        </div>
+
+                        <!-- Altura -->
+                        <div class="flex flex-col w-full">
+                            <label for="altura" class="text-gray-700 mb-2">Altura (cm)</label>
+                            <input id="altura" name="altura" type="text" readonly value="{{ $product->dimensions->height ?? '' }}"
+                                class="editInput text-center border border-gray-300 p-3 rounded w-full">
+                        </div>
+
+                        <!-- Comprimento -->
+                        <div class="flex flex-col w-full">
+                            <label for="comprimento" class="text-gray-700 mb-2">Comprimento (cm)</label>
+                            <input id="comprimento" name="comprimento" type="text" readonly value="{{ $product->dimensions->length ?? '' }}"
+                                class="editInput text-center border border-gray-300 p-3 rounded w-full">
+                        </div>
+
+                        <!-- Largura -->
+                        <div class="flex flex-col w-full">
+                            <label for="largura" class="text-gray-700 mb-2">Largura (cm)</label>
+                            <input id="largura" name="largura" type="text" readonly value="{{ $product->dimensions->width ?? '' }}"
+                                class="editInput text-center border border-gray-300 p-3 rounded w-full">
+                        </div>
+                </div>
                 <input name="id" type="hidden" readonly value="{{ $product->id }}">
                 <input type="hidden" readonly name="type" value="simple">
 <!-- É variação -->
@@ -106,62 +136,104 @@ $variante = 'true'
 
     <div class="flex flex-wrap gap-6">
     @foreach ($product as $variant)
-    <div class="flex flex-col items-center w-full lg:w-1/4 md:w-1/2">
+    <div class="flex flex-col items-center w-full lg:w-1/4 md:w-1/2 min-h-[80px] relative overflow-hidden">
+        <!-- Botão de toggle -->
         <button type="button"
-            class="toggleBtn w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300">
+            class="toggleBtn w-[450px] px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300">
             {{ $variant->name }}
         </button>
-        <div class="content hidden w-full mt-4 p-6 bg-white shadow-xl rounded-lg flex flex-col items-center justify-center text-lg fade-in">
-            <img src="{{ $variant->image->src ?? '' }}" alt="{{ $variant->name }}"
-                class="w-3/4 h-auto object-contain mb-4 rounded-lg shadow-md">
 
-            <div class="flex flex-col w-full space-y-4">
-                <div class="flex flex-col w-full">
+        <!-- Conteúdo (inputs) -->
+        <div class="content hidden w-full mt-4 p-6 bg-white shadow-xl rounded-lg text-lg fade-in">
+            <!-- Imagem -->
+            <img src="{{ $variant->image->src ?? '' }}" alt="{{ $variant->name }}"
+                class="w-3/4 h-auto object-contain mb-6 rounded-lg shadow-md mx-auto">
+
+            <!-- Grid de inputs -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Preço -->
+                <div class="flex flex-col">
                     <label for="price_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Preço</label>
                     <input id="price_{{ $loop->index }}" name="variant_price[]" type="text" readonly
                         value="{{ $variant->price }}"
-                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full"
-                        oninput="maskFloat(event)">
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                 </div>
 
-                <div class="flex flex-col w-full">
+                <!-- Quantidade -->
+                <div class="flex flex-col">
                     <label for="stock_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Quantidade</label>
                     <input id="stock_{{ $loop->index }}" name="variant_stock_quantity[]" type="text" readonly
                         value="{{ $variant->stock_quantity }}"
-                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full">
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                 </div>
 
-                <div class="flex flex-col w-full">
+                <!-- Estoque -->
+                <div class="flex flex-col">
                     <label for="estoque_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Estoque</label>
                     <input id="estoque_{{ $loop->index }}" name="estoque[]" type="text" readonly
                         value="{{ $variant->estoque }}"
-                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full">
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                 </div>
 
-                <div class="flex flex-col w-full">
+                <!-- Estante -->
+                <div class="flex flex-col">
                     <label for="estante_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Estante</label>
                     <input id="estante_{{ $loop->index }}" name="estante[]" type="number" readonly
                         value="{{ $variant->estante }}"
-                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full">
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                 </div>
 
-                <div class="flex flex-col w-full">
+                <!-- Prateleira -->
+                <div class="flex flex-col">
                     <label for="prateleira_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Prateleira</label>
                     <input id="prateleira_{{ $loop->index }}" name="prateleira[]" type="number" readonly
                         value="{{ $variant->prateleira }}"
-                        class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full">
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                </div>
+
+                <!-- Peso -->
+                <div class="flex flex-col">
+                    <label for="peso_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Peso (g)</label>
+                    <input id="peso_{{ $loop->index }}" name="peso[]" type="text" readonly
+                        value="{{ number_format(floatval($variant->weight) * 1000, 0, ',', '.') }}"
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                </div>
+
+                <!-- Comprimento -->
+                <div class="flex flex-col">
+                    <label for="comprimento_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Comprimento (cm)</label>
+                    <input id="comprimento_{{ $loop->index }}" name="comprimento[]" type="text" readonly
+                        value="{{ $variant->dimensions->length }}"
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                </div>
+
+                <!-- Largura -->
+                <div class="flex flex-col">
+                    <label for="largura_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Largura (cm)</label>
+                    <input id="largura_{{ $loop->index }}" name="largura[]" type="text" readonly
+                        value="{{ $variant->dimensions->width }}"
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                </div>
+
+                <!-- Altura -->
+                <div class="flex flex-col">
+                    <label for="altura_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Altura (cm)</label>
+                    <input id="altura_{{ $loop->index }}" name="altura[]" type="text" readonly
+                        value="{{ $variant->dimensions->height }}"
+                        class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                 </div>
 
                 <!-- Input para imagem -->
-                <div class="flex flex-col w-full">
+                <div class="flex flex-col col-span-1 md:col-span-2">
                     <label for="image_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Inserir Imagem</label>
-                    <input name="images[{{ $loop->index }}]" type="file" id="image_{{ $loop->index }}"
-                        class="text-center text-xl font-semibold border border-gray-300 p-3 rounded-md w-full mb-4">
+                    <input name="images[{{ $loop->index }}]" type="file" id="image_{{ $loop->index }}" 
+                        class="text-center text-xl font-semibold border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                 </div>
-
-                <input name="id[]" type="hidden" readonly value="{{ $variant->id }}">
-                <input name="variant_name[]" type="hidden" readonly value="{{ $variant->name }}">
             </div>
+
+            <!-- Inputs Hidden -->
+            <input name="id[]" type="hidden" readonly value="{{ $variant->id }}">
+            <input name="variant_name[]" type="hidden" readonly value="{{ $variant->name }}">
         </div>
     </div>
 @endforeach

@@ -316,20 +316,24 @@
                                     <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
                                 </td>
                                 @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
-                                            @if ($field === 'estoque')
-                                                <td class="p-2 border">
-                                                    <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                                </td>
-                                            @elseif ($field === 'peso')
-                                                <td class="p-2 border">
-                                                    <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }} (g)" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="1" required>
-                                                </td>
-                                            @else
-                                                <td class="p-2 border">
-                                                    <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                                </td>
-                                            @endif
-                            @endforeach
+                                    @if ($field === 'estoque')
+                                        <td class="p-2 border">
+                                            <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
+                                                class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                        </td>
+                                    @elseif (in_array($field, ['comprimento', 'largura', 'altura', 'peso']))
+                                        <td class="p-2 border">
+                                            <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
+                                                class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="0.01">
+                                        </td>
+                                    @else
+                                        <td class="p-2 border">
+                                            <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
+                                                class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                        </td>
+                                    @endif
+                                @endforeach
+
                                 <td class="p-2 border">
                                     <input type="file" name="image[]" accept="image/*" class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                                 </td>
@@ -350,20 +354,24 @@
                                 <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
                             </td>
                             @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
-                                    @if ($field === 'estoque')
-                                        <td class="p-2 border">
-                                            <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                        </td>
-                                    @elseif ($field === 'peso')
-                                        <td class="p-2 border">
-                                            <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }} (g)" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="1" required>
-                                        </td>
-                                    @else
-                                        <td class="p-2 border">
-                                            <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                        </td>
-                                    @endif
-                            @endforeach
+                                @if ($field === 'estoque')
+                                    <td class="p-2 border">
+                                        <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
+                                            class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                    </td>
+                                @elseif (in_array($field, ['comprimento', 'largura', 'altura', 'peso']))
+                                    <td class="p-2 border">
+                                        <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
+                                            class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="0.01">
+                                    </td>
+                                @else
+                                    <td class="p-2 border">
+                                        <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
+                                            class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                    </td>
+                                @endif
+                        @endforeach
+
                             <td class="p-2 border">
                                 <input type="file" name="image[]" accept="image/*" class=" imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
                             </td>
@@ -382,21 +390,25 @@
                             <td class="p-2 border">
                                 <input type="text" name="preco[]" placeholder="Digite o preço" class="preco  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
                             </td>
-                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
-                                    @if ($field === 'estoque')
-                                        <td class="p-2 border">
-                                            <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                        </td>
-                                    @elseif ($field === 'peso')
-                                        <td class="p-2 border">
-                                            <input type="number" name="{{ $field }}" placeholder="Insira {{ $field }} (g)" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="1" required>
-                                        </td>
-                                    @else
-                                        <td class="p-2 border">
-                                            <input type="number" name="{{ $field }}" placeholder="Insira {{ $field }}" class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                        </td>
-                                    @endif
-                        @endforeach
+                                    @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
+                                            @if ($field === 'estoque')
+                                                <td class="p-2 border">
+                                                    <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
+                                                        class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                                </td>
+                                            @elseif (in_array($field, ['comprimento', 'largura', 'altura', 'peso']))
+                                                <td class="p-2 border">
+                                                    <input type="number" name="{{ $field }}" placeholder="Insira {{ $field }}" 
+                                                        class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="0.01">
+                                                </td>
+                                            @else
+                                                <td class="p-2 border">
+                                                    <input type="number" name="{{ $field }}" placeholder="Insira {{ $field }}" 
+                                                        class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                                </td>
+                                            @endif
+                                        @endforeach
+
 
                             <td class="p-2 border">
                                 <input type="file" name="image[]" accept="image/*" class="imagem  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
