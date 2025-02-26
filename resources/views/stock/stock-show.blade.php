@@ -131,15 +131,15 @@ $variante = 'true'
     <div class="flex flex-col w-full mb-8">
         <label for="parent_name" class="text-gray-700 font-semibold mb-2">Nome do Produto Pai</label>
         <input id="parent_name" name="parent_name" type="text" readonly value="{{ $parent_name }}"
-            class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full font-semibold bg-gray-100 ">
+            class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full font-semibold bg-gray-100">
     </div>
 
     <div class="flex flex-wrap gap-6">
     @foreach ($product as $variant)
-    <div class="flex flex-col items-center w-full lg:w-1/4 md:w-1/2 min-h-[80px] relative overflow-hidden">
-        <!-- Botão de toggle -->
+    <div class="flex flex-col items-center w-full lg:w-1/4 md:w-1/2 sm:w-full min-h-[80px] relative overflow-hidden">
+        <!-- Botão de toggle com tamanho fixo -->
         <button type="button"
-            class="toggleBtn w-[450px] px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300">
+            class="toggleBtn w-[320px] px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300">
             {{ $variant->name }}
         </button>
 
@@ -226,7 +226,7 @@ $variante = 'true'
                 <!-- Input para imagem -->
                 <div class="flex flex-col col-span-1 md:col-span-2">
                     <label for="image_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Inserir Imagem</label>
-                    <input name="images[{{ $loop->index }}]" type="file" id="image_{{ $loop->index }}" 
+                    <input name="images[{{ $loop->index }}]" type="file" id="image_{{ $loop->index }}"
                         class="text-center text-xl font-semibold border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                 </div>
             </div>
@@ -237,6 +237,7 @@ $variante = 'true'
         </div>
     </div>
 @endforeach
+
 
                     <input type="hidden" readonly name="type" value="variation">
                     <input name="parent_id" type="hidden" readonly value="{{ $parent_id }}">
