@@ -101,7 +101,7 @@ class StockController extends Controller
         $preco = str_replace(',', '.', $request->input('preco')[0]);
         $preco = floatval($preco);
 
-        $sku = strtoupper(substr($request->input('product_name'), 0, 3)) . '-' . time();
+        $sku =  time(). "0";
 
         // Verifica se a imagem foi enviada corretamente
         $image_id = null;
@@ -226,7 +226,7 @@ class StockController extends Controller
             }
 
 
-            $sku = strtoupper(substr($request->input('product_name'), 0, 3)) . '-' . time() . '-' . $index;
+            $sku =  time() . $index;
            
             if ($request->hasFile("image.{$index}")) {
                 $uploadedFile = $request->file("image.{$index}");

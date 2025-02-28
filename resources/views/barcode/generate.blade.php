@@ -56,6 +56,9 @@ function convertSvgToPng(svgSelector, boolean) {
     const svgString = new XMLSerializer().serializeToString(document.querySelector(svgSelector));
     const img = new Image();
     img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0);
         const pngUrl = canvas.toDataURL('image/png');
         barcodeImage.src = pngUrl; // Mostra a imagem do código de barras
