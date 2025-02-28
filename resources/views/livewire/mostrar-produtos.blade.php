@@ -189,7 +189,7 @@ inputField.addEventListener('input', () => {
             previousValue = currentValue;
 
 
-            if (currentValue.length === 12 || currentValue.length === 13 || currentValue.length === 8) {
+            if (currentValue.length >=  8) {
                 console.log("Código de barras detectado: ", currentValue);
                 form.click();
                 inputField.value = '';
