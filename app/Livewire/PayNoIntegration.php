@@ -190,8 +190,10 @@ class PayNoIntegration extends Component
 
     public function printNota()
     {
-        if ($this->total == 0.0) {
+       
+        if ($this->total == 0.0 ) {
             // Dados necessários para gerar o PDF
+            
             $this->dados = [
                 'cart' => $this->sell['cart'],
                 'paymentReference' => $this->paymentReference,

@@ -144,4 +144,26 @@ window.addEventListener('tooBigDiscount', function() {
         confirmButtonText: 'Entendido'
     });
 });
+window.addEventListener('printNotaAlert', function(event) {
+        
+        Swal.fire({
+            title: 'O produto deve ser pago antes de gerar a nota',
+            html: `Por favor, realize a transação antes de gerar a nota.`,
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+    });
+
+document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('renderizar-pdf', (url) => {
+        const pdfUrl = url.detail[0].url;
+        console.log('omg hii',pdfUrl);
+        // Use print.js para abrir e imprimir o PDF
+        printJS({
+            printable: pdfUrl,
+            type: 'pdf',
+            showModal: true,
+            });
+        });
+});
 </script>
