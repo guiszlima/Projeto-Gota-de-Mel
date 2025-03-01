@@ -38,6 +38,7 @@
             </div>
         @endforeach
         --------------------------------
+        @if($dados['paymentReference'])
         <div class="payment">
             <h3>Referencias de Pagamento</h3>
             @foreach ($dados['paymentReference'] as $payment)
@@ -49,9 +50,13 @@
                 @endif
             @endforeach
         </div>
+        @endif
         @if ($dados['troco']??"")
                     <p>Troco: {{ number_format($dados['troco'], 2, ',', '.') ?? "" }}</p>
                 @endif
+        @if($dados['desconto']??"")
+        <p>Desconto: {{ number_format($dados['desconto'], 2, ',', '.') ?? "" }}</p>
+        @endif
     </div>
 --------------------------------
     <div class="footer">

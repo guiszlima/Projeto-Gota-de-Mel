@@ -88,6 +88,7 @@ Route::middleware(['auth','check_pending'])->group(function () {
         'paymentReference' => $request->input('paymentReference'),
         'horario' => date('d/m/Y H:i'), // Adiciona o horário no formato correto
         'troco' => $request->input('troco'),
+        'desconto' => $request->input('desconto')
     ];
 
     // Gera o PDF

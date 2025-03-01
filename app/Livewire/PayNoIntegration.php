@@ -198,6 +198,7 @@ class PayNoIntegration extends Component
                 'cart' => $this->sell['cart'],
                 'paymentReference' => $this->paymentReference,
                 'troco' => $this->troco,
+                'desconto'=> $this->descontoTotal
             ];
     
             // Cria a URL da rota para gerar o PDF
