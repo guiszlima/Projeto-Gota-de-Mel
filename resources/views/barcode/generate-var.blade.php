@@ -41,17 +41,20 @@ document.addEventListener('DOMContentLoaded', function () {
             (() => { 
                 let elementId = 'codBarras-{{$variation->id}}';
                 let sku = "{{$variation->sku}}";
-                
+                let price = parseFloat("{{$variation->price}}").toFixed(2).replace('.', ',');
 
+                
+                let text_bar = sku + " - " + price
                 if (!sku) {
                     sku = "000000";
                 }
 
                 JsBarcode('#' + elementId, sku, {
-                    text: sku,
+                    format: "CODE128",
+                    text: text_bar,
                     displayValue: true
                 });
-
+                
                 convertSvgToPng(elementId, '{{$variation->name}}', false);
             })();
         @endforeach

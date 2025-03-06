@@ -40,14 +40,18 @@ function GerarCódigoDeBarras() {
     if (!productId.innerHTML) {
         productId.innerHTML = 0;
     }
+    let sku = "{{$product['sku']}}";
+    let price = parseFloat("{{$product['price']}}").toFixed(2).replace('.', ',');
     JsBarcode('#codBarras', productId.innerHTML, {
-        text: "{{$product['sku']}}",
+        format: "CODE128",
+        text: sku + " - " + price,
         displayValue: true
     });
 
     // Converter SVG para PNG e exibir como imagem
     convertSvgToPng('#codBarras');
 }
+
 
 function convertSvgToPng(svgSelector, boolean) {
     const canvas = document.getElementById('canvas');
