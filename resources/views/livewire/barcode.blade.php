@@ -1,9 +1,21 @@
-@extends("layouts.main")
 
-@section('content')
-<x-button-back :route="route('menu')"></x-button-back>
+
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold mb-6">Gerar Código de Barras</h1>
+    <div class="mb-6 flex justify-between">
+        <button wire:click="offSearch" id="limpar"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-all duration-300">
+            Limpar
+        </button>
+        <div class="flex w-full ml-4">
+            <input id="searchTerm" type="text" wire:model="searchTerm" placeholder="Pesquisar produto..."
+                class="px-4 py-2 border border-gray-300 rounded-l-md w-full focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            <button wire:click="search"
+                class="bg-yellow-500 text-white px-4 py-2 rounded-r-md hover:bg-yellow-600 transition-all duration-300">
+                Pesquisar
+            </button>
+        </div>
+    </div>
 
     <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
         <thead class="bg-gray-100">
@@ -57,4 +69,3 @@
                 @endif
     </div>
 </div>
-@endsection

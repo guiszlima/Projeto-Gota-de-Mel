@@ -46,7 +46,9 @@ public function changeFormtype(){
 }
     else{
         $this->products = $woocommerce->get('products', ['search' => $this->searchTerm]);
-        
+        if(is_numeric( $this->searchTerm)){
+            $this->products = $woocommerce->get('products', ['sku' => $this->searchTerm]);
+        }
         $productsWithVariations = [];
         $productIdsToRemove = [];
         foreach ($this->products as $product) {
