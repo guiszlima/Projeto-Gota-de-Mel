@@ -122,7 +122,9 @@ public function changeFormtype(){
         foreach( $this->cart as $key=> &$item) {
         
             if($item['id'] == $id && $item['stock'] > $item['quantidade']){
-                $item['quantidade'] +=1;
+                
+                $item['quantidade'] ++;
+                $item['product_real_qtde']  = $item['value'] * $item['quantidade'] ;
                 
                 
                 
@@ -140,7 +142,8 @@ public function changeFormtype(){
         foreach( $this->cart as $key => &$item ) {
             
             if($item['id'] == $id){
-                $item['quantidade'] -=1;
+                $item['quantidade']--;
+                $item['product_real_qtde']  = $item['value'] * $item['quantidade'];
             if($item['quantidade'] < 1 ){
                 unset($this->cart[$key]);
             }

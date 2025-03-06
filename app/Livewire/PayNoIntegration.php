@@ -17,7 +17,6 @@ class PayNoIntegration extends Component
     public $total;
     public $parcelas;
     public $paymentmethod;
-    public $showParcelas = false;
     public $troco = false;
     public $totalReference;
     public $paymentReference;
@@ -36,7 +35,7 @@ class PayNoIntegration extends Component
         $this->total = $this->getTotal($this->sell['cart']);
         $this->paymentmethod = $sell['payment_method'];
      
-
+        
      
   
          return view('payment')->with('sell',$sell);
@@ -46,68 +45,66 @@ class PayNoIntegration extends Component
 
     public function selling()
     {
-
-        if(!$this->payment|| $this->payment === '0,00'){
-            
+        if (!$this->payment || $this->payment === '0,00') {
             $this->dispatch('noPayment');
             return;
         }
-        // Depuração dos tipos e valores
+    
         // Limpar o valor de pagamento
-        $cleanPayment = str_replace(['.', ' '], '', $this->payment); // Remove pontos e espaços
-        $cleanPayment = str_replace(',', '.', $cleanPayment); // Troca vírgula por ponto
-        // Converte para float
+        $cleanPayment = str_replace(['.', ' '], '', $this->payment);
+        $cleanPayment = str_replace(',', '.', $cleanPayment);
         $paymentValue = (float)$cleanPayment;
-        // Debug para verificar o valor convertido
-        // Verifica se o pagamento é maior que o valor total
-      
-    if ($this->paymentmethod === "dinheiro" && $this->total < $paymentValue && !$this->troco){
-        $this->troco = $paymentValue - $this->total;
-        $data = [
-            'sell_id'=>$this->sell['IdVenda'],
-            'pagamento'=> $this->paymentmethod,
-            'preco'=> $paymentValue,
-            'troco' =>  $this->troco,
-        ];
-
-        $this->paymentReference[] = $data;    
-
-         $this->total = 0.0;
-      
-         Payment::create($data);
-    }
-    elseif ($this->total < $paymentValue && $this->troco ) {
-            
-            
-        $this->dispatch('hasTroco');
-        return;
-    }
-        elseif ($this->total < $paymentValue) {
-            
-            
+    
+        if ($this->paymentmethod === "dinheiro" && $this->total < $paymentValue && !$this->troco) {
+            $this->troco = $paymentValue - $this->total;
+            $data = [
+                'sell_id' => $this->sell['IdVenda'],
+                'pagamento' => $this->paymentmethod,
+                'preco' => $paymentValue,
+                'troco' => $this->troco,
+            ];
+    
+            $this->paymentReference[] = $data;
+            $this->total = 0.0;
+            Payment::create($data);
+            return;
+        } elseif ($this->total < $paymentValue && $this->troco) {
+            $this->dispatch('hasTroco');
+            return;
+        } elseif ($this->total < $paymentValue) {
             $this->dispatch('paymentTooHigh');
             return;
-        }
-        else{
-          
+        } elseif ($this->paymentmethod === "credit") {
+            $paymentValue = $paymentValue * $this->parcelas;
+            if ($this->total < $paymentValue) {
+                $this->dispatch('parcelTooHigh');
+                return;
+            }
             $data = [
-                'sell_id'=>$this->sell['IdVenda'],
-                'pagamento'=> $this->paymentmethod,
-                'preco'=> $paymentValue,
-                'parcelas'=> $this->parcelas
+                'sell_id' => $this->sell['IdVenda'],
+                'pagamento' => $this->paymentmethod,
+                'preco' => $paymentValue,
+                'parcelas' => $this->parcelas
             ];
-
-            $this->paymentReference[] = $data;
-             $this->total = $this->total - $paymentValue;
-            
-             Payment::create($data);
-           
+        } 
+        
+        if(!$this->troco){
+        
+            $data = [
+                'sell_id' => $this->sell['IdVenda'],
+                'pagamento' => $this->paymentmethod,
+                'preco' => $paymentValue
+            ];
+        
+        $this->paymentReference[] = $data;
+        $this->total = round($this->total - $paymentValue, 2);
+        Payment::create($data);
         }
-        // Gera um novo ID para a venda e recupera o CPF do usuário logado
+    
+        
      
       
 
-        // Redirecionar ou mostrar uma mensagem de sucesso aqui, se necessário
 
 
     }
@@ -210,16 +207,8 @@ class PayNoIntegration extends Component
             $this->dispatch('printNotaAlert');
         }
     }
-public function updatedPaymentmethod()
-{
-    
-    $this->showParcelas = ($this->paymentmethod === 'credito');
-    
-}
-    public function cancel_sell()
-    {
-        // Implementação de cancelamento de venda (se necessário)
-    }
+
+
     private function getTotal($array)
     {
         $total = 0;

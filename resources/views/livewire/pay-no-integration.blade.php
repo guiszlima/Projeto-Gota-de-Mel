@@ -14,7 +14,7 @@
     <div class="w-full max-w-md p-6 bg-white rounded-2xl shadow-lg border border-gray-200">
         <div class="text-center mb-6">
             <h1 data-value={{ $total }} id="valor" class="text-3xl font-bold text-gray-800 mb-4">
-                Total a pagar: R$ {{ $total }}
+                Total a pagar: R$ {{  number_format($total, 2, ',', '.')  }}
             </h1>
 
             <input wire:model="payment" required id="to-pay" autocomplete="off" type="text" placeholder="Insira valor para pagar" class="w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
@@ -28,7 +28,7 @@
             </select>
         </div>
 
-        <input wire:model="parcelas" type="text" placeholder="Em quantas vezes Deseja Parcelar?" name="Insira as Parcelas" id="parcelas" class="hidden w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
+        <input wire:model="parcelas" wire:ignore type="text" placeholder="Em quantas vezes Deseja Parcelar?" name="Insira as Parcelas" id="parcelas" class="hidden w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
 
         <div class="flex justify-center w-full mt-6">
             <button wire:click="selling({{$total}})" id="pagar" class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-semibold rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-xl">
@@ -113,11 +113,37 @@
             confirmButtonText: 'Entendido'
         });
     });
+    window.addEventListener('parcelTooHigh', function(event) {
+    const pay = parseFloat(document.getElementById('to-pay').value.replace(/\./g, '').replace(',', '.')) || 0;
+    const parcelasInput = document.getElementById('parcelas');
+    const parcela = parseInt(parcelasInput ? parcelasInput.value : 1) || 1;
+    const valorElement = document.getElementById('valor');
+    const atualValue = parseFloat(valorElement.getAttribute('data-value')) || 0;
+
+    const parcelaSoma = pay * parcela;
+
+    if (parcelaSoma > atualValue) {
+        Swal.fire({
+            title: 'Soma de parcelas muito alta!',
+            html: `A soma de todas as parcelas ficou muito alta: <span style="color: #e3342f; font-weight: bold;">R$ ${parcelaSoma.toFixed(2).replace('.', ',')}</span>. Para prosseguir, o valor total deve ser menor que: R$ ${atualValue.toFixed(2).replace('.', ',')}.`,
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+    }
+});
 
     window.addEventListener('noPayment', function(event) {
         Swal.fire({
             title: 'Não foi inserido um pagamento',
             html: `Por favor, insira um valor.`, 
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+    });
+    window.addEventListener('hasTroco', function(event) {
+        Swal.fire({
+            title: 'O valor já foi pago',
+             
             icon: 'warning',
             confirmButtonText: 'Entendido'
         });
@@ -166,4 +192,27 @@ window.addEventListener('renderizar-pdf', (url) => {
             });
         });
 });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function toggleParcelasVisibility() {
+        let parcelas = document.getElementById('parcelas');
+        let paymentMethod = document.getElementById('payment-method').value;
+
+        if (paymentMethod === 'credit') {
+            parcelas.classList.remove('hidden');
+        } else {
+            parcelas.classList.add('hidden');
+        }
+    }
+
+    // Chama a função uma vez quando o DOM for renderizado
+    toggleParcelasVisibility();
+
+    // Adiciona o listener de evento para o change no payment-method
+    document.getElementById('payment-method').addEventListener('change', function() {
+        toggleParcelasVisibility();
+    });
+});
+
 </script>
