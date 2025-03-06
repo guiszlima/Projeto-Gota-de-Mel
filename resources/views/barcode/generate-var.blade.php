@@ -41,14 +41,14 @@ document.addEventListener('DOMContentLoaded', function () {
             (() => { 
                 let elementId = 'codBarras-{{$variation->id}}';
                 let sku = "{{$variation->sku}}";
-                let price = "{{$variation->price}}";
+                
 
                 if (!sku) {
                     sku = "000000";
                 }
 
                 JsBarcode('#' + elementId, sku, {
-                    text: price,
+                    text: sku,
                     displayValue: true
                 });
 

@@ -41,7 +41,7 @@ function GerarCódigoDeBarras() {
         productId.innerHTML = 0;
     }
     JsBarcode('#codBarras', productId.innerHTML, {
-        text: "{{$product['price']}}",
+        text: "{{$product['sku']}}",
         displayValue: true
     });
 
