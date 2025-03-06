@@ -104,15 +104,17 @@
     }
 
     window.addEventListener('paymentTooHigh', function(event) {
-        const value = document.getElementById('valor');
-        const atualValue = value.getAttribute('data-value'); // Obtém o valor do atributo
-        Swal.fire({
-            title: 'Valor de Pagamento Muito Alto',
-            html: `Por favor, insira um valor menor ou igual a: <span style="color: #e3342f; font-weight: bold;">R$ ${atualValue}</span> para prosseguir com o pagamento.`,
-            icon: 'warning',
-            confirmButtonText: 'Entendido'
-        });
+    const valorElement = document.getElementById('valor');
+    const atualValue = parseFloat(valorElement.getAttribute('data-value')) || 0;
+    
+    Swal.fire({
+        title: 'Valor de Pagamento Muito Alto',
+        html: `Por favor, insira um valor menor ou igual a: <span style="color: #e3342f; font-weight: bold;">R$ ${atualValue.toFixed(2).replace('.', ',')}</span> para prosseguir com o pagamento.`,
+        icon: 'warning',
+        confirmButtonText: 'Entendido'
     });
+});
+
     window.addEventListener('parcelTooHigh', function(event) {
     const pay = parseFloat(document.getElementById('to-pay').value.replace(/\./g, '').replace(',', '.')) || 0;
     const parcelasInput = document.getElementById('parcelas');
@@ -160,16 +162,17 @@ window.addEventListener('noInsertDiscount', function() {
 
 // Evento para quando o desconto for muito alto
 window.addEventListener('tooBigDiscount', function() {
-    const value = document.getElementById('valor');
-    const atualValue = value.getAttribute('data-value'); // Obtém o valor do atributo
+    const valorElement = document.getElementById('valor');
+    const atualValue = parseFloat(valorElement.getAttribute('data-value')) || 0;
     
     Swal.fire({
         title: 'Valor de Desconto Muito Alto',
-        html: `O desconto não pode ser maior que o valor total da venda. Por favor, insira um valor menor ou igual a: <span style="color: #e3342f; font-weight: bold;">R$ ${atualValue}</span>`,
+        html: `O desconto não pode ser maior que o valor total da venda. Por favor, insira um valor menor ou igual a: <span style="color: #e3342f; font-weight: bold;">R$ ${atualValue.toFixed(2).replace('.', ',')}</span>`,
         icon: 'warning',
         confirmButtonText: 'Entendido'
     });
 });
+
 window.addEventListener('printNotaAlert', function(event) {
         
         Swal.fire({
