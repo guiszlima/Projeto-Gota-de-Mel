@@ -28,7 +28,7 @@
             </select>
         </div>
 
-        <select wire:model="parcelas" id="parcelas" class="hidden w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
+        <select wire:model="parcelas" wire:ignore id="parcelas" class="hidden w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
             <option value="">Selecione as Parcelas</option>
             @for ($i = 1; $i <= 24; $i++)
                 <option value="{{ $i }}">{{ $i }}x</option>
@@ -118,6 +118,17 @@
         confirmButtonText: 'Entendido'
     });
 });
+
+
+window.addEventListener('noParcel', function(event) {
+        
+        Swal.fire({
+            title: 'Como o pagamento é Crédito deve ser selecionado uma Parcela',
+            
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+    });
 
     window.addEventListener('parcelTooHigh', function(event) {
     const pay = parseFloat(document.getElementById('to-pay').value.replace(/\./g, '').replace(',', '.')) || 0;
@@ -222,6 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             parcelas.classList.add('hidden');
             parcelas.value = "";
+            
         }
     }
 

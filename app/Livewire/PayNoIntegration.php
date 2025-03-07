@@ -76,6 +76,13 @@ class PayNoIntegration extends Component
             return;
         } elseif ($this->paymentmethod === "credit") {
             $paymentValue = $paymentValue * $this->parcelas;
+           
+           if(!$this->parcelas){
+            $this->dispatch('noParcel');
+
+            return;
+           }
+           
             if ($this->total < $paymentValue) {
                 $this->dispatch('parcelTooHigh');
                 return;
@@ -86,6 +93,10 @@ class PayNoIntegration extends Component
                 'preco' => $paymentValue,
                 'parcelas' => $this->parcelas
             ];
+            $this->paymentReference[] = $data;
+        $this->total = round($this->total - $paymentValue, 2);
+        Payment::create($data);
+            return; 
         } 
         
         if(!$this->troco){
@@ -100,14 +111,9 @@ class PayNoIntegration extends Component
         $this->total = round($this->total - $paymentValue, 2);
         Payment::create($data);
         }
-    
-        
-     
-      
-
-
 
     }
+
     public function applyDiscount()
     {
         // Recupera a venda atual
