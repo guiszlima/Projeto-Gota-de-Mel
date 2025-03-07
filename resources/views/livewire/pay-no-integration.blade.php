@@ -28,8 +28,12 @@
             </select>
         </div>
 
-        <input wire:model="parcelas" wire:ignore type="text" placeholder="Em quantas vezes Deseja Parcelar?" name="Insira as Parcelas" id="parcelas" class="hidden w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
-
+        <select wire:model="parcelas" id="parcelas" class="hidden w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
+            <option value="">Selecione as Parcelas</option>
+            @for ($i = 1; $i <= 24; $i++)
+                <option value="{{ $i }}">{{ $i }}x</option>
+            @endfor
+        </select>
         <div class="flex justify-center w-full mt-6">
             <button wire:click="selling({{$total}})" id="pagar" class="w-full text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-semibold rounded-lg text-base px-6 py-3 text-center mx-auto transition duration-300 transform hover:scale-105 shadow-xl">
                 Pagar
@@ -183,6 +187,17 @@ window.addEventListener('printNotaAlert', function(event) {
         });
     });
 
+    window.addEventListener('endPurchaseAlert', function(event) {
+        
+        Swal.fire({
+            title: 'O produto deve ser pago antes da compra ser finalizada',
+            html: `Por favor, realize a transação antes de confirmar a compra.`,
+            icon: 'warning',
+            confirmButtonText: 'Entendido'
+        });
+    });
+
+
 document.addEventListener('DOMContentLoaded', function () {
 window.addEventListener('renderizar-pdf', (url) => {
         const pdfUrl = url.detail[0].url;
@@ -206,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
             parcelas.classList.remove('hidden');
         } else {
             parcelas.classList.add('hidden');
+            parcelas.value = "";
         }
     }
 

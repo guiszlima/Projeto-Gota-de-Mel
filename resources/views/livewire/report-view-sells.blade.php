@@ -195,7 +195,7 @@ $totalItems = count($items);
 
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         R${{ number_format($item->preco, 2, ',', '.') }}</td>
-                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ $item->preco_total }}</td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">{{ 'R$ ' . number_format($item->preco_total, 2, ',', '.')  }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{ implode(', ', json_decode($item->produtos)) }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm capitalize text-gray-900">

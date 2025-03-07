@@ -57,7 +57,8 @@
                     <div class="flex flex-col h-full justify-end">
                         <!-- Botão Adicionar -->
                         <div class="flex justify-end h-full flex-col text-center">
-                            Preço: R${{$product->price  }}
+                        Preço: R$ {{ number_format($product->price, 2, ',', '.') }}
+
                             @if ($product->stock_quantity!=0)
 
 
