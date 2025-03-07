@@ -130,24 +130,6 @@ window.addEventListener('noParcel', function(event) {
         });
     });
 
-    window.addEventListener('parcelTooHigh', function(event) {
-    const pay = parseFloat(document.getElementById('to-pay').value.replace(/\./g, '').replace(',', '.')) || 0;
-    const parcelasInput = document.getElementById('parcelas');
-    const parcela = parseInt(parcelasInput ? parcelasInput.value : 1) || 1;
-    const valorElement = document.getElementById('valor');
-    const atualValue = parseFloat(valorElement.getAttribute('data-value')) || 0;
-
-    const parcelaSoma = pay * parcela;
-
-    if (parcelaSoma > atualValue) {
-        Swal.fire({
-            title: 'Soma de parcelas muito alta!',
-            html: `A soma de todas as parcelas ficou muito alta: <span style="color: #e3342f; font-weight: bold;">R$ ${parcelaSoma.toFixed(2).replace('.', ',')}</span>. Para prosseguir, o valor total deve ser menor que: R$ ${atualValue.toFixed(2).replace('.', ',')}.`,
-            icon: 'warning',
-            confirmButtonText: 'Entendido'
-        });
-    }
-});
 
     window.addEventListener('noPayment', function(event) {
         Swal.fire({

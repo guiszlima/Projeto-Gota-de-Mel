@@ -252,31 +252,29 @@ class ReportViewSells extends Component
             ->when($this->searchStartDate && $this->searchEndDate, function ($query) {
                 $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]);
             })
-            // Adicionando a condição para filtrar vendas não canceladas
             ->where('sells.cancelado', false)
             ->whereDate('sells.created_at', today())
             ->orderBy('sells.created_at', 'desc')
-            ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento', 'payments.preco', 'payments.troco');
-        
-        // Convertendo as vendas para um array simples
-        $salesData = $sales->get()->map(function ($sale) {
-            
-            return [
-                'id' => $sale->id,
-                'created_at' => $sale->created_at->format('d/m/Y H:i:s'),
-                'user_name' => $sale->user_name,
-                'user_cpf' => $sale->user_cpf,
-                'pagamento' => $sale->pagamento,
-                'preco' => 'R$' . number_format($sale->preco, 2, ',', '.'),
-                'produtos' => '"' . implode('", "', json_decode($sale->produtos)) . '"',
-                'status' => $sale->cancelado ? 'Cancelado' : 'Aprovado',
-                'troco' => $sale->troco ? 'R$' . number_format($sale->troco, 2, ',', '.') : '',
-            ];
-        });
-        
+            ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento', 'payments.preco', 'payments.troco','payments.parcelas')
+            ->get() // Aqui está o erro corrigido. Agora a query executa e retorna os resultados.
+            ->toArray(); // Transforma os resultados em array
     
-        // Disparando o evento JavaScript e passando os dados como array
-        $this->dispatch('export-sales', ['sales' => $salesData]);
+
+            
+
+
+
+        // Verifica se há vendas
+        if (empty($sales)) {
+            session()->flash('message', 'Nenhuma venda encontrada para gerar o relatório.');
+            return;
+        }
+    
+        // Gera a URL com os dados corretamente formatados
+        $url = route('generate.pdf.relatorio') . '?' . http_build_query(['sales' =>$sales]);
+    
+        // Dispara o evento para renderizar o PDF
+        $this->dispatch('export-sales-pdf', ['url' => $url]);
     }
     
     
@@ -320,7 +318,7 @@ class ReportViewSells extends Component
                 $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtra pela data de criação
             })->when()
             ->orderBy('sells.created_at', 'desc')
-            ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento', 'payments.preco', 'payments.preco', 'payments.troco');
+            ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento',  'payments.preco', 'payments.troco','payments.parcelas');
 
         // Aplicar paginação
         $itemsPaginate = $itemsQuery->paginate(50);

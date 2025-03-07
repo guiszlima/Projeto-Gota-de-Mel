@@ -75,7 +75,7 @@ class PayNoIntegration extends Component
             $this->dispatch('paymentTooHigh');
             return;
         } elseif ($this->paymentmethod === "credit") {
-            $paymentValue = $paymentValue * $this->parcelas;
+          
            
            if(!$this->parcelas){
             $this->dispatch('noParcel');
@@ -83,10 +83,7 @@ class PayNoIntegration extends Component
             return;
            }
            
-            if ($this->total < $paymentValue) {
-                $this->dispatch('parcelTooHigh');
-                return;
-            }
+     
             $data = [
                 'sell_id' => $this->sell['IdVenda'],
                 'pagamento' => $this->paymentmethod,

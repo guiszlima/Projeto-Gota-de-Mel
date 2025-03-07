@@ -159,6 +159,7 @@ $totalItems = count($items);
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Pagamento</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">CPF</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Troco</th>
+                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Parcelas</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Desconto</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Data</th>
                 </tr>
@@ -209,6 +210,9 @@ $totalItems = count($items);
                     </td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{$item->troco}}
+                    </td>
+                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                        {{$item->parcelas}}
                     </td>
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{$item->desconto?? ""}}
@@ -372,74 +376,36 @@ console.log('omg hii',pdfUrl);
 <script>
 
 
-window.addEventListener('export-sales', event => {
-    // Obtendo os dados das vendas
-    const sales = event.detail[0].sales;
-    console.log(sales);
-    // Convertendo os dados para um formato que o Excel entende
-    const rows = sales.map(sale => [
-        `Venda ID: ${sale.id}`,
-        sale.created_at,
-        sale.user_name,
-        sale.user_cpf,
-        sale.pagamento,
-        sale.preco,
+window.addEventListener('export-sales-pdf', (url) => {
+        const pdfUrl = url.detail[0].url;
+        console.log('omg hii',pdfUrl);
+        printJS({
+        printable: pdfUrl,
+        type: 'pdf',
+        showModal: true,
+        style: `
+            @media print {
+                /* Ajustar o zoom para impressão */
+                body {
+                    zoom: 1.5; /* Ajuste o valor de zoom para aumentar o conteúdo */
+                }
 
-        sale.produtos ? JSON.parse('[' + sale.produtos + ']').join(', ') : '',
-        sale.troco
-    ]);
-
-    // Estilos para o cabeçalho
-    const headerStyle = {
-        font: { bold: true, color: { rgb: "FFFFFF" }, sz: 12, name: "Arial" },
-        fill: { fgColor: { rgb: "4F81BD" } }, // Azul de fundo
-        alignment: { horizontal: "center", vertical: "center", wrapText: true },
-        border: { top: { style: "thin", color: { rgb: "000000" } }, bottom: { style: "thin", color: { rgb: "000000" } }, left: { style: "thin", color: { rgb: "000000" } }, right: { style: "thin", color: { rgb: "000000" } } }
-    };
-
-    // Estilos para as células de dados
-    const dataStyle = {
-        alignment: { horizontal: "center", vertical: "center", wrapText: true },
-        border: { top: { style: "thin", color: { rgb: "000000" } }, bottom: { style: "thin", color: { rgb: "000000" } }, left: { style: "thin", color: { rgb: "000000" } }, right: { style: "thin", color: { rgb: "000000" } } }
-    };
-
-    // Criando a planila com os estilos
-    const ws = XLSX.utils.aoa_to_sheet([['Id de Venda', 'Data', 'Nome', 'CPF', 'Tipo de pagamento', 'Preço', 'Id De Produtos','Troco'], ...rows]);
-
-    // Estilo para o cabeçalho
-    const range = XLSX.utils.decode_range(ws['!ref']);
-    for (let col = range.s.c; col <= range.e.c; col++) {
-        const cell = ws[XLSX.utils.encode_cell({ r: 0, c: col })];
-        if (cell) {
-            cell.s = headerStyle;
-        }
-    }
-
-    // Estilo para as células de dados
-    for (let row = 1; row <= range.e.r; row++) {
-        for (let col = range.s.c; col <= range.e.c; col++) {
-            const cell = ws[XLSX.utils.encode_cell({ r: row, c: col })];
-            if (cell) {
-                cell.s = dataStyle;
+                /* Ajustar configurações de página */
+                @page {
+                    size: A4;
+                    margin: 1in;
+                }
             }
-        }
-    }
+        `
+    });
 
-    // Ajustando a largura das colunas automaticamente
-    const columnWidths = [20, 25, 20, 15, 20, 15, 20, 20, 15];
-    for (let col = range.s.c; col <= range.e.c; col++) {
-        const colLetters = XLSX.utils.encode_col(col);
-        ws['!cols'] = ws['!cols'] || [];
-        ws['!cols'][col] = { width: columnWidths[col] };
-    }
 
-    // Criando o arquivo Excel
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Vendas de Hoje');
+    })
+    
 
-    // Gerando o arquivo Excel
-    XLSX.writeFile(wb, 'vendas-hoje-' + new Date().toISOString().split('T')[0] + '.xlsx');
-});
+
+
+
 
 
 </script>

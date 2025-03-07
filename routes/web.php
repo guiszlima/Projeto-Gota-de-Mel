@@ -116,6 +116,23 @@ foreach ($request->all() as $item) {
   // Retorna o PDF para visualização
   return $pdf->stream('nota-fiscal.pdf');
 })->name('generate.pdf.troca');
+
+Route::get('/generate-pdf-relatorio', function (Request $request) {
+  
+  $dados = collect($request->input('sales', []))
+        ->filter() // Remove valores nulos
+        ->groupBy('id'); // Agrupa pelo ID da venda
+        
+  
+    // Gera o PDF
+    $pdf = Pdf::loadView('pdf.template-relatorio', ['data' => $dados]);
+  
+    // Retorna o PDF para visualização
+    return $pdf->stream('relatorio.pdf');
+  })->name('generate.pdf.relatorio');
+  
+  
+
 });
 
    
