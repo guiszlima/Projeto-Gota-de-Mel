@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Automattic\WooCommerce\Client;
 use App\Models\Sell;
 use App\Models\ReportCreate;
+use Illuminate\Support\Facades\Http;
+
 
 class ReportViewSells extends Component
 {
@@ -21,7 +23,7 @@ class ReportViewSells extends Component
     public $searchSellId;
     public $searchPrice;
     public $searchStartDate;
-    public $searchCPF;
+    
     public $searchEndDate;
     public $estoque;
     public $estante;
@@ -219,113 +221,78 @@ class ReportViewSells extends Component
         $this->dispatch('renderizar-pdf', ['url' => $url]);
     }
 
-    public function downloadExcel()
+    
+
+    public function downloadPDF()
     {
-        // Fazendo a consulta para pegar as vendas do dia
-        $sales = Sell::query()
-            ->join('users', 'sells.user_id', '=', 'users.id')
-            ->leftJoin('payments', 'sells.id', '=', 'payments.sell_id')
-            ->when($this->searchCPF, function ($query) {
-                $query->where('users.CPF', 'like', '%' . $this->searchCPF . '%');
-            })
-            ->when($this->selectedPay, function ($query) {
-                $query->where('payments.pagamento', $this->selectedPay);
-            })
-            ->when($this->selectedStatus !== null, function ($query) {
-                $query->where('sells.cancelado', (int)$this->selectedStatus);
-            })
-            ->when($this->searchName, function ($query) {
-                $query->where('users.name', 'like', '%' . $this->searchName . '%');
-            })
-            ->when($this->searchId, function ($query) {
-                $query->whereRaw('JSON_CONTAINS(sells.produtos, ?)', [json_encode($this->searchId)]);
-            })
-            ->when($this->searchSellId, function ($query) {
-                $query->where('sells.id', 'like', '%' . $this->searchSellId . '%');
-            })
-            ->when($this->searchPrice, function ($query) {
-                $query->where('sells.preco_total', $this->searchPrice);
-            })
-            ->when($this->searchTroco, function ($query) {
-                $query->where('payments.troco', $this->searchTroco);
-            })
-            ->when($this->searchStartDate && $this->searchEndDate, function ($query) {
-                $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]);
-            })
-            ->where('sells.cancelado', false)
-            ->whereDate('sells.created_at', today())
-            ->orderBy('sells.created_at', 'desc')
-            ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento', 'payments.preco', 'payments.troco','payments.parcelas')
-            ->get() // Aqui está o erro corrigido. Agora a query executa e retorna os resultados.
-            ->toArray(); // Transforma os resultados em array
-    
-
+        $data = [
             
-
-
-
-        // Verifica se há vendas
-        if (empty($sales)) {
-            session()->flash('message', 'Nenhuma venda encontrada para gerar o relatório.');
-            return;
-        }
+            'selectedPay' => request('selectedPay'),
+            'selectedStatus' => request('selectedStatus'),
+            'searchName' => request('searchName'),
+            'searchId' => request('searchId'),
+            'searchSellId' => request('searchSellId'),
+            'searchPrice' => request('searchPrice'),
+            'searchTroco' => request('searchTroco'),
+            'searchStartDate' => request('searchStartDate'),
+            'searchEndDate' => request('searchEndDate'),
+        ];
     
-        // Gera a URL com os dados corretamente formatados
-        $url = route('generate.pdf.relatorio') . '?' . http_build_query(['sales' =>$sales]);
-    
-        // Dispara o evento para renderizar o PDF
-        $this->dispatch('export-sales-pdf', ['url' => $url]);
+        return redirect()->route('generate.pdf.relatorio', http_build_query($data));
     }
+    
     
     
     public function render()
-    {
-        // Aplicar os filtros e paginação
-        $itemsQuery = Sell::query()
-            ->join('users', 'sells.user_id', '=', 'users.id') // Join com a tabela 'users'
-            ->leftJoin('payments', 'sells.id', '=', 'payments.sell_id')
-            ->when($this->searchCPF, function ($query) {
-                $query->where('users.CPF', 'like', '%' . $this->searchCPF . '%'); // Filtra pelo CPF na tabela 'users'
-            })
-            ->when($this->selectedPay, function ($query) {
-                $query->where('payments.pagamento', $this->selectedPay); // Filtra pelo tipo de pagamento na tabela 'payments'
-            })
-            ->when($this->selectedStatus !== null, function ($query) {
-                $query->where('sells.cancelado', (int)$this->selectedStatus); // Filtra pelo tipo de pagamento na tabela 'payments'
-            })
-            ->when($this->searchName, function ($query) {
-                $query->where('users.name', 'like', '%' . $this->searchName . '%'); // Filtra pelo nome do usuário
-            })
-            ->when($this->searchId, function ($query) {
-                $query->whereRaw('JSON_CONTAINS(sells.produtos, ?)', [json_encode($this->searchId)]); // Filtra pelo ID do produto no JSON
-            })
-            ->when($this->selectedPay, function ($query) {
-                $query->where('payments.pagamento', $this->selectedPay); // Filtra pelo tipo de pagamento na tabela 'payments'
-            })
-            ->when($this->searchSellId, function ($query) {
-                $query->where('sells.id', 'like', '%' . $this->searchSellId . '%'); // Filtra pelo preço na tabela 'payments'
-            })
-            ->when($this->searchPrice, function ($query) {
-                $query->where('sells.preco_total', $this->searchPrice); // Filtra pelo preço na tabela 'sells'
-            })
-            ->when($this->searchTroco, function ($query) {
-                $query->where('payments.troco', $this->searchTroco); // Filtro correto no campo troco
-            })
-            ->when($this->searchDiscount, function ($query) {
-                $query->where('payments.desconto', $this->searchDiscount); // Filtro por desconto
-            })
-            ->when($this->searchStartDate && $this->searchEndDate, function ($query) {
-                $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtra pela data de criação
-            })->when()
-            ->orderBy('sells.created_at', 'desc')
-            ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento',  'payments.preco', 'payments.troco','payments.parcelas');
+{
+    // Substitui a vírgula por ponto e converte para float
+    $searchPrice = floatval(str_replace(',', '.', $this->searchPrice));
+    $searchPayment = floatval(str_replace(',', '.', $this->searchPayment));
 
-        // Aplicar paginação
-        $itemsPaginate = $itemsQuery->paginate(50);
+    // Aplicar os filtros e paginação
+    $itemsQuery = Sell::query()
+        ->join('users', 'sells.user_id', '=', 'users.id')
+        ->leftJoin('payments', 'sells.id', '=', 'payments.sell_id')
+        ->when($this->selectedPay, function ($query) {
+            $query->where('payments.pagamento', $this->selectedPay); // Filtro tipo de pagamento
+        })
+        ->when($this->selectedStatus !== null, function ($query) {
+            $query->where('sells.cancelado', (int)$this->selectedStatus); // Filtro status
+        })
+        ->when($this->searchName, function ($query) {
+            $query->where('users.name', 'like', '%' . $this->searchName . '%'); // Filtro nome do usuário
+        })
+        ->when($this->searchId, function ($query) {
+            $query->whereRaw('JSON_CONTAINS(sells.produtos, ?)', [json_encode($this->searchId)]); // Filtro por ID do produto
+        })
+        ->when($this->searchSellId, function ($query) {
+            $query->where('sells.id', 'like', '%' . $this->searchSellId . '%'); // Filtro por ID da venda
+        })
+        ->when($searchPrice > 0, function ($query) use ($searchPrice) {
+            $query->where('sells.preco_total', 'like', $searchPrice . '%'); // Filtro por preço total
+        })
+        ->when($searchPayment > 0, function ($query) use ($searchPayment) {
+            $query->where('payments.preco', 'like', $searchPayment . '%'); // Filtro por preço de pagamento
+        })
+        ->when($this->searchTroco, function ($query) {
+            $query->where('payments.troco', 'like', $this->searchTroco . '%'); // Filtro por troco
+        })
+        ->when($this->searchDiscount, function ($query) {
+            $query->where('payments.desconto', $this->searchDiscount); // Filtro por desconto
+        })
+        ->when($this->searchStartDate && $this->searchEndDate, function ($query) {
+            $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtro por data
+        })
+        ->orderBy('sells.created_at', 'desc')
+        ->select('sells.*', 'users.name as user_name', 'payments.pagamento', 'payments.preco', 'payments.troco', 'payments.parcelas');
 
-        // Calcular o total de preços
-        $totalPreco = $itemsQuery->where('sells.cancelado', 0)->sum('sells.preco_total');  // Calcular a soma antes da paginação
+    // Aplicar paginação
+    $itemsPaginate = $itemsQuery->paginate(50);
 
-        return view('livewire.report-view-sells', ['items' => $itemsPaginate, 'soma' => $totalPreco]);
-    }
+    // Calcular o total de preços antes da paginação
+    $totalPreco = $itemsQuery->where('sells.cancelado', 0)->sum('sells.preco_total');
+
+    return view('livewire.report-view-sells', ['items' => $itemsPaginate, 'soma' => $totalPreco]);
+}
+
 }

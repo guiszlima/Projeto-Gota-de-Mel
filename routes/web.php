@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request; // Adicione esta linha
-use Barryvdh\DomPDF\Facade\Pdf; 
+
+use App\Http\Controllers\PDFController;
 
 
 // routes/web.php
@@ -98,39 +99,9 @@ Route::middleware(['auth','check_pending'])->group(function () {
     return $pdf->stream('nota-fiscal.pdf');
 })->name('generate.pdf');
 
-Route::get('/generate-pdf-troca', function (Request $request) {
-
-
-foreach ($request->all() as $item) {
-  $dados[] = [
-      'id' => $item['id_produto'],
-      'cont' => $item['cont'],
-      'preco_produto' => $item['preco_produto'],
-      
-  ];
-}
-
-  // Gera o PDF
-  $pdf = Pdf::loadView('pdf.template-troca', ['dados' => $dados]);
-
-  // Retorna o PDF para visualização
-  return $pdf->stream('nota-fiscal.pdf');
-})->name('generate.pdf.troca');
-
-Route::get('/generate-pdf-relatorio', function (Request $request) {
-  
-  $dados = collect($request->input('sales', []))
-        ->filter() // Remove valores nulos
-        ->groupBy('id'); // Agrupa pelo ID da venda
-        
-  
-    // Gera o PDF
-    $pdf = Pdf::loadView('pdf.template-relatorio', ['data' => $dados]);
-  
-    // Retorna o PDF para visualização
-    return $pdf->stream('relatorio.pdf');
-  })->name('generate.pdf.relatorio');
-  
+Route::get('/generate-pdf-troca', [PDFController::class, 'generatePdfTroca'])->name('generate.pdf.troca');
+Route::get('/generate-pdf-relatorio', [PDFController::class, 'generatePdfRelatorio'])->name('generate.pdf.relatorio');
+Route::get('/generate-pdf', [PDFController::class, 'generatePdf'])->name('generate.pdf');
   
 
 });

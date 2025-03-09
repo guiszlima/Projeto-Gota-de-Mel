@@ -66,11 +66,7 @@ $totalItems = count($items);
                 <input type="search" wire:model="searchName" placeholder="Buscar Nome "
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">CPF</label>
-                <input type="search" wire:model="searchCPF" placeholder="Buscar por CPF"
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
-            </div>
+            
 
             <!-- Input para Id -->
             <div>
@@ -89,7 +85,7 @@ $totalItems = count($items);
             <!-- Input para Preço -->
             <div>
                 <label class="block text-sm font-medium text-gray-700">Preço Total</label>
-                <input type="search" wire:model="searchPrice" placeholder="Preço do produto"
+                <input type="search" wire:model="searchPrice" placeholder="Preço total" 
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:border-blue-300">
             </div>
             <div>
@@ -130,7 +126,7 @@ $totalItems = count($items);
         </button>
     </div>
     <div class="mb-6 text-right">
-    <button wire:click="downloadExcel"
+    <button wire:click="downloadPDF"
     class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
     Baixar Vendas de Hoje
 </button>
@@ -157,7 +153,7 @@ $totalItems = count($items);
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">ID dos Produtos</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Status</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Pagamento</th>
-                    <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">CPF</th>
+                    
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Troco</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Parcelas</th>
                     <th scope="col" class="px-6 py-3 text-sm font-medium text-gray-900">Desconto</th>
@@ -205,9 +201,7 @@ $totalItems = count($items);
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{ $item->pagamento === 'credit' ? 'crédito' : ($item->pagamento === 'debit' ? 'débito' : $item->pagamento) }}
                     </td>
-                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                        {{$item->user_cpf}}
-                    </td>
+                   
                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                         {{$item->troco}}
                     </td>
@@ -320,6 +314,17 @@ $totalItems = count($items);
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
 <script>
+
+
+function maskFloat(e) {
+    let value = e.target.value;
+    value = value.replace(/\D/g, '');
+    value = (value / 100).toFixed(2) + '';
+    value = value.replace(".", ",");
+    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+    e.target.value = value;
+}
+
 
 window.addEventListener('alreadyCancelled', function(event) {
 

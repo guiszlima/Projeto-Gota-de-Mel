@@ -87,6 +87,12 @@
     }
 </style>
 
+@php
+    $totalGeral = collect($sales)->flatten(1)->sum('preco_total');
+@endphp
+
+<p class="font-bold text-lg">Total Geral de Pagamentos: R${{ number_format($totalGeral, 2, ',', '.') }}</p>
+
 <table>
     <thead>
         <tr>
@@ -102,7 +108,8 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($data as $productId => $groupedItems)
+    
+        @foreach($sales as $productId => $groupedItems)
             <tr>
                 <td colspan="11" class="font-semibold text-gray-700 bg-gray-300">
                     Venda ID: {{ $productId }}
@@ -110,6 +117,7 @@
             </tr>
 
             @foreach($groupedItems as $item)
+            
                 <tr>
                     <td>{{ $item['user_name'] }}</td>
                     <td class="price">R${{ number_format($item['preco'], 2, ',', '.') }}</td>
