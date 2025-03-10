@@ -27,18 +27,23 @@ class CriarProduto extends Component
     public $allQuantity;
     public $allEstoque;
     public $allPrateleira;
+    public $response;
+
+
 
     public function render()
     {
         return view('livewire.criar-produto');
     }
 
-    public function mount(Client $woocommerce)
+    public function mount(Client $woocommerce,$response=null)
     {
         $this->categories = $this->getCategories($woocommerce);
         $this->attr = $this->getAttr($woocommerce);
         $this->cores = $this->getCores($woocommerce);
         $this->coresSelecionadas = [env("COR_ID") => []];
+        $this->response = $response;
+        
     }
 
     public function getCategories(Client $woocommerce)

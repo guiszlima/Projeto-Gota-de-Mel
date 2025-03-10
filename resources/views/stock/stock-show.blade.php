@@ -33,7 +33,7 @@ $variante = 'true'
             @php
             $variante = 'falso';
             @endphp
-
+            
             <div id="divChangeImg" class="flex flex-row hidden ">
                 <input name="image" type="file"
                     class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-min mb-4" placeholder="
@@ -55,8 +55,16 @@ $variante = 'true'
                     <input id="price" name="price" type="text" readonly value="{{ $product->price }}"
                         class="price editInput text-center border border-gray-300 p-3 rounded w-full"
                         oninput="maskFloat(event)">
-                </div>
-
+                        
+                    <label for="sku" class="text-gray-700 mb-2">Código de Barras</label>
+                    <input id="sku" name="sku" type="text" readonly value="{{ $product->sku }}"
+                        class="sku editInput text-center border border-gray-300 p-3 rounded w-full"
+                       
+                
+                
+              <div>
+            
+              </div>
                 <div class="flex flex-col">
                     <div class="flex flex-col w-full">
                         <label for="estoque" class="text-gray-700 mb-2">Estoque</label>
@@ -135,6 +143,7 @@ $variante = 'true'
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+       
     @foreach ($product as $variant)
         <div class="flex flex-col items-center w-full min-h-[80px] relative overflow-hidden">
             <!-- Botão de toggle com tamanho fixo -->
@@ -149,9 +158,20 @@ $variante = 'true'
                 <img src="{{ $variant->image->src ?? '' }}" alt="{{ $variant->name }}"
                     class="w-3/4 h-auto object-contain mb-6 rounded-lg shadow-md mx-auto">
 
-                <!-- Grid de inputs -->
+                    <div class='flex flex-col'>
+                    <label for="sku_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Código de Barras</label>
+                        <input id="sku_{{ $loop->index }}" name="sku[]" type="text" readonly
+                            value="{{ $variant->sku }}"
+                            class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                            </div>
+                
+                            <!-- Grid de inputs -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Preço -->
+
+                    <div class="flex flex-col">
+                       
+                    </div>
                     <div class="flex flex-col">
                         <label for="price_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Preço</label>
                         <input id="price_{{ $loop->index }}" name="variant_price[]" type="text" readonly

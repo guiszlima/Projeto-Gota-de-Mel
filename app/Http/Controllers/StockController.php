@@ -78,17 +78,22 @@ class StockController extends Controller
     {
         // Debug para verificar os dados recebidos
         
-
+   
         // Verifica se o tipo de produto é "simple"
         if ($request->input('product_type') === 'simple') {
-            $this->postSimpleProduct($woocommerce, $request);
+           $response = $this->postSimpleProduct($woocommerce, $request);
+            
+         
 
-            return view('stock.create.create');
+            return view('stock.create.create')->with('response',$response);
 
         } elseif ($request->input('product_type') === 'variable') {
-            $this->postVariableProduct($woocommerce, $request, $wpService);
-            
-            return view('stock.create.create');
+            $response = $this->postVariableProduct($woocommerce, $request, $wpService);
+            if(isset($response['error'])){
+                $woocommerce->delete("products/$response[product_id]");
+                
+            }
+            return view('stock.create.create')->with('response', $response);
         }
 
         return response()->json(['message' => 'Tipo de produto não suportado'], 400);
@@ -101,7 +106,13 @@ class StockController extends Controller
         $preco = str_replace(',', '.', $request->input('preco')[0]);
         $preco = floatval($preco);
 
-        $sku =  time(). "0";
+        if (!$request->barra) {
+            $sku =  time(). "0";
+        }
+        else {
+            $sku = $request->barra;
+        }
+        
 
         // Verifica se a imagem foi enviada corretamente
         $image_id = null;
@@ -169,9 +180,26 @@ class StockController extends Controller
             ]);
             
             return response()->json(['message' => 'Produto criado com sucesso!', 'data' => $response]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao criar o produto', 'details' => $e->getMessage()], 500);
-         
+        } catch (\Automattic\WooCommerce\HttpClient\HttpClientException $e) {
+            // Obtém a resposta da API e decodifica o JSON
+            $response = $e->getResponse();
+    
+            // Converte para array associativo
+            $errorResponse = json_decode($response->getBody(), true);
+            
+             $sku = rtrim($errorResponse['data']['unique_sku'], '-1');
+    
+            // Verifica se a resposta contém o código específico de SKU inválido ou duplicado
+            if (isset($errorResponse['code']) && $errorResponse['code'] === 'product_invalid_sku') {
+                return [
+                    'error' => 'O Produto não foi registrado pois o código de barras já está registrado.',
+                    'sku' => $sku
+
+                ];
+            }
+    
+            // Caso seja outro erro, retorna uma mensagem genérica
+           
         }
     }
 
@@ -204,7 +232,7 @@ class StockController extends Controller
     
         // Criar variações do produto PAI
         if (!empty($productResponse->id)) {
-            $this->createVariations($woocommerce, $request, $productResponse->id, $wpService);
+           return $this->createVariations($woocommerce, $request, $productResponse->id, $wpService);
         }
     }
     
@@ -225,8 +253,14 @@ class StockController extends Controller
                 }
             }
 
-
-            $sku =  time() . $index;
+            
+        if($request->input('barra')[$index]){
+            $sku =$request->input('barra')[$index] ;
+        }
+        else {
+        $sku =  time() . $index;
+        }
+           
            
             if ($request->hasFile("image.{$index}")) {
                 $uploadedFile = $request->file("image.{$index}");
@@ -264,10 +298,43 @@ class StockController extends Controller
         
         }
     
+       
+            $response = $woocommerce->post("products/{$product_id}/variations/batch", [
+                'create' => $variations
+            ]);
+            
+            // Verifique se existem erros na resposta
+           // Verifique se existem erros na resposta
+                $errors = collect($response->create)->filter(function($item) {
+                    return isset($item->error);  // Acessando como objeto
+                });
+               
+                if ($errors->isNotEmpty()) {
+                    // Inicializa a variável para armazenar os SKUs concatenados
+                    $all_sku = '';
+                
+                    // Percorre os erros e extrai os SKUs, removendo o sufixo "-1"
+                    foreach ($errors as $item) {
+                        $sku = rtrim($item->error->data->unique_sku, '-1');
+                        $all_sku .= $sku . " "; // Concatena os SKUs separados por espaço
+                    }
+                    
+                    // Formata a resposta
+                   return $errorMessages = [
+                        'product_id' => $product_id,
+                        'error' => 'O Produto não foi registrado pois o código de barras já está registrado.',
+                        'sku' => trim($all_sku) ?? 'N/A' // Remove espaços extras no final
+                    ];
+                
+                    // Para debugar e visualizar os dados
+                
+                }
+                
+            
+    
+       
         // Enviar todas as variações para o WooCommerce de uma vez
-       $response =  $woocommerce->post("products/{$product_id}/variations/batch", [
-            'create' => $variations
-        ]);
+      
         
         foreach ($response->create as $variation) {
             
@@ -283,8 +350,8 @@ class StockController extends Controller
         }
        
 
-    }
-    
+                }
+            
     
     /**
      * Display the specified resource.
@@ -390,6 +457,7 @@ class StockController extends Controller
              $variant = [
                 'id' => $data['id'][$i],  // O id diretamente aqui
               'weight' => (string)((float)$data['peso'][$i] / 1000) ?? '',
+              'sku' => $data['sku'][$i],
                 'dimensions'=>[
                     'length'=>$data['comprimento'][$i]??'',
                     'width'=> $data['largura'][$i]??'',
@@ -447,6 +515,7 @@ class StockController extends Controller
              $id = $data['id'];
              $produto = [
                  'name' => $data['name'],
+                 'sku' => $data['sku'],
                  'regular_price' => (string)str_replace(',', '.', $data['price']),
                  'stock_quantity' => $data['quantity'],
                  'weight'=> (string)((float)$data['peso']/1000)??'',

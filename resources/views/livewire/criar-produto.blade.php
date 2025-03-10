@@ -7,11 +7,21 @@
     <div class="w-full max-w-lg bg-white p-6 rounded-xl shadow-lg">
        
        
-
+  @if($response)
+           
+           <div class="bg-red-500 text-white p-4 rounded-md mb-4">
+               <strong>Erro:</strong> {{ $response['error'] }} <br>
+               <strong>SKU:</strong> {{ $response['sku'] }}
+           </div>
+       @endif
             @isset ($mensagem)
             <div class="my-4 p-3 bg-red-100 border border-red-400 text-red-600 rounded-md">
                 {{ $mensagem }}
             </div>
+            
+           
+
+            
             @endisset
 
             <!-- Nome do Produto -->
@@ -263,7 +273,14 @@
         type="button" onclick="insertPeso(document.getElementById('all-peso').value)">
     </button>
 </div>
-
+<div class="flex flex-row space-x-4">
+    <input type="text" id="all-barra" placeholder="Código de Barras de todos"
+        class="block w-full py-2 px-3 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+    <button id="insert-altura"
+        class="fa fa-refresh p-2 bg-amber-200 text-white rounded-full hover:bg-amber-300 hover:text-black transition duration-300"
+        type="button" onclick="insertBarra(document.getElementById('all-barra').value)">
+    </button>
+</div>
     <div class="flex flex-row space-x-4">
     <input type="file" id="all-imagem"  accept="image/*"
         class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
@@ -297,6 +314,7 @@
                     <th class="p-2 border">Largura</th>
                     <th class="p-2 border">Altura</th>
                     <th class="p-2 border">Peso(G)</th>
+                    <th class="p-2 border">Código de Barras</th>
                     <th class="p-2 border">Imagem</th>
                 </tr>
             </thead>
@@ -315,24 +333,24 @@
                                 <td class="p-2 border">
                                     <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)">
                                 </td>
-                                @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
-                                    @if ($field === 'estoque')
-                                        <td class="p-2 border">
+                                @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso', 'barra'] as $field)
+                                    <td class="p-2 border">
+                                        @if ($field === 'estoque')
                                             <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
                                                 class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                        </td>
-                                    @elseif (in_array($field, ['comprimento', 'largura', 'altura', 'peso']))
-                                        <td class="p-2 border">
+                                        @elseif ($field === 'barra')
+                                            <input type="text" name="{{ $field }}[]" placeholder="Código de barras" 
+                                                class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" >
+                                        @elseif (in_array($field, ['comprimento', 'largura', 'altura', 'peso']))
                                             <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
                                                 class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" step="0.01">
-                                        </td>
-                                    @else
-                                        <td class="p-2 border">
+                                        @else
                                             <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
                                                 class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
-                                        </td>
-                                    @endif
+                                        @endif
+                                    </td>
                                 @endforeach
+
 
                                 <td class="p-2 border">
                                     <input type="file" name="image[]" accept="image/*" class="imagem w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500">
@@ -353,12 +371,17 @@
                             <td class="p-2 border">
                                 <input type="text" name="preco[]" placeholder="Digite o preço" class="preco w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
                             </td>
-                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
+                            @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso','barra'] as $field)
                                 @if ($field === 'estoque')
                                     <td class="p-2 border">
                                         <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
                                             class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                                     </td>
+                                    @elseif ($field === 'barra')
+                                    <td class="p-2 border">
+                                            <input type="text" name="{{ $field }}[]" placeholder="Código de barras" 
+                                                class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                        </td>
                                 @elseif (in_array($field, ['comprimento', 'largura', 'altura', 'peso']))
                                     <td class="p-2 border">
                                         <input type="number" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
@@ -390,12 +413,18 @@
                             <td class="p-2 border">
                                 <input type="text" name="preco[]" placeholder="Digite o preço" class="preco  w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" oninput="maskFloat(event)" required>
                             </td>
-                                    @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso'] as $field)
+                                    @foreach (['quantidade', 'estoque', 'estante', 'prateleira', 'comprimento', 'largura', 'altura', 'peso','barra'] as $field)
                                             @if ($field === 'estoque')
                                                 <td class="p-2 border">
                                                     <input type="text" name="{{ $field }}[]" placeholder="Insira {{ $field }}" 
                                                         class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                                                 </td>
+                                            @elseif ($field === 'barra')
+                                                <td class="p-2 border">
+                                                        <input type="text" name="{{ $field }}" placeholder="Código de barras" 
+                                                            class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" >
+                                                </td>
+                                        
                                             @elseif (in_array($field, ['comprimento', 'largura', 'altura', 'peso']))
                                                 <td class="p-2 border">
                                                     <input type="number" name="{{ $field }}" placeholder="Insira {{ $field }}" 
@@ -407,6 +436,7 @@
                                                         class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
                                                 </td>
                                             @endif
+                                            
                                         @endforeach
 
 
@@ -606,6 +636,9 @@ function insertLargura(value) {
 
 function insertPeso(value) {
     document.querySelectorAll('.peso').forEach(input => input.value = value);
+}
+function insertBarra(value) {
+    document.querySelectorAll('.barra').forEach(input => input.value = value);
 }
 
 function insertImagem(files) {
