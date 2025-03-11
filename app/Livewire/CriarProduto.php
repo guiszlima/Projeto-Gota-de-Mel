@@ -27,7 +27,7 @@ class CriarProduto extends Component
     public $allQuantity;
     public $allEstoque;
     public $allPrateleira;
-    public $response;
+    public $response = null;
 
 
 
@@ -37,7 +37,9 @@ class CriarProduto extends Component
     }
 
     public function mount(Client $woocommerce,$response=null)
-    {
+    {   
+
+        
         $this->categories = $this->getCategories($woocommerce);
         $this->attr = $this->getAttr($woocommerce);
         $this->cores = $this->getCores($woocommerce);

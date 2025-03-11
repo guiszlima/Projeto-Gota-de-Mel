@@ -90,7 +90,7 @@ class StockController extends Controller
         } elseif ($request->input('product_type') === 'variable') {
             $response = $this->postVariableProduct($woocommerce, $request, $wpService);
             if(isset($response['error'])){
-                $woocommerce->delete("products/$response[product_id]");
+                $woocommerce->delete("products/$response[product_id]",['force' => true]);
                 
             }
             return view('stock.create.create')->with('response', $response);
@@ -183,7 +183,7 @@ class StockController extends Controller
         } catch (\Automattic\WooCommerce\HttpClient\HttpClientException $e) {
             // Obtém a resposta da API e decodifica o JSON
             $response = $e->getResponse();
-    
+            
             // Converte para array associativo
             $errorResponse = json_decode($response->getBody(), true);
             
@@ -553,7 +553,7 @@ class StockController extends Controller
      */
     public function destroy(Client $woocommerce, string $id)
     {
-        $woocommerce->delete("products/{$id}");
+        $woocommerce->delete("products/{$id}",['force' => true]);
         return back()->with('success', 'Produto Deletado com Sucesso!');
     }
 }
