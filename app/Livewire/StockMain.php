@@ -13,6 +13,12 @@ class StockMain extends Component
     public $currentPage = 1;
     public $totalPages;
     public $nmbrPerPage = 30;
+    public $searchBySku = false;
+
+    public function toggleSearchType()
+    {
+        $this->searchBySku = !$this->searchBySku;
+    }
 
     public function mount(Client $woocommerce)
     {
@@ -37,8 +43,12 @@ public function offSearch(Client $woocommerce){
             'page' => $this->currentPage,
             
         ];
-        if($this->isSearch){
-            $params['search'] = $this->searchTerm;
+        if ($this->isSearch) {
+            if ($this->searchBySku) {
+                $params['sku'] = $this->searchTerm; // Busca por SKU
+            } else {
+                $params['search'] = $this->searchTerm; // Busca por Nome
+            }
         }
 
         // Buscando produtos com os parâmetros definidos
