@@ -226,18 +226,18 @@ class ReportViewSells extends Component
     public function downloadPDF()
     {
         $data = [
-            
-            'selectedPay' => request('selectedPay'),
-            'selectedStatus' => request('selectedStatus'),
-            'searchName' => request('searchName'),
-            'searchId' => request('searchId'),
-            'searchSellId' => request('searchSellId'),
-            'searchPrice' => request('searchPrice'),
-            'searchTroco' => request('searchTroco'),
-            'searchStartDate' => request('searchStartDate'),
-            'searchEndDate' => request('searchEndDate'),
+            'selectedPay' => $this->selectedPay,
+            'selectedStatus' => $this->selectedStatus,
+            'searchName' => $this->searchName,
+            'searchId' => $this->searchId,
+            'searchSellId' => $this->searchSellId,
+            'searchPrice' => $this->searchPrice,
+            'searchTroco' => $this->searchTroco,
+            'searchStartDate' => $this->searchStartDate,
+            'searchEndDate' => $this->searchEndDate,
         ];
-    
+        
+        
         return redirect()->route('generate.pdf.relatorio', http_build_query($data));
     }
     
