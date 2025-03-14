@@ -28,9 +28,8 @@ class PDFController extends Controller
     $data = $request->all();
 
     // Define as datas padrão como hoje se não forem fornecidas
-    $startDate = $data['searchStartDate'] ?? now()->startOfDay()->toDateTimeString();
-    $endDate = $data['searchEndDate'] ?? now()->endOfDay()->toDateTimeString();
-
+   
+    
     $sales = Sell::query()
         ->join('users', 'sells.user_id', '=', 'users.id')
         ->leftJoin('payments', 'sells.id', '=', 'payments.sell_id')
@@ -55,7 +54,13 @@ class PDFController extends Controller
         ->when($data['searchTroco'] ?? null, function ($query, $troco) {
             $query->where('payments.troco', $troco);
         })
-        ->whereBetween('sells.created_at', [$startDate, $endDate])
+        ->when(true, function ($query) use ($data) {
+            $startDate = ($data['searchStartDate'] ?? now()->toDateString()) . ' 00:00:00'; // Início do dia
+            $endDate = ($data['searchEndDate'] ?? now()->toDateString()) . ' 23:59:59'; // Final do dia
+          
+            $query->whereBetween('sells.created_at', [$startDate, $endDate]);
+        })
+        
         ->where('sells.cancelado', false)
         ->orderBy('sells.created_at', 'desc')
         ->select('sells.*', 'users.name as user_name', 'users.CPF as user_cpf', 'payments.pagamento', 'payments.preco', 'payments.troco', 'payments.parcelas')
