@@ -61,8 +61,11 @@ class ReportView extends Component
             ->when($this->searchPrice, function($query) {
                 $query->where('preco', $this->searchPrice);
             })
-            ->when($this->searchStartDate && $this->searchEndDate, function($query) {
-                $query->whereBetween('created_at', [$this->searchStartDate, $this->searchEndDate]);
+            ->when($this->searchStartDate || $this->searchEndDate, function ($query) {
+                $startDate = ($this->searchStartDate ?? now()->toDateString()) . ' 00:00:00'; // Início do dia
+                $endDate = ($this->searchEndDate ?? now()->toDateString()) . ' 23:59:59'; // Final do dia
+            
+                $query->whereBetween('created_at', [$startDate, $endDate]);
             })
             ->orderBy('created_at','desc')
             ->paginate(30); // Aplicar paginação

@@ -233,8 +233,8 @@ class ReportViewSells extends Component
             'searchSellId' => $this->searchSellId,
             'searchPrice' => $this->searchPrice,
             'searchTroco' => $this->searchTroco,
-            'searchStartDate' => $this->searchStartDate,
-            'searchEndDate' => $this->searchEndDate,
+            'searchStartDate' => $this->searchStartDate  ,
+            'searchEndDate' => $this->searchEndDate ,
         ];
         
         
@@ -280,8 +280,11 @@ class ReportViewSells extends Component
         ->when($this->searchDiscount, function ($query) {
             $query->where('payments.desconto', $this->searchDiscount); // Filtro por desconto
         })
-        ->when($this->searchStartDate && $this->searchEndDate, function ($query) {
-            $query->whereBetween('sells.created_at', [$this->searchStartDate, $this->searchEndDate]); // Filtro por data
+        ->when($this->searchStartDate || $this->searchEndDate, function ($query) {
+            $startDate = ($this->searchStartDate ?? now()->toDateString()) . ' 00:00:00'; // Início do dia
+            $endDate = ($this->searchEndDate ?? now()->toDateString()) . ' 23:59:59'; // Final do dia
+        
+            $query->whereBetween('sells.created_at', [$startDate, $endDate]);
         })
         ->orderBy('sells.created_at', 'desc')
         ->select('sells.*', 'users.name as user_name', 'payments.pagamento', 'payments.preco', 'payments.troco', 'payments.parcelas');
