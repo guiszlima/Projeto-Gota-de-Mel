@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-                    observer.disconnect(); // Desconecta o observer após encontrar o botão
+                    
                 }
             }
         });
