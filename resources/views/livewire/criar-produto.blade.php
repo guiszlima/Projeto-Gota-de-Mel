@@ -6,23 +6,22 @@
 
     <div class="w-full max-w-lg bg-white p-6 rounded-xl shadow-lg">
        
-       
-  @if($response)
-           
-           <div class="bg-red-500 text-white p-4 rounded-md mb-4">
-               <strong>Erro:</strong> {{ $response['error'] }} <br>
-               <strong>SKU:</strong> {{ $response['sku'] }}
-           </div>
-       @endif
-            @isset ($mensagem)
-            <div class="my-4 p-3 bg-red-100 border border-red-400 text-red-600 rounded-md">
-                {{ $mensagem }}
-            </div>
-            
+    @if(!empty($response['error']))
+    <div class="bg-red-500 text-white p-4 rounded-md mb-4">
+        <strong>Erro:</strong> {{ $response['error'] }} <br>
+        <strong>SKU:</strong> {{ $response['sku'] ?? 'N/A' }}
+    </div>
+@endif
+
+@if(!empty($response['sucess']))
+    <div class="bg-green-500 text-white p-4 rounded-md mb-4">
+        <strong>{{ $response['sucess'] }}</strong> <br>
+    </div>
+@endif
            
 
             
-            @endisset
+            
 
             <!-- Nome do Produto -->
             <div class="mb-5">
@@ -380,7 +379,7 @@
                                     @elseif ($field === 'barra')
                                     <td class="p-2 border">
                                             <input type="text" name="{{ $field }}[]" placeholder="Código de barras" 
-                                                class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" required>
+                                                class="{{ $field }} w-full p-1 border rounded-md focus:ring-2 focus:ring-indigo-500" >
                                         </td>
                                 @elseif (in_array($field, ['comprimento', 'largura', 'altura', 'peso']))
                                     <td class="p-2 border">
