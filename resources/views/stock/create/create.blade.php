@@ -9,6 +9,7 @@ $response = $response ?? ""
 
 <x-button-back :route="route('menu')"></x-button-back>
 @if($response)
+
 @livewire('criar-produto', ['response' => $response])
 @else
 @livewire('criar-produto')

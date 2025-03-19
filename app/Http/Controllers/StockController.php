@@ -179,7 +179,7 @@ class StockController extends Controller
                 'type'=> 'simples'
             ]);
             
-            return response()->json(['message' => 'Produto criado com sucesso!', 'data' => $response]);
+            return ['sucess' => 'Produto criado com sucesso!'];
         } catch (\Automattic\WooCommerce\HttpClient\HttpClientException $e) {
             // Obtém a resposta da API e decodifica o JSON
             $response = $e->getResponse();
