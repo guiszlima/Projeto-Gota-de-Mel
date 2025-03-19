@@ -51,12 +51,18 @@ public function changeFormtype(){
             }
         }
     else{
-        $this->products = $woocommerce->get('products', ['search' => $this->searchTerm]);
-        if (empty($this->products)) {
-            $this->products = $woocommerce->get('products', ['sku' => $this->searchTerm]);
-        }
-      
+        $this->products = $woocommerce->get('products', [
+            'search' => $this->searchTerm,
+            'fields' => 'id,name,stock_quantity,price'
+        ]);
         
+        if (empty($this->products)) {
+            $this->products = $woocommerce->get('products', [
+                'sku' => $this->searchTerm,
+                'fields' => 'id,name,stock_quantity,price'
+            ]);
+      
+        }
         $productsWithVariations = [];
         $productIdsToRemove = [];
         
@@ -74,7 +80,9 @@ public function changeFormtype(){
             $this->contagem[$product->id] = 1;
         
             if ($product->type === 'variable') {
-                $variations = $woocommerce->get("products/{$product->id}/variations");
+                $variations = $woocommerce->get("products/{$product->id}/variations", [
+                    'fields' => 'id,name,stock_quantity,price'
+                ]);
         
                 foreach ($variations as $variation) {
                     $productIdsToRemove[] = $product->id; // Marca o produto principal para remoção
