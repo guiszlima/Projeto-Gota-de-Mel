@@ -15,7 +15,7 @@ class PayNoIntegration extends Component
     public $sell;
     public $payment;
     public $total;
-    public $parcelas;
+    public $parcelas = 1;
     public $paymentmethod;
     public $troco = false;
     public $totalReference;
@@ -110,6 +110,13 @@ class PayNoIntegration extends Component
         }
 
     }
+
+    public function updateParcelas($value)
+    {
+        $this->parcelas = $value; // Atualiza a variável parcelas com o valor recebido
+    }
+    
+
 
     public function applyDiscount()
     {

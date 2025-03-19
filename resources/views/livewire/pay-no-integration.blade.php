@@ -19,7 +19,7 @@
 
             <input wire:model="payment" required id="to-pay" autocomplete="off" type="text" placeholder="Insira valor para pagar" class="w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
 
-            <select wire:model="paymentmethod" id="payment-method" class="w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
+            <select wire:model="paymentmethod" id="payment-method" wire:change="updateParcelas($event.target.value === 'credit' ? '1' : '')" class="w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
                 <option value="debito" {{$sell['payment_method'] === 'Débito' ? 'selected':''}}>Débito</option>
                 <option value="credit" {{$sell['payment_method'] === 'credit' ? 'selected':''}}>Crédito</option>
                 <option value="pix" {{$sell['payment_method'] === 'Pix' ? 'selected':''}}>Pix</option>
@@ -29,8 +29,8 @@
         </div>
 
         <select wire:model="parcelas" wire:ignore id="parcelas" class="hidden w-full p-3 border border-gray-300 rounded-lg mb-6 shadow-sm focus:outline-none focus:border-green-500 transition duration-200">
-            <option value="">Selecione as Parcelas</option>
-            @for ($i = 1; $i <= 24; $i++)
+        <option value="1">1x</option>
+            @for ($i = 2; $i <= 4; $i++)
                 <option value="{{ $i }}">{{ $i }}x</option>
             @endfor
         </select>
@@ -212,9 +212,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (paymentMethod === 'credit') {
             parcelas.classList.remove('hidden');
+            parcelas.value = "1";
+            
         } else {
             parcelas.classList.add('hidden');
             parcelas.value = "";
+            
             
         }
     }
