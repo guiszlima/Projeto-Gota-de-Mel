@@ -6,6 +6,7 @@ use Livewire\Component;
 use Automattic\WooCommerce\Client;
 use phpDocumentor\Reflection\PseudoTypes\False_;
 use Illuminate\Support\Str;
+
 class MostrarProdutos extends Component
 {
 
@@ -30,63 +31,76 @@ public function changeFormtype(){
 }
  public function fetchProducts(Client $woocommerce)
     {
-    
-    if($this->formType === false){
-         
-       
-         $param = [ 'sku'=> $this->searchTerm];
-           
+        if ($this->formType === false) {
+            $param = [
+                'sku' => $this->searchTerm,
+                'fields' => 'id,name,price,stock_quantity' // 🔥 Apenas os campos necessários
+            ];
+        
             $pedido = $woocommerce->get('products', $param);
-            if(!empty($pedido)){
-            $produto = $pedido[0];
-            
-            $this->addToCart($produto->name,$produto->price,$produto->id,$produto->stock_quantity);
-           
-    }
-}
+        
+            if (!empty($pedido)) {
+                $produto = $pedido[0];
+        
+                $this->addToCart(
+                    $produto->name,
+                    $produto->price,
+                    $produto->id,
+                    $produto->stock_quantity
+                );
+            }
+        }
     else{
         $this->products = $woocommerce->get('products', ['search' => $this->searchTerm]);
-        if(is_numeric( $this->searchTerm)){
+        if (empty($this->products)) {
             $this->products = $woocommerce->get('products', ['sku' => $this->searchTerm]);
         }
+      
+        
         $productsWithVariations = [];
         $productIdsToRemove = [];
-        foreach ($this->products as $product) {
-            // Adiciona o produto principal ao array
-            $productsWithVariations[] = $product;
         
-            // Inicializa a contagem para o produto principal
+        foreach ($this->products as $product) {
+            // Adiciona o produto principal com apenas os dados necessários
+            $productsWithVariations[] = (object) [
+                'id' => $product->id,
+                'name' => $product->name,
+                'stock_quantity' => $product->stock_quantity,
+                'price' => $product->price,
+                'parent_name' => null,
+                'parent_id' => null
+            ];
+        
             $this->contagem[$product->id] = 1;
         
-            // Verifica se o produto tem variações
             if ($product->type === 'variable') {
-                // Busca as variações do produto
                 $variations = $woocommerce->get("products/{$product->id}/variations");
-              
-                // Adiciona cada variação como um produto independente no array
+        
                 foreach ($variations as $variation) {
-                    // Adiciona algumas propriedades do produto principal à variação
-                    $variation->parent_name = $product->name;
-                    $variation ->name = $variation->parent_name ." ". $variation->name;
-                    $variation->parent_id = $product->id;
-                    $productIdsToRemove[] = $variation->parent_id;
-                     
-                    // Adiciona a variação ao array de produtos
-                    $productsWithVariations[] = $variation;
-
-                    // Inicializa a contagem para a variação
+                    $productIdsToRemove[] = $product->id; // Marca o produto principal para remoção
+        
+                    $productsWithVariations[] = (object) [
+                        'id' => $variation->id,
+                        'name' => $product->name . " " . $variation->name, // Concatena com o nome do pai
+                        'stock_quantity' => $variation->stock_quantity,
+                        'price' => $variation->price,
+                        'parent_name' => $product->name,
+                        'parent_id' => $product->id
+                    ];
+        
                     $this->contagem[$variation->id] = 1;
                 }
             }
         }
-        $filteredProducts = array_filter($productsWithVariations, function($product) use ($productIdsToRemove) {
-            // Remove o produto se o seu ID estiver na lista de IDs a serem removidos
+        
+        // Filtra os produtos removendo os principais que possuem variações
+        $this->products = array_filter($productsWithVariations, function ($product) use ($productIdsToRemove) {
             return !in_array($product->id, $productIdsToRemove);
         });
-        // Atualiza $this->products para incluir as variações como produtos independentes
-        $this->products = $filteredProducts;
-        }
+        
+
     }
+    }        
     
     
     public function addToCart($productName, $productValue,$productId,$prodStockQuantity){
