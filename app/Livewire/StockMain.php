@@ -41,8 +41,9 @@ public function offSearch(Client $woocommerce){
         $params = [
             'per_page' => $this->nmbrPerPage,
             'page' => $this->currentPage,
-             'orderby' => 'date', 
-            'order' => 'desc'
+            'orderby' => 'date', 
+            'order' => 'desc',
+            'fields' => 'id,name,regular_price,sale_price'
         ];
         if ($this->isSearch) {
             if ($this->searchBySku) {
