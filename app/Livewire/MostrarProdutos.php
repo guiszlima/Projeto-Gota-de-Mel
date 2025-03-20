@@ -21,6 +21,8 @@ class MostrarProdutos extends Component
     public $uniqueId;
     public $formType = false;
 public $x = 0;
+public $perPage = 100; // Produtos por página
+
 public function mount(){
 $this->uniqueId  = Str::uuid()->toString();
 }
@@ -53,13 +55,16 @@ public function changeFormtype(){
     else{
         $this->products = $woocommerce->get('products', [
             'search' => $this->searchTerm,
-            'fields' => 'id,name,stock_quantity,price'
+            'fields' => 'id,name,stock_quantity,price',
+            'per_page' => $this->perPage,
+            
         ]);
         
         if (empty($this->products)) {
             $this->products = $woocommerce->get('products', [
                 'sku' => $this->searchTerm,
                 'fields' => 'id,name,stock_quantity,price'
+                
             ]);
       
         }
@@ -110,7 +115,19 @@ public function changeFormtype(){
     }
     }        
     
-    
+    public function nextPage(Client $woocommerce)
+{
+    $this->page++;
+    $this->fetchProducts($woocommerce);
+}
+
+public function previousPage(Client $woocommerce)
+{
+    if ($this->page > 1) {
+        $this->page--;
+        $this->fetchProducts($woocommerce);
+    }
+}
     public function addToCart($productName, $productValue,$productId,$prodStockQuantity){
         // Inicializa uma variável para indicar se o produto já foi encontrado
         
