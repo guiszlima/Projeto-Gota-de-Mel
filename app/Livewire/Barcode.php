@@ -71,6 +71,15 @@ public function offSearch(Client $woocommerce){
         $this->totalPages = ceil($totalProducts / $this->nmbrPerPage);
     }
 
+
+    public function goToPage($page, Client $woocommerce)
+{
+    if ($page >= 1 && $page <= $this->totalPages) {
+        $this->currentPage = $page;
+        $this->loadProducts($woocommerce);
+    }
+}
+
     public function nextPage(Client $woocommerce)
     {
         if ($this->currentPage < $this->totalPages) {

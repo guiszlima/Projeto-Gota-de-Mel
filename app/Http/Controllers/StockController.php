@@ -27,6 +27,8 @@ class StockController extends Controller
         $params = [
             'per_page' => $nmbrPerPage, // Número de produtos por página
             'page' => $page, // Página atual
+            'orderby' => 'date', // Ordena por data de criação
+            'order' => 'desc'
         ];
 
         // Buscando produtos com os parâmetros definidos

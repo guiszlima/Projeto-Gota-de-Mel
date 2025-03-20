@@ -41,7 +41,8 @@ public function offSearch(Client $woocommerce){
         $params = [
             'per_page' => $this->nmbrPerPage,
             'page' => $this->currentPage,
-            
+             'orderby' => 'date', 
+            'order' => 'desc'
         ];
         if ($this->isSearch) {
             if ($this->searchBySku) {
@@ -69,6 +70,14 @@ public function offSearch(Client $woocommerce){
         // Calculando o número total de páginas
         $this->totalPages = ceil($totalProducts / $this->nmbrPerPage);
     }
+
+    public function goToPage($page, Client $woocommerce)
+{
+    if ($page >= 1 && $page <= $this->totalPages) {
+        $this->currentPage = $page;
+        $this->loadProducts($woocommerce);
+    }
+}
 
     public function nextPage(Client $woocommerce)
     {
