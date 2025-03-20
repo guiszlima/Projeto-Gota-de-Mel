@@ -43,7 +43,7 @@ public function offSearch(Client $woocommerce){
             'page' => $this->currentPage,
             'orderby' => 'date', 
             'order' => 'desc',
-            'fields' => 'id,name,regular_price,sale_price'
+            'fields' => 'id,name,regular_price,sale_price,sku,type,parent_id',
         ];
         if ($this->isSearch) {
             if ($this->searchBySku) {
@@ -56,7 +56,15 @@ public function offSearch(Client $woocommerce){
         // Buscando produtos com os parâmetros definidos
 
         $this->products = $woocommerce->get('products', $params);
-     
+        
+        if($this->searchBySku){
+            foreach ($this->products as &$product) {
+                if ($product->type === 'variation') {
+                    // Se o produto for uma variação, substituímos o ID pelo parent_id
+                    $product->id = $product->parent_id;
+                }
+            }
+        }
         
 
         // Obter o total de produtos a partir dos cabeçalhos de resposta

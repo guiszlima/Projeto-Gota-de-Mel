@@ -5,7 +5,20 @@ namespace App\Livewire;
 use Livewire\Component;
 use Automattic\WooCommerce\Client;
 class Barcode extends Component
-{
+{   
+    
+    
+    public $searchTerm;
+    public $isSearch = False;
+    public $products = [];
+    public $currentPage = 1;
+    public $totalPages;
+    public $nmbrPerPage = 30;
+    public  $searchBySku = false;
+
+
+
+
     public function render()
     {
         return view('livewire.barcode',
@@ -18,18 +31,16 @@ class Barcode extends Component
         
     }
 
-    public $searchTerm;
-    public $isSearch = False;
-    public $products = [];
-    public $currentPage = 1;
-    public $totalPages;
-    public $nmbrPerPage = 30;
+    
 
     public function mount(Client $woocommerce)
     {
         $this->loadProducts($woocommerce);
     }
-
+    public function toggleSearchType()
+    {
+        $this->searchBySku = !$this->searchBySku;
+    }
 public function search(Client $woocommerce){
     $this->isSearch = true;
     $this->currentPage = 1; // Reinicia a página ao fazer nova pesquisa
@@ -48,19 +59,30 @@ public function offSearch(Client $woocommerce){
             'page' => $this->currentPage,
             'orderby' => 'date', 
             'order' => 'desc',
-            'fields' => 'id,name,regular_price,sale_price,sku',
+            'fields' => 'id,name,regular_price,sale_price,sku,type,parent_id',
 
             
         ];
-        if($this->isSearch){
-            $params['search'] = $this->searchTerm;
+        if ($this->isSearch) {
+            if ($this->searchBySku) {
+                $params['sku'] = $this->searchTerm; // Busca por SKU
+            } else {
+                $params['search'] = $this->searchTerm; // Busca por Nome
+            }
         }
 
         // Buscando produtos com os parâmetros definidos
 
         $this->products = $woocommerce->get('products', $params);
      
-        
+        if($this->searchBySku){
+            foreach ($this->products as &$product) {
+                if ($product->type === 'variation') {
+                    // Se o produto for uma variação, substituímos o ID pelo parent_id
+                    $product->id = $product->parent_id;
+                }
+            }
+        }
 
         // Obter o total de produtos a partir dos cabeçalhos de resposta
         $responseHeaders = $woocommerce->http->getResponse()->getHeaders();
