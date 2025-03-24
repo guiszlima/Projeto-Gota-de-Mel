@@ -23,6 +23,7 @@
         <p>Rua Florestal 20, 37A, 104, Bairro Cidade Nova Heliopolis, Sao Paulo - SP CEP 04235-200</p>
         <p>CNPJ 51.891.343/0001-24</p>
         <p>Horario: {{ now()->format('H:i:s') }}</p>
+       
     </div>
 --------------------------------
     <div class="content">

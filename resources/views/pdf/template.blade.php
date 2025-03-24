@@ -26,6 +26,7 @@
         <p>CNPJ 51.891.343/0001-24
         </p>
         <p>Horario: {{$dados['horario']}} </p>
+        <p>AVISO: 7 DIAS PARA TROCA</p>
     </div>
     --------------------------------
     <div class="content">
