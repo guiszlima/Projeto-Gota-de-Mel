@@ -177,13 +177,14 @@ class ReportViewSells extends Component
     
             foreach ($variacoes as $index => $variacao) {
                 if ($variacao->id == $id_produto) {
-                    
-
-                    if ($this->itensTrocar[$index]['id_produto'] === $id_produto ) {
-                        
-                        $this->itensTrocar[$index]['quantidade'] = max(0, $this->itensTrocar[$index]['quantidade'] - $cont);
-                        $this->itensTrocar[$index]['cont']  = 0;
+                    foreach ($this->itensTrocar as $key => &$item) {
+                        if ($item['id_produto'] === $id_produto) {
+                            $item['quantidade'] = max(0, $item['quantidade'] - $cont);
+                            $item['cont'] = 0;
+                            break; // Para otimizar, interrompe o loop após encontrar o item
+                        }
                     }
+                    unset($item);
             
                     // Atualiza o estoque da variação específica
                     $woocommerce->put("products/{$parent_id}/variations/{$id_produto}", [
