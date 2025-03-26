@@ -52,7 +52,7 @@ class ReportViewSells extends Component
     public function fechaModal(){
         $this->isTrocado = false;
         $this->itensTrocar = null;
-        $itensTrocarPrint = [];
+        $this->itensTrocarPrint = [];
     }
 
     public function trocaProduct(Client $woocommerce, $groupedItems)
@@ -304,6 +304,7 @@ class ReportViewSells extends Component
     
     public function render()
 {
+    
     // Substitui a vírgula por ponto e converte para float
     $searchPrice = floatval(str_replace(',', '.', $this->searchPrice));
     $searchPayment = floatval(str_replace(',', '.', $this->searchPayment));
