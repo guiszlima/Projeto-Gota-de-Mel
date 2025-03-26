@@ -34,6 +34,7 @@ class ReportViewSells extends Component
     public $isOpen = false; 
     public $selectedSellId; // ID da venda selecionada
     public $itensTrocar;
+    public $itensTrocarPrint = [];
     public $cont;
     public $isTrocado = false;
 
@@ -51,6 +52,7 @@ class ReportViewSells extends Component
     public function fechaModal(){
         $this->isTrocado = false;
         $this->itensTrocar = null;
+        $itensTrocarPrint = [];
     }
 
     public function trocaProduct(Client $woocommerce, $groupedItems)
@@ -155,23 +157,37 @@ class ReportViewSells extends Component
         if (!$venda) {
             return response()->json(['error' => 'Venda não encontrada'], 404);
         }
-    
+        
+        
+
+        $this->consolidarItensTroca($this->itensTrocar);
         // Decodifica os produtos e quantidades armazenados como JSON
         $produtos = json_decode($venda->produtos, true) ?? [];
         $quantidades = json_decode($venda->quantidade, true) ?? [];
     
+
+
         // Calcula o valor total da troca
         $valorTotal = $cont * $preco;
     
         if ($tipo === 'variation') {
+            
             // Busca as variações do produto pai
             $variacoes = $woocommerce->get("products/{$parent_id}/variations");
     
-            foreach ($variacoes as $variacao) {
+            foreach ($variacoes as $index => $variacao) {
                 if ($variacao->id == $id_produto) {
+                    
+
+                    if ($this->itensTrocar[$index]['id_produto'] === $id_produto ) {
+                        
+                        $this->itensTrocar[$index]['quantidade'] = max(0, $this->itensTrocar[$index]['quantidade'] - $cont);
+                        $this->itensTrocar[$index]['cont']  = 0;
+                    }
+            
                     // Atualiza o estoque da variação específica
                     $woocommerce->put("products/{$parent_id}/variations/{$id_produto}", [
-                        'stock_quantity' => max(0, $variacao->stock_quantity + $cont) // Evita estoque negativo
+                        'stock_quantity' => max(0, $variacao->stock_quantity + $cont) 
                     ]);
                     break;
                 }
@@ -179,19 +195,30 @@ class ReportViewSells extends Component
         } else {
             // Obtém o produto no WooCommerce (produto simples)
             $produto = $woocommerce->get("products/{$id_produto}");
+
             if (!$produto) {
                 return response()->json(['error' => 'Produto não encontrado'], 404);
+            }
+
+            foreach ($this->itensTrocar as $index => $item) {
+                if ($item['id_produto'] === $id_produto) {
+                    // Atualiza a quantidade no array $this->itensTrocar
+                    $this->itensTrocar[$index]['quantidade'] = max(0, $this->itensTrocar[$index]['quantidade'] - $cont);
+                    $this->itensTrocar[$index]['cont'] = 0;
+                    break; // Sai do loop assim que encontrar o produto
+                }
             }
     
             // Atualiza o estoque do produto simples
             $woocommerce->put("products/{$id_produto}", [
-                'stock_quantity' => max(0, $produto->stock_quantity + $cont) // Evita estoque negativo
+                'stock_quantity' => max(0, $produto->stock_quantity + $cont) 
             ]);
         }
     
         // Atualiza a quantidade do produto na venda
         foreach ($produtos as $key => $produtoId) {
             if ($produtoId == $id_produto && $quantidades[$key] > 0) {
+
                 $quantidades[$key] = max(0, $quantidades[$key] - $cont); // Evita valores negativos
                 $venda->preco_total = max(0, $venda->preco_total - $valorTotal); // Evita valores negativos
                 break;
@@ -207,20 +234,52 @@ class ReportViewSells extends Component
         $venda->quantidade = json_encode($quantidades);
         $venda->save();
     }
+    private function consolidarItensTroca($var)
+    {
+        // Garante que $this->itensTrocarPrint seja um array
+        $this->itensTrocarPrint = is_array($this->itensTrocarPrint) ? $this->itensTrocarPrint : [];
+    
+        // Inicializa o array que vai armazenar os itens consolidados
+        $itensConsolidados = [];
+    
+        // Adiciona os itens de $var a $this->itensTrocarPrint
+        $this->itensTrocarPrint = array_merge($this->itensTrocarPrint, $var);
+    
+        // Percorre todos os itens e consolida
+        foreach ($this->itensTrocarPrint as &$item) {
+            $id_produto = $item['id_produto'];
+    
+            // Verifica se o produto já está no array de consolidados
+            if (isset($itensConsolidados[$id_produto])) {
+                // Se o produto já existir, soma a quantidade e o cont
+                $itensConsolidados[$id_produto]['quantidade'] += $item['quantidade'];
+                $itensConsolidados[$id_produto]['cont'] += $item['cont'];
+            } else {
+                // Se o produto não existir, adiciona ao array de consolidados
+                $itensConsolidados[$id_produto] = $item;
+            }
+        }
+    
+        // Atualiza $this->itensTrocarPrint com os itens consolidados
+        $this->itensTrocarPrint = array_values($itensConsolidados);
+        
+    }
     
 
     public function imprimirNota()
     {
+        
         if (!$this->isTrocado) {
             $this->dispatch('troca-nao-realizada');
             return;
         }
-        $url = route('generate.pdf.troca') . '?' . http_build_query($this->itensTrocar);
+        $url = route('generate.pdf.troca') . '?' . http_build_query($this->itensTrocarPrint);
 
         // Dispara o evento para o navegador abrir ou imprimir o PDF
         $this->dispatch('renderizar-pdf', ['url' => $url]);
     }
 
+    
     
 
     public function downloadPDF()

@@ -231,7 +231,8 @@ $totalItems = count($items);
      x-on:close-modal.window="isOpen = false"
      class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
 
-    <div class="bg-white p-6 rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/5 lg:w-2/5">
+     <div class="bg-gray-100 p-8 rounded-xl shadow-md w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl">
+
         <h2 class="text-lg font-semibold mb-6 text-center">Itens a serem Trocados</h2>
         <button wire:click='fechaModal'  x-on:click="isOpen = false" class="mt-4 mb-2 px-4 py-2 bg-red-500 text-white rounded">
             Fechar
@@ -241,6 +242,7 @@ $totalItems = count($items);
             <!-- Flex Container para os itens -->
             <div class="flex flex-wrap gap-6 justify-start">
             @foreach($itensTrocar as $item)
+            
                 <div class="flex-1 min-w-[200px] p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200">
                     <p class="text-lg font-semibold text-gray-800 mb-2"><strong>Nome do Produto:</strong> {{ $item['nome_produto'] }}</p>
                     <p class="text-md text-gray-600 mb-2"><strong>Preço do Produto:</strong> R$ {{ number_format($item['preco_produto'], 2, ',', '.') }}</p>
