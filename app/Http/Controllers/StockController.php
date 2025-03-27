@@ -415,7 +415,7 @@ class StockController extends Controller
      */
     
      public function update(Request $request, Client $woocommerce, WpClient $wpService, )
-     {
+     {  
          $data = $request->all();
          if ($data['type'] === 'simple') {
              $this->updateSimple($request, $woocommerce, $wpService, );
@@ -429,7 +429,7 @@ class StockController extends Controller
  
      private function updateVariations($data, Client $woocommerce, WpClient $wpService)
      {
-         
+        
          $variantData = [];
          $count = count($data['variant_price']);
          $imageIds = [];
@@ -489,7 +489,7 @@ class StockController extends Controller
                      ReportCreate::where('product_id', $var['id'])->update([
                          'nome' => $data['parent_name'] ." ".$data['variant_name'][$index] ?? '',
                          'preco' => $var['regular_price'],
-                         'estoque' => $data['variant_stock_quantity'][$index],
+                         'estoque' => $data['estoque'][$index],
                          'estante' => $data['estante'][$index],
                          'prateleira' => $data['prateleira'][$index],
                      ]);
