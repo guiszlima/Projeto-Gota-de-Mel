@@ -203,6 +203,7 @@ class PayNoIntegration extends Component
             
             $this->dados = [
                 'cart' => $this->sell['cart'],
+                'IdVenda' => $this->sell['IdVenda'],
                 'paymentReference' => $this->paymentReference,
                 'troco' => $this->troco,
                 'desconto'=> $this->descontoTotal

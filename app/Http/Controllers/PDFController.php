@@ -73,9 +73,11 @@ class PDFController extends Controller
 
     public function generatePdf(Request $request)
     {
+        
         $dados = [
             'cart' => $request->input('cart'),
             'paymentReference' => $request->input('paymentReference'),
+            'IdVenda' => $request->input('IdVenda'),
             'horario' => date('d/m/Y H:i'),
             'troco' => $request->input('troco'),
             'desconto' => $request->input('desconto')

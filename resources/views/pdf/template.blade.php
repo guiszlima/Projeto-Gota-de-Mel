@@ -51,7 +51,13 @@
                 @endif
             @endforeach
         </div>
+        @elseif(!$dados['paymentReference'] && $dados['desconto'] )
+        <p>ID da Venda: {{ $dados['IdVenda'] }}</p>
+        
         @endif
+        
+
+
         @if ($dados['troco']??"")
                     <p>Troco: {{ number_format($dados['troco'], 2, ',', '.') ?? "" }}</p>
                 @endif
