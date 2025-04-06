@@ -55,7 +55,6 @@ public function changeFormtype(){
     else{
         $this->products = $woocommerce->get('products', [
             'search' => $this->searchTerm,
-            'fields' => 'id,name,stock_quantity,price',
             'per_page' => $this->perPage,
             
         ]);
@@ -63,7 +62,7 @@ public function changeFormtype(){
         if (empty($this->products)) {
             $this->products = $woocommerce->get('products', [
                 'sku' => $this->searchTerm,
-                'fields' => 'id,name,stock_quantity,price'
+              
                 
             ]);
       
