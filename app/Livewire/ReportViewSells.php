@@ -67,7 +67,12 @@ class ReportViewSells extends Component
         }
         $createdAt = $venda->created_at; // Obtém a data de criação
         $currentDate = now(); // Obtém a data atual
-        if ($createdAt->diffInDays($currentDate) > 7) {
+        $createdAt = $createdAt->startOfDay();
+
+
+        $limitDate = $createdAt->copy()->addDays(7)->endOfDay();
+
+        if (now()->greaterThan($limitDate)) {
             $this->dispatch('productTooOld');
             $this->dispatch('closeModal');
             return;
