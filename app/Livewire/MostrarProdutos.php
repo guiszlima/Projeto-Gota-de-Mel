@@ -36,7 +36,7 @@ public function changeFormtype(){
         if ($this->formType === false) {
             $param = [
                 'sku' => $this->searchTerm,
-                // 🔥 Apenas os campos necessários
+                'fields' => 'id,name,price,stock_quantity' // 🔥 Apenas os campos necessários
             ];
         
             $pedido = $woocommerce->get('products', $param);
@@ -84,7 +84,9 @@ public function changeFormtype(){
             $this->contagem[$product->id] = 1;
         
             if ($product->type === 'variable') {
-                $variations = $woocommerce->get("products/{$product->id}/variations")
+                $variations = $woocommerce->get("products/{$product->id}/variations", [
+                    'fields' => 'id,name,stock_quantity,price'
+                ]);
         
                 foreach ($variations as $variation) {
                     $productIdsToRemove[] = $product->id; // Marca o produto principal para remoção
