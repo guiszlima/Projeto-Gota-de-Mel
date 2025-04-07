@@ -59,7 +59,7 @@ public function offSearch(Client $woocommerce){
             'page' => $this->currentPage,
             'orderby' => 'date', 
             'order' => 'desc',
-            'fields' => 'id,name,regular_price,sale_price,sku,type,parent_id',
+            
 
             
         ];
