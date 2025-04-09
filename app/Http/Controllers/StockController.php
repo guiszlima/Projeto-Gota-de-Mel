@@ -228,6 +228,7 @@ class StockController extends Controller
             'categories' => [
                 ['id' => (int) $request->input('category')]
             ],
+
             'attributes' => $attributes
         ];
     
@@ -242,7 +243,7 @@ class StockController extends Controller
     
     private function createVariations(Client $woocommerce, Request $request, $product_id, WpClient $wpService) {
         $variations = [];
-        
+        $hasImagem = false;
         foreach ($request->input('preco') as $index => $preco) {
             $precoFormatado = str_replace(',', '.', $preco); // Convertendo "23,23" para "23.23"
     
@@ -271,6 +272,7 @@ class StockController extends Controller
                 if ($uploadedFile instanceof \Illuminate\Http\UploadedFile) {
                     $wordpressServiceProvider = new WordpressServiceProvider(app());
                     $imageIds[$index] = $wordpressServiceProvider->uploadWP($uploadedFile, $request->input('product_name'), $wpService);
+                    
                 }
             }
             
@@ -294,7 +296,20 @@ class StockController extends Controller
                 ]
             ];
             if (!empty($imageIds[$index])) {
+
                 $variations[$index]['image'] = ['id' => $imageIds[$index]];
+                if(!$hasImagem){
+                    $updateData = [
+                        'images' => [
+                            ['id' => $imageIds[$index],
+                        ]
+                        ]
+                    ];
+                    
+                    $response = $woocommerce->put("products/{$product_id}", $updateData);
+                    $hasImagem = true;
+                }
+              
             }
             
 
