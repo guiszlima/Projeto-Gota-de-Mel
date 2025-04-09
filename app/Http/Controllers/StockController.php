@@ -452,7 +452,7 @@ class StockController extends Controller
          $imageIds = [];
      
          // Se o nome do produto pai foi alterado, faz um PUT para atualizar
-         if ($data['parent_image'] || $data['old_parent_name'] != $data['parent_name']) {
+         if (!empty($data['parent_image']) || $data['old_parent_name'] != $data['parent_name']) {
              try {
                 $payload = [
                     'name' => $data['parent_name'],
