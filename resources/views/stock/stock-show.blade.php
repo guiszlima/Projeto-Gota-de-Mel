@@ -141,7 +141,11 @@ $variante = 'true'
         <input id="parent_name" name="parent_name" type="text" readonly value="{{ $parent_name }}"
             class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full font-semibold bg-gray-100">
     </div>
-
+    <div class="flex flex-col col-span-1 md:col-span-2 mb-3">
+                        <label for="parent_image" class="text-gray-700 font-semibold mb-2">Inserir Imagem</label>
+                        <input name="parent_image" type="file" id="image_pai"
+                            class="text-center text-xl font-semibold border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                    </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
        
     @foreach ($product as $variant)

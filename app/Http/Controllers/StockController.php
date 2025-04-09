@@ -452,15 +452,36 @@ class StockController extends Controller
          $imageIds = [];
      
          // Se o nome do produto pai foi alterado, faz um PUT para atualizar
-         if ($data['old_parent_name'] != $data['parent_name']) {
+         if ($data['parent_image'] || $data['old_parent_name'] != $data['parent_name']) {
              try {
-                 $woocommerce->put("products/{$data['parent_id']}", [
-                     'name' => $data['parent_name']
-                 ]);
+                $payload = [
+                    'name' => $data['parent_name'],
+                ];
+               
+                if ($data['parent_image']) {
+                    $wordpressServiceProvider = new WordpressServiceProvider(app());
+                    $parentImgId = $wordpressServiceProvider->uploadWP(
+                        $data['parent_image'],
+                        $data['parent_name'],
+                        $wpService
+                    );
+                    
+                    // Só adiciona a imagem se o ID for retornado
+                    if ($parentImgId) {
+                        $payload['images'] = [
+                            ['id' => $parentImgId],
+                        ];
+                    }
+                }
+             
+               $responseParent =  $woocommerce->put("products/{$data['parent_id']}", $payload);
+                
              } catch (\Exception $e) {
+                
                  return back()->with('error', 'Erro ao atualizar o nome do produto pai.');
-             }
-         }
+                
+             }}
+         
          
          // Loop para preparar os dados das variações
          for ($i = 0; $i < $count; $i++) {
@@ -468,6 +489,7 @@ class StockController extends Controller
              if (isset($data['images'][$i]) && $data['images'][$i] instanceof \Illuminate\Http\UploadedFile) {
                  // Enviar a imagem e obter o ID da imagem
                  $wordpressServiceProvider = new WordpressServiceProvider(app());
+                 
                  $imageIds[] = $wordpressServiceProvider->uploadWP($data['images'][$i], $data['id'][$i], $wpService); 
                  
              }
