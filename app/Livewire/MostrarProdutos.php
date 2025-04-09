@@ -21,7 +21,7 @@ class MostrarProdutos extends Component
     public $uniqueId;
     public $formType = false;
 public $x = 0;
-public $perPage = 100; // Produtos por página
+public $perPage = 50; // Produtos por página
 
 public function mount(){
 $this->uniqueId  = Str::uuid()->toString();
