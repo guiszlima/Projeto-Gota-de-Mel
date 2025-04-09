@@ -36,11 +36,14 @@ public function changeFormtype(){
         if ($this->formType === false) {
             $param = [
                 'sku' => $this->searchTerm,
-                'fields' => 'id,name,price,stock_quantity' // 🔥 Apenas os campos necessários
+                'per_page' => $this->perPage,
+                '_fields' => 'id,name,sku,price,stock_quantity,type',
+                '_embed' => 'false'    
+
             ];
-        
+           
             $pedido = $woocommerce->get('products', $param);
-        
+            
             if (!empty($pedido)) {
                 $produto = $pedido[0];
         
@@ -56,17 +59,21 @@ public function changeFormtype(){
         $this->products = $woocommerce->get('products', [
             'search' => $this->searchTerm,
             'per_page' => $this->perPage,
+            '_fields' => 'id,name,sku,price,stock_quantity,type',
+            '_embed' => 'false'  
             
         ]);
         
         if (empty($this->products)) {
             $this->products = $woocommerce->get('products', [
                 'sku' => $this->searchTerm,
-              
+                '_fields' => 'id,name,sku,price,stock_quantity,type',
+                '_embed' => 'false'  
                 
             ]);
       
         }
+
         $productsWithVariations = [];
         $productIdsToRemove = [];
         
@@ -85,7 +92,7 @@ public function changeFormtype(){
         
             if ($product->type === 'variable') {
                 $variations = $woocommerce->get("products/{$product->id}/variations", [
-                    'fields' => 'id,name,stock_quantity,price'
+                    '_fields' => 'id,name,stock_quantity,price'
                 ]);
         
                 foreach ($variations as $variation) {

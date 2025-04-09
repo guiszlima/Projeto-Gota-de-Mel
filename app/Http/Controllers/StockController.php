@@ -28,7 +28,9 @@ class StockController extends Controller
             'per_page' => $nmbrPerPage, // Número de produtos por página
             'page' => $page, // Página atual
             'orderby' => 'date', // Ordena por data de criação
-            'order' => 'desc'
+            'order' => 'desc',
+            '_fields' => 'id,name,sku,price,stock_quantity,type',
+            '_embed' => 'false'   
         ];
 
         // Buscando produtos com os parâmetros definidos
