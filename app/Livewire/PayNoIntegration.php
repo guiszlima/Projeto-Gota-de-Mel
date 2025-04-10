@@ -185,7 +185,7 @@ class PayNoIntegration extends Component
 
                 session()->flash('mensagem', 'Venda Feita com sucesso');
             } catch (\Exception $e) {
-                session()->flash('mensagem', 'Erro na venda favor contatar o desenvolvedor responsável');
+                session()->flash('mensagem', 'Erro na conexão com o servidor');
             }
 
             // Redireciona para a view desejada (exemplo: 'vendas.index')

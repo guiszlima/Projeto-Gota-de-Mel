@@ -23,7 +23,7 @@ class BarCodeMakerController extends Controller
          
          do {
              $variations = $woocommerce->get("products/{$request->id}/variations", [
-                 'per_page' => 100,
+                 'per_page' => 50,
                  'page' => $page
              ]);
          

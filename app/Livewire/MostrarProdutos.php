@@ -21,7 +21,7 @@ class MostrarProdutos extends Component
     public $uniqueId;
     public $formType = false;
 public $x = 0;
-public $perPage = 50; // Produtos por página
+public $perPage = 20; // Produtos por página
 
 public function mount(){
 $this->uniqueId  = Str::uuid()->toString();
@@ -36,7 +36,6 @@ public function changeFormtype(){
         if ($this->formType === false) {
             $param = [
                 'sku' => $this->searchTerm,
-                'per_page' => $this->perPage,
                 '_fields' => 'id,name,sku,price,stock_quantity,type',
                 '_embed' => 'false'    
 
