@@ -137,7 +137,13 @@ public function previousPage(Client $woocommerce)
         // Inicializa uma variável para indicar se o produto já foi encontrado
         
       $test = array_key_exists($productId, $this->cart);
-     
+    if($prodStockQuantity == 0){
+        session()->flash('alert', [
+            'type' => 'warning',
+            'message' => 'O produto requisitado está com Estoque Zerado, favor atualizar o estoque antes de realizar a venda'
+        ]);
+        return;
+    }
     if (!$test) {
             $this->cart[$productId]=  [
             'id' => $productId,
