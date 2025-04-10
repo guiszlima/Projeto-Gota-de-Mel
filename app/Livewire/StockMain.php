@@ -12,7 +12,7 @@ class StockMain extends Component
     public $products = [];
     public $currentPage = 1;
     public $totalPages;
-    public $nmbrPerPage = 30;
+    public $nmbrPerPage = 25;
     public $searchBySku = false;
 
     public function toggleSearchType()

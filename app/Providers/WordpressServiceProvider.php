@@ -35,6 +35,8 @@ class WordpressServiceProvider extends ServiceProvider
             ],
             'body' => fopen($imgPath, 'r'), // Enviar o conteúdo do arquivo
             'auth' => [env('ADMIN_NAME'), env('ADMIN_PASSWORD')], // Autenticação básica com usuário e senha
+            'timeout' => 120,           // tempo total de espera pela resposta (em segundos)
+            'connect_timeout' => 10,
             
         ]);
         

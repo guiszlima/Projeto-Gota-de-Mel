@@ -20,6 +20,8 @@ class WooCommerceServiceProvider extends ServiceProvider
                 $consumerSecret,
                 [
                     'version' => 'wc/v3',
+                    'timeout' => 60,          
+                    'connect_timeout' => 10,  
                 ]
             );
         });

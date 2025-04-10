@@ -46,6 +46,8 @@ class WordpressClass
             ],
             'body' => fopen($imgPath, 'r'),
             'auth' => [env('ADMIN_NAME'), env('ADMIN_APP_PASSWORD')], // Certifique-se de usar a senha de aplicação
+            'timeout' => 120,           // tempo total de espera pela resposta (em segundos)
+            'connect_timeout' => 10,
         ]);
         
 
