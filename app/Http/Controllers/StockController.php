@@ -452,20 +452,22 @@ class StockController extends Controller
          $imageIds = [];
      
          // Se o nome do produto pai foi alterado, faz um PUT para atualizar
-         if (!empty($data['parent_image']) || $data['old_parent_name'] != $data['parent_name']) {
+         if ((isset($data['parent_image']) && !empty($data['parent_image'])) || $data['old_parent_name'] != $data['parent_name']) {
+
              try {
+                
                 $payload = [
                     'name' => $data['parent_name'],
                 ];
-               
-                if ($data['parent_image']) {
+                
+                if (isset($data['parent_image'])) {
                     $wordpressServiceProvider = new WordpressServiceProvider(app());
                     $parentImgId = $wordpressServiceProvider->uploadWP(
                         $data['parent_image'],
                         $data['parent_name'],
                         $wpService
                     );
-                    
+                 
                     // Só adiciona a imagem se o ID for retornado
                     if ($parentImgId) {
                         $payload['images'] = [
@@ -473,11 +475,11 @@ class StockController extends Controller
                         ];
                     }
                 }
-             
+          
                $responseParent =  $woocommerce->put("products/{$data['parent_id']}", $payload);
                 
              } catch (\Exception $e) {
-                
+                dd($e);
                  return back()->with('error', 'Erro ao atualizar o nome do produto pai.');
                 
              }}
