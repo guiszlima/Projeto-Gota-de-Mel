@@ -13,7 +13,7 @@ class Barcode extends Component
     public $products = [];
     public $currentPage = 1;
     public $totalPages;
-    public $nmbrPerPage = 20;
+    public $nmbrPerPage = 15;
     public  $searchBySku = false;
 
 

@@ -21,7 +21,7 @@ class StockController extends Controller
     {
         // Recuperando o número da página atual da requisição
         $page = $request->input('page', 1);
-        $nmbrPerPage = 20;
+        $nmbrPerPage = 15;
 
         // Definindo parâmetros de paginação e filtros
         $params = [
