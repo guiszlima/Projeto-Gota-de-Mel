@@ -41,7 +41,23 @@ public function changeFormtype(){
 
             ];
            
-            $pedido = $woocommerce->get('products', $param);
+            try {
+                $pedido = $woocommerce->get('products', $param);
+            } catch (\Throwable $th) {
+                Log::error('Erro ao buscar produtos no WooCommerce:', [
+                    'mensagem' => $th->getMessage(),
+                    'arquivo' => $th->getFile(),
+                    'linha' => $th->getLine(),
+                    'trace' => $th->getTraceAsString(),
+                    'parametros' => $param, // Loga também os parâmetros se for útil
+                ]);
+                session()->flash('alert', [
+                    'type' => 'error',
+                    'message' => 'Erro com o servidor, favor tente novamente.'
+                ]);
+                return;
+            }
+          
             
             if (!empty($pedido)) {
                 $produto = $pedido[0];
