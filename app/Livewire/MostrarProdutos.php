@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Automattic\WooCommerce\Client;
+use Illuminate\Support\Facades\Log;
+
 use phpDocumentor\Reflection\PseudoTypes\False_;
 use Illuminate\Support\Str;
 
