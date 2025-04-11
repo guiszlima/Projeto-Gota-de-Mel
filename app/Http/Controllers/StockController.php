@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use phpDocumentor\Reflection\PseudoTypes\True_;
 use App\Models\ReportCreate;
+
 use App\Providers\WordpressServiceProvider;
 
 class StockController extends Controller
@@ -479,8 +480,15 @@ class StockController extends Controller
                $responseParent =  $woocommerce->put("products/{$data['parent_id']}", $payload);
                 
              } catch (\Exception $e) {
-                dd($e);
-                 return back()->with('error', 'Erro ao atualizar o nome do produto pai.');
+                
+                Log::error('Erro ao conectar com a API WooCommerce: ' . $e->getMessage(), [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            
+
+                 return back()->with('error', 'Erro de conexão.');
                 
              }}
          
