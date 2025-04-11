@@ -559,7 +559,8 @@ class StockController extends Controller
          if ($request->hasFile('image')) {
              $imageFile = $request->file('image');
              $wordpressServiceProvider = new WordpressServiceProvider(app());
-             $image_id = $wordpressServiceProvider->uploadWP($imageFile,$data['name'], $wpService) ;
+             $nomeUnico = now()->format('Ymd_His') . '_' . Str::random(5);
+             $image_id = $wordpressServiceProvider->uploadWP($imageFile,$nomeUnico, $wpService) ;
              
          }
          try {
