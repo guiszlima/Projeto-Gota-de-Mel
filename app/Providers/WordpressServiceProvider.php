@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Providers;
-
+use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
 use GuzzleHttp\Client as WpClient;
 class WordpressServiceProvider extends ServiceProvider
@@ -14,7 +14,8 @@ class WordpressServiceProvider extends ServiceProvider
     {
         $requestImage = $imagem;
         $extension = $requestImage->extension();
-        $imageName = $nomeProduto . strtotime('now') . '.' . $extension;
+        $nomeTratado = Str::slug($nomeProduto, '-');
+        $imageName = $nomeTratado . strtotime('now') . '.' . $extension;
         $imgPath = public_path('img/temp_imgs/' . $imageName);
         $requestImage->move(public_path('img/temp_imgs'), $imageName);
        

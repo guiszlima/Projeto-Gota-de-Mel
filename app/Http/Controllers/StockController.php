@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use phpDocumentor\Reflection\PseudoTypes\True_;
 use App\Models\ReportCreate;
+use Illuminate\Support\Str;
+
 
 use App\Providers\WordpressServiceProvider;
 
@@ -487,8 +489,7 @@ class StockController extends Controller
                     'trace' => $e->getTraceAsString(),
                 ]);
             
-
-                 return back()->with('error', 'Erro de conexão.');
+               
                 
              }}
          
