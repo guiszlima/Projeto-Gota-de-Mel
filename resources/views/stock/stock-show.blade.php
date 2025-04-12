@@ -161,7 +161,7 @@ $variante = 'true'
             <!-- Conteúdo (inputs) -->
             <div class="content hidden w-full mt-4 p-6 bg-white shadow-xl rounded-lg text-lg fade-in">
             <div class="flex flex-col items-center w-full min-h-[80px] relative overflow-hidden border border-gray-300 rounded-lg p-4 mb-4">
-    <span class="text-gray-700 font-medium">{{ $variant->name ?? 'Variação' }}</span>
+    
 
     <a
         href="{{ route('stock.delete-variation', ['productId' => $variant->parent_id, 'variationId' => $variant->id]) }}"
