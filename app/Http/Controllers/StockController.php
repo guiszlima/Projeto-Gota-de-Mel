@@ -422,6 +422,18 @@ class StockController extends Controller
         ]);
     }
     
+
+    public function deleteVariation($productId, $variationId, Client $woocommerce)
+{
+    try {
+        $woocommerce->delete("products/{$productId}/variations/{$variationId}", ['force' => true]);
+
+        return redirect()->back()->with('success', 'Variação deletada com sucesso.');
+    } catch (\Exception $e) {
+        \Log::error('Erro ao deletar variação: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Erro ao deletar variação.');
+    }
+}
     /**
      * Show the form for editing the specified resource.
      */
