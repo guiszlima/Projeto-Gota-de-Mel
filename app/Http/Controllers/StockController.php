@@ -422,18 +422,6 @@ class StockController extends Controller
         ]);
     }
     
-
-    public function deleteVariation($productId, $variationId, Client $woocommerce)
-{
-    try {
-        $woocommerce->delete("products/{$productId}/variations/{$variationId}", ['force' => true]);
-
-        return redirect()->back()->with('success', 'Variação deletada com sucesso.');
-    } catch (\Exception $e) {
-        \Log::error('Erro ao deletar variação: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Erro ao deletar variação.');
-    }
-}
     /**
      * Show the form for editing the specified resource.
      */
@@ -510,10 +498,11 @@ class StockController extends Controller
          for ($i = 0; $i < $count; $i++) {
              // Verificar se há imagens para a variação
              if (isset($data['images'][$i]) && $data['images'][$i] instanceof \Illuminate\Http\UploadedFile) {
+                
                  // Enviar a imagem e obter o ID da imagem
                  $wordpressServiceProvider = new WordpressServiceProvider(app());
                  
-                 $imageIds[] = $wordpressServiceProvider->uploadWP($data['images'][$i], $data['id'][$i], $wpService); 
+                 $imageIds[$i] = $wordpressServiceProvider->uploadWP($data['images'][$i], $data['id'][$i], $wpService); 
                  
              }
      
@@ -534,11 +523,15 @@ class StockController extends Controller
             // Só adiciona o campo 'images' se houver imagens
             if (!empty($imageIds[$i])) {
                 $variant['image'] = ['id' => $imageIds[$i]];
+                
+                
             }
     
             // Adiciona a variação aos dados
             $variantData[] = $variant;
+            
         }
+        
          // Estrutura da requisição para atualizar as variações
          $req = ['update' => $variantData];
   

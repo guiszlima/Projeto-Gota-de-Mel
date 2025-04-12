@@ -142,14 +142,25 @@ $variante = 'true'
             class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full font-semibold bg-gray-100">
     </div>
     <div class="flex flex-col col-span-1 md:col-span-2 mb-3">
-                        <label for="parent_image" class="text-gray-700 font-semibold mb-2">Inserir Imagem</label>
+                        <label for="parent_image" class="text-gray-700 font-semibold mb-2">Inserir Imagem Principal</label>
                         <input name="parent_image" type="file" id="image_pai"
                             class="text-center text-xl font-semibold border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
        
+    @php
+    $produtoCopy = $product
+    @endphp
     @foreach ($product as $variant)
-    
+    @php
+    $nameParts = explode(',', $variant->name);
+
+// Verifica se há um segundo elemento, senão usa o primeiro mesmo
+$targetName = $nameParts[1] ?? "";
+
+// Converte para classe CSS-safe
+$className = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($targetName)));
+    @endphp
         <div class="flex flex-col items-center w-full min-h-[80px] relative overflow-hidden">
      
             <!-- Botão de toggle com tamanho fixo -->
@@ -265,7 +276,7 @@ $variante = 'true'
                     <div class="flex flex-col col-span-1 md:col-span-2">
                         <label for="image_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Inserir Imagem</label>
                         <input name="images[{{ $loop->index }}]" type="file" id="image_{{ $loop->index }}"
-                            class="text-center text-xl font-semibold border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
+                            class=" {{$className}} text-center text-xl font-semibold border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300" onchange="changeIMG(event,'{{ $className }}')">
                     </div>
                 </div>
 
@@ -281,6 +292,8 @@ $variante = 'true'
                     <input type="hidden" readonly name="type" value="variation">
                     <input name="parent_id" type="hidden" readonly value="{{ $parent_id }}">
                     <input type="hidden" readonly name="old_parent_name" value="{{$parent_name}}">
+                    <input type="hidden" readonly name="old_product" value="{{ json_encode($product) }}">
+
     </div>
 </div>
 @endif
@@ -405,5 +418,21 @@ if ("{{$variante}}" !== "falso") {
     value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
     e.target.value = value;
 }
+</script>
+<script>
+function changeIMG(event,className) {
+    const files = event.target.files;
+    
+    
+nameClass = "."+className
+    
+        // Aqui você pode, por exemplo, adicionar o arquivo à lista de imagens ou processá-lo
+        document.querySelectorAll(nameClass).forEach(input => {
+            input.files = files; // Atribui os arquivos ao input
+            console.log(input.files)
+        });
+    
+}
+
 </script>
 @endsection
