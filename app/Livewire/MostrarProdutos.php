@@ -40,8 +40,6 @@ public function changeFormtype(){
         if ($this->formType === false) {
             $param = [
                 'sku' => $this->searchTerm,
-                '_fields' => 'id,name,sku,price,stock_quantity,type',
-                '_embed' => 'false'    
 
             ];
            
@@ -78,16 +76,12 @@ public function changeFormtype(){
         $this->products = $woocommerce->get('products', [
             'search' => $this->searchTerm,
             'per_page' => $this->perPage,
-            '_fields' => 'id,name,sku,price,stock_quantity,type',
-            '_embed' => 'false'  
-            
         ]);
         
         if (empty($this->products)) {
             $this->products = $woocommerce->get('products', [
                 'sku' => $this->searchTerm,
-                '_fields' => 'id,name,sku,price,stock_quantity,type',
-                '_embed' => 'false'  
+                
                 
             ]);
       
