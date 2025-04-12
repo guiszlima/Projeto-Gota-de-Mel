@@ -162,14 +162,14 @@ $variante = 'true'
             <div class="content hidden w-full mt-4 p-6 bg-white shadow-xl rounded-lg text-lg fade-in">
             <div class="flex flex-col items-center w-full min-h-[80px] relative overflow-hidden border border-gray-300 rounded-lg p-4 mb-4">
     
+            <a
+    href="{{ route('stock.delete-variation', ['productId' => $variant->parent_id, 'variationId' => $variant->id]) }}"
+    onclick="return confirm('Tem certeza que deseja deletar esta variação?')"
+    class="inline-block bg-red-500 text-white text-xs px-3 py-2 rounded-md shadow-md transition-all duration-200 ease-in-out hover:bg-red-600"
+>
+    Deletar
+</a>
 
-    <a
-        href="{{ route('stock.delete-variation', ['productId' => $variant->parent_id, 'variationId' => $variant->id]) }}"
-        onclick="return confirm('Tem certeza que deseja deletar esta variação?')"
-        class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded"
-    >
-        Deletar
-    </a>
 </div>
 
                 <!-- Imagem -->
