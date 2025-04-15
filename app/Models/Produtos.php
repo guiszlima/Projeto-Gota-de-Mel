@@ -50,9 +50,9 @@ class Produtos extends Model
                     break;
             }
         }
-    
+        
         return $query->paginate($perPage)
-            ->withQueryString()
+            
             ->through(fn($produto) => self::formatProduct($produto));
     }
     
@@ -171,13 +171,7 @@ public function variations()
         if ($produto->post_type === 'product_variation') {
             $dados->parent_id = $produto->post_parent;
         }
-        if ($produto->post_type === 'product') {
-            $variacoes = Produtos::listVariationsById($produto->ID);
-    
-            if ($variacoes->isNotEmpty()) {
-                $dados->variations = $variacoes->pluck('id')->toArray();  // Retorna um array simples de IDs
-            }
-        }
+        
         return (object)$dados;
 
     }

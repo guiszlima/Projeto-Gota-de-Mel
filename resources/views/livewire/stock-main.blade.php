@@ -78,6 +78,7 @@
     </table>
     <div class="mt-6 flex justify-center">
     {{ $products->appends(request()->query())->links() }}
+
 </div>
 
 
