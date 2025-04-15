@@ -78,10 +78,10 @@ public function changeFormtype(){
         }
     else{
         $this->products = Produtos::listarProdutoPorNome($this->searchTerm);
+            
         
         if ($this->products->isEmpty()) {
             $this->products = Produtos::listarProdutoPorSku($this->searchTerm);
-            
         }if ($this->products->isEmpty()) {
             $this->products = Produtos::listarProdutoPorId($this->searchTerm);
             

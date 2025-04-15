@@ -14,21 +14,7 @@ class Produtos extends Model
     public $timestamps = false;
 
     // Relacionamento com meta (valores como preço, sku, etc.)
-    public function metas()
-    {
-        return $this->hasMany(ProdutoMeta::class, 'post_id', 'ID');
-    }
-
-    // Accessor para pegar um meta específico
-    public function getMetaValue($key)
-    {
-        return optional($this->metas->firstWhere('meta_key', $key))->meta_value;
-    }
-    public function parent()
-    {
-        return $this->belongsTo(Produtos::class, 'post_parent', 'ID');
-
-    }
+   
     public static function listarTodosProdutos()
     {
         return self::queryBase()->get()->map(fn($produto) => self::formatarProduto($produto));
@@ -54,11 +40,29 @@ class Produtos extends Model
     
     public static function listarProdutoPorNome($nome)
     {
-        return self::queryBase()
+        // Produtos do tipo 'product' sem variações
+        $produtosSimples = self::queryBase()
+            ->where('post_type', 'product')
+            ->where('post_status', 'publish')
             ->where('post_title', 'like', '%' . $nome . '%')
-            ->get()
-            ->map(fn($produto) => self::formatarProduto($produto));
+            
+            ->get();
+    
+        // Variações cujo produto pai tem nome semelhante ao parâmetro
+        $variacoes = self::queryBase()
+            ->where('post_type', 'product_variation')
+            ->where('post_status', 'publish')
+            ->whereHas('parent', function ($query) use ($nome) {
+                $query->where('post_title', 'like', '%' . $nome . '%');
+            })
+            ->get();
+    
+        // Junta os resultados e formata tudo
+        return $produtosSimples->merge($variacoes)
+        ->map(fn($produto) => self::formatarProduto($produto));
+    
     }
+    
     public static function listarVariacoesPorId($id)
 {
     return self::where('post_type', 'product_variation')  // Filtra para variações de produto
@@ -66,58 +70,28 @@ class Produtos extends Model
         ->get()
         ->map(fn($variacao) => self::formatarProduto($variacao));  // Chama a função formatarProduto para cada variação
 }
-public static function listarProdutosSimplesVariations($parametro)
+
+
+
+public function metas()
 {
-    // Cria a query base para buscar produtos principais (product)
-    $query = self::where('post_type', 'product')
-        ->where('post_status', 'publish'); // Apenas produtos publicados
-
-    // Primeiro tenta buscar pelo ID, se o parâmetro for numérico
-    if (is_numeric($parametro)) {
-        $produtosPrincipais = $query->where('ID', $parametro) // Busca pelo ID
-            ->whereDoesntHave('variations') // Garante que o produto não tenha variações
-            ->get();
-    } else {
-        // Caso o parâmetro não seja numérico, tenta buscar pelo nome do produto
-        $produtosPrincipais = $query->where('post_title', 'like', '%' . $parametro . '%') // Busca pelo nome
-            ->whereDoesntHave('variations') // Garante que o produto não tenha variações
-            ->get();
-    }
-
-    // Se não encontrar pelo ID ou nome, tenta buscar pelo SKU
-    if ($produtosPrincipais->isEmpty()) {
-        $produtosPrincipais = $query->whereHas('metas', function ($q) use ($parametro) {
-            $q->where('meta_key', '_sku')
-              ->where('meta_value', $parametro); // Busca pelo SKU
-        })
-        ->whereDoesntHave('variations') // Garante que o produto não tenha variações
-        ->get();
-    }
-
-    // Agora vamos buscar as variações (product_variation) que pertencem ao produto principal filtrado
-    $variacoes = self::where('post_type', 'product_variation')
-        ->where('post_status', 'publish')
-        ->whereIn('post_parent', $produtosPrincipais->pluck('ID')->toArray()) // Filtra pelas variações associadas aos produtos principais
-        ->get();
-
-    // Agora vamos tratar as variações como produtos independentes
-    $produtosComVariacoes = $variacoes->map(function ($variacao) {
-        return self::formatarProduto($variacao); // Formata as variações como produtos independentes
-    });
-
-    // Formata também os produtos principais
-    $produtosPrincipaisFormatados = $produtosPrincipais->map(function ($produto) {
-        return self::formatarProduto($produto);
-    });
-
-    // Retorna tanto os produtos principais (sem variações) quanto as variações (como produtos independentes)
-    return $produtosPrincipaisFormatados->merge($produtosComVariacoes); // Junta os dois conjuntos de produtos
+    return $this->hasMany(ProdutoMeta::class, 'post_id', 'ID');
 }
+// Accessor para pegar um meta específico
+public function getMetaValue($key)
+{
+    return optional($this->metas->firstWhere('meta_key', $key))->meta_value;
+}
+public function parent()
+{
+    return $this->belongsTo(Produtos::class, 'post_parent', 'ID');
 
-
-
-
-
+}
+public function variations()
+{
+    return $this->hasMany(self::class, 'post_parent', 'ID')
+                ->where('post_type', 'product_variation');
+}
     private static function queryBase()
     {
         return self::whereIn('post_type', ['product', 'product_variation'])
