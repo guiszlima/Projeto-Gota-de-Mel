@@ -76,27 +76,10 @@
             @endforeach
         </tbody>
     </table>
-
     <div class="mt-6 flex justify-center">
-    @if ($currentPage > 1)
-        <button wire:click="previousPage" class="mx-1 px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-            Anterior
-        </button>
-    @endif
-
-    @for ($i = 1; $i <= $totalPages; $i++)
-        <button wire:click="goToPage({{ $i }})"
-            class="mx-1 px-3 py-1 {{ $i == $currentPage ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-700' }} rounded hover:bg-gray-300">
-            {{ $i }}
-        </button>
-    @endfor
-
-    @if ($currentPage < $totalPages)
-        <button wire:click="nextPage" class="mx-1 px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-            Próximo
-        </button>
-    @endif
+    {{ $products->appends(request()->query())->links() }}
 </div>
+
 
 
 </div>

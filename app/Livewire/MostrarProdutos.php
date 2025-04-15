@@ -77,13 +77,14 @@ public function changeFormtype(){
             }
         }
     else{
-        $this->products = Produtos::listarProdutoPorNome($this->searchTerm);
-            
+        
+        $this->products = Produtos::listarProdutoPorSku($this->searchTerm);
         
         if ($this->products->isEmpty()) {
-            $this->products = Produtos::listarProdutoPorSku($this->searchTerm);
+            $this->products = Produtos::listProductByName($this->searchTerm);
+            
         }if ($this->products->isEmpty()) {
-            $this->products = Produtos::listarProdutoPorId($this->searchTerm);
+            $this->products = Produtos::listProductById($this->searchTerm);
             
         }
         if ($this->products->isEmpty()) {
@@ -92,21 +93,10 @@ public function changeFormtype(){
                 'message' => 'Produto não encontrado.'
             ]);
         }
-        
-
-       
-        
         foreach ($this->products as $product) {
-            // Adiciona o produto principal com apenas os dados necessários
-          
-        
-            $this->contagem[$product->id] = 1;
-        
             
+            $this->contagem[$product->id] = 1;
         }
-        
-    
-        
 
     }
     }        

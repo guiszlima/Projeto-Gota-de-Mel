@@ -15,17 +15,55 @@ class Produtos extends Model
 
     // Relacionamento com meta (valores como preço, sku, etc.)
    
-    public static function listarTodosProdutos()
+    public static function listProducts($parametroNome = null, $parametroValor = null, $perPage = 40, $all = null)
     {
-        return self::queryBase()->get()->map(fn($produto) => self::formatarProduto($produto));
+        $query = self::queryBase($all);
+    
+        // Verificando os parâmetros de busca
+        if ($parametroNome && $parametroValor) {
+            switch (strtolower($parametroNome)) {
+                case 'id':
+                    $query->where('ID', $parametroValor);
+                    break;
+    
+                case 'name':
+                    $query->where('post_title', 'like', '%' . $parametroValor . '%');
+                    break;
+    
+                case 'sku':
+                    // Buscando o SKU do produto principal
+                    $query->whereHas('metas', function ($metaQuery) use ($parametroValor) {
+                        $metaQuery->where('meta_key', '_sku')
+                                  ->where('meta_value', 'like', '%' . $parametroValor . '%');
+                    });
+    
+                    // Buscando o SKU nas variações, se houver
+                    $query->orWhereHas('variations', function ($variationQuery) use ($parametroValor) {
+                        $variationQuery->whereHas('metas', function ($metaQuery) use ($parametroValor) {
+                            $metaQuery->where('meta_key', '_sku')
+                                      ->where('meta_value', 'like', '%' . $parametroValor . '%');
+                        });
+                    });
+                    break;
+    
+                default:
+                    // Campo inválido, pode opcionalmente lançar exceção ou ignorar
+                    break;
+            }
+        }
+    
+        return $query->paginate($perPage)
+            ->withQueryString()
+            ->through(fn($produto) => self::formatProduct($produto));
     }
     
-    public static function listarProdutoPorId($id)
+    
+    public static function listProductById($id)
     {
         return self::queryBase()
             ->where('ID', $id)
             ->get()
-            ->map(fn($produto) => self::formatarProduto($produto));
+            ->map(fn($produto) => self::formatProduct($produto));
     }
     
     public static function listarProdutoPorSku($sku)
@@ -35,17 +73,16 @@ class Produtos extends Model
                 $q->where('meta_key', '_sku')->where('meta_value', $sku);
             })
             ->get()
-            ->map(fn($produto) => self::formatarProduto($produto));
+            ->map(fn($produto) => self::formatProduct($produto));
     }
     
-    public static function listarProdutoPorNome($nome)
+    public static function listProductByName($nome)
     {
         // Produtos do tipo 'product' sem variações
         $produtosSimples = self::queryBase()
             ->where('post_type', 'product')
             ->where('post_status', 'publish')
             ->where('post_title', 'like', '%' . $nome . '%') // Nome do produto
-            ->whereDoesntHave('variations') // Garante que o produto não tenha variações associadas
             ->get();
     
         // Variações cujo produto pai tem nome semelhante ao parâmetro
@@ -59,15 +96,15 @@ class Produtos extends Model
     
         // Junta os resultados e formata tudo
         return $produtosSimples->merge($variacoes)
-            ->map(fn($produto) => self::formatarProduto($produto));
+            ->map(fn($produto) => self::formatProduct($produto));
     }
     
-    public static function listarVariacoesPorId($id)
+    public static function listVariationsById($id)
 {
     return self::where('post_type', 'product_variation')  // Filtra para variações de produto
         ->where('post_parent', $id)  // Filtra pela associação de variação ao produto principal
         ->get()
-        ->map(fn($variacao) => self::formatarProduto($variacao));  // Chama a função formatarProduto para cada variação
+        ->map(fn($variacao) => self::formatProduct($variacao));  
 }
 
 
@@ -90,15 +127,28 @@ public function variations()
 {
     return $this->hasMany(self::class, 'post_parent', 'ID')
                 ->where('post_type', 'product_variation');
+                
 }
-    private static function queryBase()
-    {
-        return self::whereIn('post_type', ['product', 'product_variation'])
+    private static function queryBase($all=null)
+    { 
+        if(!$all){
+            return self::whereIn('post_type', ['product', 'product_variation'])
             ->where('post_status', 'publish')
-            ->with(['metas', 'parent']);
-    }
+            ->whereDoesntHave('variations')
+            ->with(['metas', 'parent'])
+            ->orderBy('ID', 'desc');;
+
+        }
+        if($all){
+            return self::whereIn('post_type', ['product'])
+            ->where('post_status', 'publish')
+            ->with(['metas', 'parent'])
+            ->orderBy('ID', 'desc');
+        }
+
+            }
     
-    private static function formatarProduto($produto)
+    private static function formatProduct($produto)
     {
 
         
@@ -122,7 +172,7 @@ public function variations()
             $dados->parent_id = $produto->post_parent;
         }
         if ($produto->post_type === 'product') {
-            $variacoes = Produtos::listarVariacoesPorId($produto->ID);
+            $variacoes = Produtos::listVariationsById($produto->ID);
     
             if ($variacoes->isNotEmpty()) {
                 $dados->variations = $variacoes->pluck('id')->toArray();  // Retorna um array simples de IDs

@@ -38,19 +38,18 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
                     @endif
                 </span>
             </div>
+            <div>
+                <p class="small text-muted">
+                    Mostrando 
+                    <span class="fw-semibold">{{ $paginator->firstItem() }}</span>
+                    até 
+                    <span class="fw-semibold">{{ $paginator->lastItem() }}</span>
+                    de 
+                    <span class="fw-semibold">{{ $paginator->total() }}</span>
+                    resultados
+                </p>
+            </div>
 
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm text-gray-700 leading-5 dark:text-gray-400">
-                        <span>{!! __('Showing') !!}</span>
-                        <span class="font-medium">{{ $paginator->firstItem() }}</span>
-                        <span>{!! __('to') !!}</span>
-                        <span class="font-medium">{{ $paginator->lastItem() }}</span>
-                        <span>{!! __('of') !!}</span>
-                        <span class="font-medium">{{ $paginator->total() }}</span>
-                        <span>{!! __('results') !!}</span>
-                    </p>
-                </div>
 
                 <div>
                     <span class="relative z-0 inline-flex rtl:flex-row-reverse rounded-md shadow-sm">

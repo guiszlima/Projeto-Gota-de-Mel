@@ -8,6 +8,7 @@ use App\WordpressClass;
 use GuzzleHttp\Client as WpClient;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use App\Models\Produtos;
 use phpDocumentor\Reflection\PseudoTypes\True_;
 use App\Models\ReportCreate;
 use Illuminate\Support\Str;
@@ -20,45 +21,13 @@ class StockController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, Client $woocommerce)
+    public function index(Request $request)
     {
-        // Recuperando o número da página atual da requisição
-        $page = $request->input('page', 1);
-        $nmbrPerPage = 15;
-
-        // Definindo parâmetros de paginação e filtros
-        $params = [
-            'per_page' => $nmbrPerPage, // Número de produtos por página
-            'page' => $page, // Página atual
-            'orderby' => 'date', // Ordena por data de criação
-            'order' => 'desc',
-            '_fields' => 'id,name,sku,price,stock_quantity,type',
-            '_embed' => 'false'   
-        ];
-
-        // Buscando produtos com os parâmetros definidos
-        try {
-            $products = $woocommerce->get('products', $params);
-        } catch (\Exception $e) {
-        }
-
-        // Obter o total de produtos a partir dos cabeçalhos de resposta
-        $responseHeaders = $woocommerce->http->getResponse()->getHeaders();
-        try {
-            $totalProducts = $responseHeaders['X-WP-Total'];
-         } catch (\Throwable $th) {
-            $totalProducts = $responseHeaders['x-wp-total'];
-         }
-
-        // Calculando o número total de páginas
-        $totalPages = ceil($totalProducts / $nmbrPerPage);
-
-        // Retornando a view com os produtos e informações de paginação
-        return view("stock.stock-index", [
-            'products' => $products,
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
-        ]);
+        // Define quantos produtos por página
+      
+    
+        // Retorna a view com paginação
+        return view("stock.stock-index");
     }
 
     /**

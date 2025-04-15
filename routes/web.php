@@ -35,8 +35,7 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::get("/menu", function(){
         $user = Auth::user();
     
-        $produtos = Produtos::listarProdutos();
-        
+      
         
         
     return view('menu')
@@ -64,10 +63,10 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::get('estoque/create', [StockController::class, 'create'])->name('stock.create');
     Route::get('estoque/create-variation-product',[StockController::class,'createVariableProduct'])->name('stock.create.var-product');
     Route::post('estoque/create-variation-product',[StockController::class,'storeVariableProduct'])->name('stock.store.var-product');
-    Route::post('estoque', [StockController::class, 'store'])->name('stock.store');
+    Route::post('estoque/store', [StockController::class, 'store'])->name('stock.store');
     Route::get('estoque/{id}', [StockController::class, 'show'])->name('stock.show');
     Route::get('estoque/delete-variation/{productId}/{variationId}', [StockController::class, 'deleteVariation'])->name('stock.delete-variation');
-    Route::put('estoque', [StockController::class, 'update'])->name('stock.update');
+    Route::put('estoque/update', [StockController::class, 'update'])->name('stock.update');
     Route::delete('estoque/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
     Route::get('relatorio/estoque',[ReportController::class,'get'])->name('report.products');
     Route::get('relatorio/vendas',[ReportController::class,'getSells'])->name('report.sells');
