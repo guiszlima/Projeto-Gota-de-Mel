@@ -55,7 +55,7 @@
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $product->id }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $product->name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{'R$ ' . number_format((float)$product->price, 2, ',', '.')}}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ $product->price == 0 ? 'Variações' : 'R$ ' . number_format((float)$product->price, 2, ',', '.') }}</td>
                 <td class="px-6 py-4 whitespace-nowrap flex space-x-4 justify-end">
                     <a href="{{ route('stock.show', $product->id) }}"
                         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded">

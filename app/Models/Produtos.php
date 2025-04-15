@@ -17,9 +17,10 @@ class Produtos extends Model
    
     public static function listProducts($parametroNome = null, $parametroValor = null, $perPage = 40, $all = null)
     {
-        $query = self::queryBase($all);
+        $query = self::queryBase($all)
+            ->select(['ID', 'post_title', 'post_type', 'post_status']) // apenas se apropriado
+            ->with(['metas', 'variations.metas']);
     
-        // Verificando os parâmetros de busca
         if ($parametroNome && $parametroValor) {
             switch (strtolower($parametroNome)) {
                 case 'id':
@@ -31,23 +32,21 @@ class Produtos extends Model
                     break;
     
                 case 'sku':
-                    // Buscando o SKU do produto principal
-                    $query->whereHas('metas', function ($metaQuery) use ($parametroValor) {
-                        $metaQuery->where('meta_key', '_sku')
-                                  ->where('meta_value', 'like', '%' . $parametroValor . '%');
-                    });
-    
-                    // Buscando o SKU nas variações, se houver
-                    $query->orWhereHas('variations', function ($variationQuery) use ($parametroValor) {
-                        $variationQuery->whereHas('metas', function ($metaQuery) use ($parametroValor) {
+                    $query->where(function ($q) use ($parametroValor) {
+                        $q->whereHas('metas', function ($metaQuery) use ($parametroValor) {
                             $metaQuery->where('meta_key', '_sku')
                                       ->where('meta_value', 'like', '%' . $parametroValor . '%');
+                        })
+                        ->orWhereHas('variations', function ($variationQuery) use ($parametroValor) {
+                            $variationQuery->whereHas('metas', function ($metaQuery) use ($parametroValor) {
+                                $metaQuery->where('meta_key', '_sku')
+                                          ->where('meta_value', 'like', '%' . $parametroValor . '%');
+                            });
                         });
                     });
                     break;
     
                 default:
-                    // Campo inválido, pode opcionalmente lançar exceção ou ignorar
                     break;
             }
         }
@@ -56,6 +55,7 @@ class Produtos extends Model
             ->withQueryString()
             ->through(fn($produto) => self::formatProduct($produto));
     }
+    
     
     
     public static function listProductById($id)
