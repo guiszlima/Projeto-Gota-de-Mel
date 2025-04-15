@@ -44,8 +44,8 @@ class Produtos extends Model
         $produtosSimples = self::queryBase()
             ->where('post_type', 'product')
             ->where('post_status', 'publish')
-            ->where('post_title', 'like', '%' . $nome . '%')
-            
+            ->where('post_title', 'like', '%' . $nome . '%') // Nome do produto
+            ->whereDoesntHave('variations') // Garante que o produto não tenha variações associadas
             ->get();
     
         // Variações cujo produto pai tem nome semelhante ao parâmetro
@@ -53,14 +53,13 @@ class Produtos extends Model
             ->where('post_type', 'product_variation')
             ->where('post_status', 'publish')
             ->whereHas('parent', function ($query) use ($nome) {
-                $query->where('post_title', 'like', '%' . $nome . '%');
+                $query->where('post_title', 'like', '%' . $nome . '%'); // Nome do produto pai
             })
             ->get();
     
         // Junta os resultados e formata tudo
         return $produtosSimples->merge($variacoes)
-        ->map(fn($produto) => self::formatarProduto($produto));
-    
+            ->map(fn($produto) => self::formatarProduto($produto));
     }
     
     public static function listarVariacoesPorId($id)

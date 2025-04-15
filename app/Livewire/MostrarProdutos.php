@@ -94,48 +94,18 @@ public function changeFormtype(){
         }
         
 
-        $productsWithVariations = [];
-        $productIdsToRemove = [];
+       
         
         foreach ($this->products as $product) {
             // Adiciona o produto principal com apenas os dados necessários
-            $productsWithVariations[] = (object) [
-                'id' => $product->id,
-                'name' => $product->name,
-                'stock_quantity' => $product->stock_quantity,
-                'price' => $product->price,
-                'parent_name' => null,
-                'parent_id' => null
-            ];
+          
         
             $this->contagem[$product->id] = 1;
         
-            if ($product->type === 'variable') {
-                $variations = $woocommerce->get("products/{$product->id}/variations", [
-                    '_fields' => 'id,name,stock_quantity,price'
-                ]);
-        
-                foreach ($variations as $variation) {
-                    $productIdsToRemove[] = $product->id; // Marca o produto principal para remoção
-        
-                    $productsWithVariations[] = (object) [
-                        'id' => $variation->id,
-                        'name' => $product->name . " " . $variation->name, // Concatena com o nome do pai
-                        'stock_quantity' => $variation->stock_quantity,
-                        'price' => $variation->price,
-                        'parent_name' => $product->name,
-                        'parent_id' => $product->id
-                    ];
-        
-                    $this->contagem[$variation->id] = 1;
-                }
-            }
+            
         }
         
-        // Filtra os produtos removendo os principais que possuem variações
-        $this->products = array_filter($productsWithVariations, function ($product) use ($productIdsToRemove) {
-            return !in_array($product->id, $productIdsToRemove);
-        });
+    
         
 
     }
