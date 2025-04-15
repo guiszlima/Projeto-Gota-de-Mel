@@ -5,7 +5,9 @@ namespace App\Livewire;
 use Livewire\Component;
 use Automattic\WooCommerce\Client;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\Produtos; // Corrigido o namespace
+use App\Models\ProdutoMeta;
+use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\PseudoTypes\False_;
 use Illuminate\Support\Str;
 
@@ -44,8 +46,10 @@ public function changeFormtype(){
             ];
            
             try {
-                $pedido = $woocommerce->get('products', $param);
-            } catch (\Throwable $th) {
+                $pedido = Produtos::listarProdutoPorSku($this->searchTerm);
+                
+            } catch (\Exception $e) {
+                
                 Log::error('Erro ao buscar produtos no WooCommerce:', [
                     'mensagem' => $th->getMessage(),
                     'arquivo' => $th->getFile(),
@@ -61,7 +65,7 @@ public function changeFormtype(){
             }
           
             
-            if (!empty($pedido)) {
+            if ($pedido->isNotEmpty()) {
                 $produto = $pedido[0];
         
                 $this->addToCart(
@@ -73,19 +77,22 @@ public function changeFormtype(){
             }
         }
     else{
-        $this->products = $woocommerce->get('products', [
-            'search' => $this->searchTerm,
-            'per_page' => $this->perPage,
-        ]);
+        $this->products = Produtos::listarProdutoPorNome($this->searchTerm);
         
-        if (empty($this->products)) {
-            $this->products = $woocommerce->get('products', [
-                'sku' => $this->searchTerm,
-                
-                
-            ]);
-      
+        if ($this->products->isEmpty()) {
+            $this->products = Produtos::listarProdutoPorSku($this->searchTerm);
+            
+        }if ($this->products->isEmpty()) {
+            $this->products = Produtos::listarProdutoPorId($this->searchTerm);
+            
         }
+        if ($this->products->isEmpty()) {
+            session()->flash('alert', [
+                'type' => 'alert',
+                'message' => 'Produto não encontrado.'
+            ]);
+        }
+        
 
         $productsWithVariations = [];
         $productIdsToRemove = [];

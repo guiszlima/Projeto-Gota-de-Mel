@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request; // Adicione esta linha
+use App\Models\Produtos;
 
 use App\Http\Controllers\PDFController;
 
@@ -33,11 +34,15 @@ Route::middleware(['auth','check_pending'])->group(function () {
   });  
     Route::get("/menu", function(){
         $user = Auth::user();
+    
+        $produtos = Produtos::listarProdutos();
+        
         
         
     return view('menu')
     ->with('user', $user);
     
+
     })->name('menu');
     
  
