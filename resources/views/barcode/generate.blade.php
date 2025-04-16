@@ -4,8 +4,10 @@
 
 <x-button-back :route="route('barcode.index')"></x-button-back>
 
-
-
+<div class="text-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">{{$product['real_name']}}
+    </h1>
+</div>
 
 
 

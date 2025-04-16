@@ -155,73 +155,47 @@ public function variations()
     if (!$produto) {
         return (object)[]; // ou `null` se preferir retornar null
     }
-        $dados =  (object)[
-            'id'              => $produto->ID,
-            'name'            => $produto->post_title,
-            'stock_quantity'  => $produto->getMetaValue('_stock'),
-            'sku'             => $produto->getMetaValue('_sku'),
-            'permalink'       => $produto->post_parent
-                                    ? optional($produto->parent)->guid
-                                    : $produto->guid,
-            'type'            => $produto->post_type,
-            'price'           => $produto->getMetaValue('_regular_price'),
-            'variations'      => [],  // Inicia o array de variações vazio
-        ];
+    $variations = [];
 
-        if ($produto->post_type === 'product_variation') {
-            $dados->parent_id = $produto->post_parent;
-        }
+    if ($produto->post_type === 'product') {
+        $variations = self::where('post_parent', $produto->ID)
+            ->where('post_type', 'product_variation')
+            ->get();
+    }
+    
+    // Montar o objeto
+    $dados = (object)[
+        'id'              => $produto->ID,
+        'name'            => $produto->post_title,
+        'stock_quantity'  => $produto->getMetaValue('_stock'),
+        'sku'             => $produto->getMetaValue('_sku'),
+        'permalink'       => $produto->post_parent
+                                ? optional($produto->parent)->guid
+                                : $produto->guid,
+        'type'            => $produto->post_type,
+        'price'           => $produto->getMetaValue('_regular_price'),
+        'variations'      => false, // valor padrão
+    ];
+    
+    // Se for variação, adiciona o parent_id
+    if ($produto->post_type === 'product_variation') {
+        $dados->parent_id = $produto->post_parent;
+    }
+    
+    // Se tiver exatamente uma variação, define como true
+    if ($produto->post_type === 'product' && !$variations->isEmpty()) {
+        $dados->variations = true;
+    }
+    
         
         return (object)$dados;
 
     }
 
-    
+
     
 
 
-    function getProductVariations($parent_id, $variation_id) {
-        global $wpdb; // Usando o WordPress $wpdb para interação com o banco de dados
     
-        // Consulta SQL para obter os dados da variação
-        $query = "
-            SELECT 
-                vp.ID AS variation_id,
-                vp.post_title AS variation_name,
-                vp.post_content AS variation_description,
-                vp.guid AS permalink,
-                vp.post_type AS type,
-                vp.post_status AS status,
-                vp.post_parent AS parent_id,
-                MAX(CASE WHEN pm.meta_key = '_sku' THEN pm.meta_value END) AS sku,
-                MAX(CASE WHEN pm.meta_key = '_stock' THEN pm.meta_value END) AS stock_quantity,
-                MAX(CASE WHEN pm.meta_key = '_regular_price' THEN pm.meta_value END) AS regular_price,
-                MAX(CASE WHEN pm.meta_key = '_sale_price' THEN pm.meta_value END) AS sale_price,
-                MAX(CASE WHEN pm.meta_key = '_weight' THEN pm.meta_value END) AS weight,
-                MAX(CASE WHEN pm.meta_key = '_length' THEN pm.meta_value END) AS length,
-                MAX(CASE WHEN pm.meta_key = '_width' THEN pm.meta_value END) AS width,
-                MAX(CASE WHEN pm.meta_key = '_height' THEN pm.meta_value END) AS height,
-                MAX(CASE WHEN pm.meta_key = '_product_attributes' THEN pm.meta_value END) AS attributes,
-                MAX(CASE WHEN pm.meta_key = '_manage_stock' THEN pm.meta_value END) AS manage_stock,
-                MAX(CASE WHEN pm.meta_key = '_stock_status' THEN pm.meta_value END) AS stock_status
-            FROM {$wpdb->posts} vp
-            LEFT JOIN {$wpdb->prefix}postmeta pm ON vp.ID = pm.post_id
-            WHERE vp.ID = %d
-              AND vp.post_type = 'product_variation'
-              AND vp.post_status = 'publish'
-              AND vp.post_parent = %d
-            GROUP BY vp.ID, vp.post_title, vp.guid, vp.post_type, vp.post_status, vp.post_content, vp.post_parent;
-        ";
-    
-        // Executando a consulta com parâmetros
-        $results = $wpdb->get_row($wpdb->prepare($query, $variation_id, $parent_id));
-    
-        // Retornando os dados se encontrados
-        if ($results) {
-            return (array) $results;
-        } else {
-            return null; // Nenhuma variação encontrada
-        }
-    }
     
 }

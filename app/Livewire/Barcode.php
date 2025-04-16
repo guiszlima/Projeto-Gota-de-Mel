@@ -3,126 +3,42 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use Automattic\WooCommerce\Client;
+use App\Models\Produtos;
+
 class Barcode extends Component
-{   
-    
-    
+{
     public $searchTerm;
-    public $isSearch = False;
-    public $products = [];
-    public $currentPage = 1;
-    public $totalPages;
-    public $nmbrPerPage = 15;
-    public  $searchBySku = false;
+    public $isSearch = false;
+    public $searchBySku = false;
 
-
-
+    public $nmbrPerPage = 10;
 
     public function render()
     {
-        return view('livewire.barcode',
-            [
-                'products' => $this->products,
-                'currentPage' => $this->currentPage,
-                'totalPages' => $this->totalPages,
-            ]);
-    
-        
+        $searchType = $this->searchBySku ? 'sku' : 'name';
+        $searchParam = $this->isSearch ? $this->searchTerm : null;
+
+        // Agora passando current_page da query string automaticamente
+        $products = Produtos::listProducts($searchType, $searchParam, $this->nmbrPerPage, true);
+
+        return view('livewire.barcode', [
+            'products' => $products
+        ]);
     }
 
-    
-
-    public function mount(Client $woocommerce)
-    {
-        $this->loadProducts($woocommerce);
-    }
     public function toggleSearchType()
     {
         $this->searchBySku = !$this->searchBySku;
     }
-public function search(Client $woocommerce){
-    $this->isSearch = true;
-    $this->currentPage = 1; // Reinicia a página ao fazer nova pesquisa
-    $this->loadProducts($woocommerce);
-}
-public function offSearch(Client $woocommerce){
-    $this->isSearch = false;
-    $this->currentPage = 1; // Reinicia a página ao fazer nova pesquisa
-    $this->loadProducts($woocommerce);
-}
-    public function loadProducts(Client $woocommerce)
+
+    public function search()
     {
-        // Definindo parâmetros de paginação
-        $params = [
-            'per_page' => $this->nmbrPerPage,
-            'page' => $this->currentPage,
-            'orderby' => 'date', 
-            'order' => 'desc',
-            '_fields' => 'id,name,sku,price,stock_quantity,type',
-            '_embed' => 'false'   
-
-            
-        ];
-        if ($this->isSearch) {
-            if ($this->searchBySku) {
-                $params['sku'] = $this->searchTerm; // Busca por SKU
-            } else {
-                $params['search'] = $this->searchTerm; // Busca por Nome
-            }
-        }
-
-        // Buscando produtos com os parâmetros definidos
-
-        $this->products = $woocommerce->get('products', $params);
-     
-        if($this->searchBySku){
-            foreach ($this->products as &$product) {
-                if ($product->type === 'variation') {
-                    // Se o produto for uma variação, substituímos o ID pelo parent_id
-                    $product->id = $product->parent_id;
-                }
-            }
-        }
-
-        // Obter o total de produtos a partir dos cabeçalhos de resposta
-        $responseHeaders = $woocommerce->http->getResponse()->getHeaders();
-        
-        try {
-            $totalProducts = $responseHeaders['X-WP-Total'];
-         } catch (\Throwable $th) {
-            $totalProducts = $responseHeaders['x-wp-total'];
-         }
-
-        // Calculando o número total de páginas
-        $this->totalPages = ceil($totalProducts / $this->nmbrPerPage);
+        $this->isSearch = true;
     }
 
-
-    public function goToPage($page, Client $woocommerce)
-{
-    if ($page >= 1 && $page <= $this->totalPages) {
-        $this->currentPage = $page;
-        $this->loadProducts($woocommerce);
-    }
-}
-
-    public function nextPage(Client $woocommerce)
+    public function offSearch()
     {
-        if ($this->currentPage < $this->totalPages) {
-            $this->currentPage++;
-            $this->loadProducts($woocommerce);
-        }
+        $this->isSearch = false;
+        $this->reset('searchTerm');
     }
-
-    public function previousPage(Client $woocommerce)
-    {
-        if ($this->currentPage > 1) {
-            $this->currentPage--;
-            $this->loadProducts($woocommerce);
-        }
-    }
-
-
-
 }

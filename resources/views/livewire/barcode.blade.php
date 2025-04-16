@@ -37,15 +37,18 @@
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $product->id }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $product->name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ 'R$ ' . number_format((float)$product->price, 2, ',', '.') }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+             {{ $product->variations === true ? 'Variação' : 'R$ ' . number_format((float)$product->price, 2, ',', '.') }}
+                </td>
 
                 <td class="px-6 py-4 whitespace-nowrap">
                     <form action="{{ route('barcode.generate') }}">
                         @csrf
+                      
                         <input type="hidden" name="sku" value="{{ $product->sku }}">
+                        <input type="hidden" name="variations" value="{{ $product->variations }}">
                         <input type="hidden" name="price" value="{{ $product->price }}">
                         <input type="hidden" name="name" value="{{ $product->name }}">
-                        <input type="hidden" name="type" value="{{$product->type}}">
                         <input type="hidden" name="id" value="{{$product->id}}">
                         <button type="submit"
                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -59,23 +62,8 @@
     </table>
 
     <div class="mt-6 flex justify-center">
-    @if ($currentPage > 1)
-        <button wire:click="previousPage" class="mx-1 px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-            Anterior
-        </button>
-    @endif
-
-    @for ($i = 1; $i <= $totalPages; $i++)
-        <button wire:click="goToPage({{ $i }})"
-            class="mx-1 px-3 py-1 {{ $i == $currentPage ? 'bg-orange-600 text-white' : 'bg-gray-200 text-gray-700' }} rounded hover:bg-gray-300">
-            {{ $i }}
-        </button>
-    @endfor
-
-    @if ($currentPage < $totalPages)
-        <button wire:click="nextPage" class="mx-1 px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-            Próximo
-        </button>
-    @endif
+    <div class="mt-4">
+        {{ $products->links() }}
+    </div>
 </div>
 </div>

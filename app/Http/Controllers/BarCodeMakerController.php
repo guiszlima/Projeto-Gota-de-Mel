@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Automattic\WooCommerce\Client;
+use App\Models\Produtos;
 
 class BarCodeMakerController extends Controller
 {
@@ -17,19 +18,16 @@ class BarCodeMakerController extends Controller
    public function generate(Request $request , Client $woocommerce){
       
       $nome_sem_espacos = str_replace(' ', '_', trim($request->name));
-      if ($request->type == 'variable') {
-         $all_variations = [];
-         $page = 1;
+      if ($request->variations) {
          
-         do {
-             $variations = $woocommerce->get("products/{$request->id}/variations", [
-                 'per_page' => 50,
-                 'page' => $page
-             ]);
          
-             $all_variations = array_merge($all_variations, $variations);
-             $page++;
-         } while (count($variations) === 100); // Continua até que menos de 100 resultados sejam retornados.
+         
+         
+             $variations = Produtos::listVariationsById($request->id);
+         
+         
+         
+         
          
          
          
@@ -39,7 +37,8 @@ class BarCodeMakerController extends Controller
       $product = [
          'sku'=>$request->sku,
          'price'=> $request->price,
-         'name' => $nome_sem_espacos
+         'name' => $nome_sem_espacos,
+         'real_name' => $request->name,
       ];
       return view('barcode.generate')->with('product', $product);
    }
