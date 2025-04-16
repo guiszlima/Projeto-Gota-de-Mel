@@ -58,9 +58,9 @@ class Produtos extends Model
     
     
     
-    public static function listProductById($id)
+    public static function listProductById($id, $all=null)
     {
-        return self::queryBase()
+        return self::queryBase($all)
             ->where('ID', $id)
             ->get()
             ->map(fn($produto) => self::formatProduct($produto));
