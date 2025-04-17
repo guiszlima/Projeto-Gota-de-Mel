@@ -83,7 +83,8 @@ class Produtos extends Model
             ->where('post_type', 'product')
             ->where('post_status', 'publish')
             ->where('post_title', 'like', '%' . $nome . '%') // Nome do produto
-            ->get();
+            ->paginate(50);
+            
     
         // Variações cujo produto pai tem nome semelhante ao parâmetro
         $variacoes = self::queryBase()
@@ -91,8 +92,9 @@ class Produtos extends Model
             ->where('post_status', 'publish')
             ->whereHas('parent', function ($query) use ($nome) {
                 $query->where('post_title', 'like', '%' . $nome . '%'); // Nome do produto pai
-            })
-            ->get();
+            })->paginate(50);
+            
+            ;
     
         // Junta os resultados e formata tudo
         return $produtosSimples->merge($variacoes)
