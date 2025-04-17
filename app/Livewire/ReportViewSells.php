@@ -9,6 +9,7 @@ use Automattic\WooCommerce\Client;
 use App\Models\Sell;
 use App\Models\ReportCreate;
 use Illuminate\Support\Facades\Http;
+use App\Models\Produtos;
 
 
 class ReportViewSells extends Component
@@ -87,8 +88,9 @@ class ReportViewSells extends Component
         // Loop pelos produtos e monta o array com nome, preço, ID e quantidade
         foreach ($produtos as $index => $produtoId) {
             // Realiza a solicitação ao WooCommerce para obter o produto pelo ID
-            $produto = $woocommerce->get('products/' . $produtoId);
-
+            
+            $produto = Produtos::listProductById($produtoId)[0];
+            
             // Adiciona as informações do produto no array $itensTrocar
             $itensTrocar[] = [
                 'venda_id' => $itens['id'],
@@ -99,11 +101,11 @@ class ReportViewSells extends Component
                 'tipo' => $produto->type,
                 'cont' => 0
             ];
-            if($produto->type == 'variation'){
+            if($produto->type == 'product_variation'){
              $itensTrocar[$index]['parent_id'] = $produto->parent_id;
             }
         }
-
+        
         // Atualiza a propriedade $itensTrocar
         $this->itensTrocar = $itensTrocar;
         $produtos = "";
@@ -175,7 +177,7 @@ class ReportViewSells extends Component
         // Calcula o valor total da troca
         $valorTotal = $cont * $preco;
     
-        if ($tipo === 'variation') {
+        if ($tipo === 'product_variation') {
             
             // Busca as variações do produto pai
             $variacoes = $woocommerce->get("products/{$parent_id}/variations");
