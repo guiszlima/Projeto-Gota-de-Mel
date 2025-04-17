@@ -33,7 +33,54 @@ $variante = 'true'
             @php
             $variante = 'falso';
             @endphp
-            
+            @php
+    $storeUrl = env('WOOCOMMERCE_STORE_URL', 'https://homolog.sunfire.com.br');
+@endphp
+
+<div class="w-full max-w-2xl mx-auto mt-4 space-y-4">
+    {{-- Editar no painel --}}
+    @if(isset($product->id))
+        <div>
+            <a href="{{ $storeUrl }}/wp-admin/post.php?post={{ $product->id }}&action=edit"
+               target="_blank"
+               class="inline-block text-blue-600 text-sm hover:underline hover:text-blue-800 transition">
+                ✏️ Editar produto no painel
+            </a>
+        </div>
+    @endif
+
+    {{-- Permalink + botão copiar --}}
+    @if(isset($product->permalink))
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 space-y-3">
+            <a href="{{ $product->permalink }}" target="_blank"
+               class="text-blue-600 text-sm underline hover:text-blue-800 transition">
+                🔗 Ver produto na loja
+            </a>
+
+            <div class="flex items-center gap-2">
+                <input id="permalinkInput" type="text" readonly value="{{ $product->permalink }}"
+                    class="flex-1 border border-gray-300 bg-gray-100 text-gray-700 px-3 py-2 rounded text-sm focus:outline-none">
+
+                <button type="button" onclick="copyPermalink()"
+                    class="bg-blue-500 text-white text-sm px-4 py-2 rounded hover:bg-blue-600 transition active:scale-95"
+                    title="Copiar link">
+                    Copiar
+                </button>
+            </div>
+        </div>
+
+        <script>
+            function copyPermalink() {
+                const input = document.getElementById('permalinkInput');
+                input.select();
+                input.setSelectionRange(0, 99999); // Compatibilidade mobile
+                document.execCommand('copy');
+                alert('Link copiado!');
+            }
+        </script>
+    @endif
+</div>
+
             <div id="divChangeImg" class="flex flex-row hidden ">
                 <input name="image" type="file"
                     class="text-center text-xl font-semibold border border-gray-300 p-3 rounded w-min mb-4" placeholder="
@@ -135,8 +182,61 @@ $variante = 'true'
         </button>
     </div>
 
+
+    @php
+    $storeUrl = env('WOOCOMMERCE_STORE_URL', 'https://homolog.sunfire.com.br');
+@endphp
+
+<div class="w-full max-w-2xl mx-auto mt-4">
+    {{-- Link de edição no painel --}}
+    @if(isset($parent_id))
+        <div class="mb-2">
+            <a href="{{ $storeUrl }}/wp-admin/post.php?post={{ $parent_id }}&action=edit"
+               target="_blank"
+               class="inline-block text-sm text-blue-600 hover:underline hover:text-blue-800 transition">
+                ✏️ Editar produto no painel
+            </a>
+        </div>
+    @endif
+
+    {{-- Permalink com botão copiar --}}
+    @if(isset($parent_permalink))
+        <div class="bg-white shadow-sm border border-gray-200 rounded-lg p-4 space-y-3">
+            <a href="{{ $parent_permalink }}" target="_blank"
+               class="text-blue-600 text-sm underline hover:text-blue-800 transition">
+                🔗 Ver produto na loja
+            </a>
+
+            <div class="flex items-center gap-2">
+                <input id="permalinkInput" type="text" readonly value="{{ $parent_permalink }}"
+                    class="flex-1 border border-gray-300 bg-gray-100 text-gray-700 px-3 py-2 rounded text-sm">
+
+                <button type="button" onclick="copyPermalink()"
+                    class="bg-blue-500 text-white text-sm px-4 py-2 rounded hover:bg-blue-600 transition active:scale-95"
+                    title="Copiar link">
+                    Copiar
+                </button>
+            </div>
+        </div>
+
+        <script>
+            function copyPermalink() {
+                const input = document.getElementById('permalinkInput');
+                input.select();
+                input.setSelectionRange(0, 99999); // para mobile
+                document.execCommand('copy');
+                alert('Link copiado!');
+            }
+        </script>
+    @endif
+</div>
+
     <!-- Input único para o nome do produto pai -->
     <div class="flex flex-col w-full mb-8">
+
+
+    
+    
         <label for="parent_name" class="text-gray-700 font-semibold mb-2">Nome do Produto Pai</label>
         <input id="parent_name" name="parent_name" type="text" readonly value="{{ $parent_name }}"
             class="editInputVar text-center border border-gray-300 p-3 rounded-md w-full font-semibold bg-gray-100">
@@ -163,6 +263,9 @@ $className = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($targetName)));
     @endphp
         <div class="flex flex-col items-center w-full min-h-[80px] relative overflow-hidden">
      
+
+
+        
             <!-- Botão de toggle com tamanho fixo -->
             <button type="button"
                 class="toggleBtn w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300">
@@ -434,5 +537,5 @@ nameClass = "."+className
     
 }
 
-</script>
+
 @endsection

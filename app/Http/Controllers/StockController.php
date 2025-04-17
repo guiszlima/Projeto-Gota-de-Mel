@@ -350,9 +350,10 @@ class StockController extends Controller
     public function show(Client $woocommerce, string $id)
     {
         $product = $woocommerce->get("products/{$id}");
-    
+        
         // Define o nome do produto pai antes do loop
         $parent_name = $product->name;
+        $parent_permalink = $product->permalink;
         $parent_id = $product->id;
         if (!empty($product->variations)) {
             $variations = $woocommerce->get("products/{$id}/variations",[
@@ -386,6 +387,7 @@ class StockController extends Controller
     
         return view("stock.stock-show")->with([
             'product' => $product,
+            'parent_permalink' => $parent_permalink,
             'parent_name' => $parent_name,
             'parent_id' => $parent_id
         ]);
