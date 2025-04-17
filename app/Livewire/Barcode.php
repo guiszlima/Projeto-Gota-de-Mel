@@ -11,7 +11,7 @@ class Barcode extends Component
     public $isSearch = false;
     public $searchBySku = false;
 
-    public $nmbrPerPage = 10;
+    public $nmbrPerPage = 20;
 
     public function render()
     {
