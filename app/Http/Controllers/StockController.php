@@ -22,14 +22,24 @@ class StockController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        // Define quantos produtos por página
-      
+    {   
+        
+        // Termo e tipo de busca
+        $busca = $request->input('busca') ?? null;
+        $searchType = $request->input('searchType') ?? null;// nome ou sku
+        $nmbrPerPage = 10;
     
-        // Retorna a view com paginação
-        return view("stock.stock-index");
-    }
+        // Se não tiver busca, deixa os parâmetros nulos para retornar tudo
+        $parametroNome = $busca ? $searchType : null;
+        $parametroValor = $busca;
+        
 
+        // Busca produtos com paginação
+        $products = Produtos::listProducts($parametroNome, $parametroValor, $nmbrPerPage, true);
+    
+        return view('stock.stock-index', compact('products', 'busca', 'searchType'));
+    }
+    
     /**
      * Show the form for creating a new resource.
      */

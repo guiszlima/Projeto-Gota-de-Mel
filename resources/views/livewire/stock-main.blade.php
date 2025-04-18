@@ -1,22 +1,7 @@
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-6">Gerenciamento de Estoque</h1>
+   <h1 class="text-2xl font-bold mb-6">Gerenciamento de Estoque</h1>
 
-    <div class="flex w-full ml-4">
-    <input id="searchTerm" type="text" wire:model="searchTerm" placeholder="Pesquisar produto..."
-        class="px-4 py-2 border border-gray-300 rounded-l-md w-full focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-
-    <button wire:click="search"
-        class="bg-yellow-500 text-white px-4 py-2 hover:bg-yellow-600 transition-all duration-300">
-        Pesquisar
-    </button>
-
-    <!-- Botão para alternar entre pesquisa por SKU e por Nome -->
-    <button wire:click="toggleSearchType"
-        class="ml-2 px-4 py-2 rounded-md text-white transition-all duration-300 
-        @if($searchBySku) bg-blue-500 hover:bg-blue-600 @else bg-gray-500 hover:bg-gray-600 @endif">
-        {{ $searchBySku ? 'Pesquisar por Nome' : 'Pesquisar por Código de Barras' }}
-    </button>
-</div>
+  
 
 
 

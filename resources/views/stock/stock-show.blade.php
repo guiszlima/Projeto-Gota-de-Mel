@@ -281,7 +281,7 @@ $className = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($targetName)));
     onclick="return confirm('Tem certeza que deseja deletar esta variação?')"
     class="inline-block bg-red-500 text-white text-xs px-3 py-2 rounded-md shadow-md transition-all duration-200 ease-in-out hover:bg-red-600"
 >
-    Deletar
+    Deletar Variação
 </a>
 
 </div>
