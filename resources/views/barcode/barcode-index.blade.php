@@ -30,7 +30,7 @@
     <button 
     type="button"
     id="limpar"
-    class="bg-blue-600 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-blue-700 hover:shadow-lg transition-all duration-300 font-medium"
+    class="bg-red-500 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-red-600 hover:shadow-lg transition-all duration-300 font-medium"
 >
     Limpar
 </button>
