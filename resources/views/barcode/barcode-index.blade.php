@@ -28,12 +28,12 @@
     </button>
 
     <button 
-        type="button"
-        id="limpar"
-        class="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 transition-all duration-300"
-    >
-        Limpar
-    </button>
+    type="button"
+    id="limpar"
+    class="bg-blue-600 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-blue-700 hover:shadow-lg transition-all duration-300 font-medium"
+>
+    Limpar
+</button>
 </form>
 
 
