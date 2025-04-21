@@ -30,7 +30,9 @@
     <button 
     type="button"
     id="limpar"
-    class="bg-red-500 text-white px-6 py-2 rounded-2xl shadow-md hover:bg-red-600 hover:shadow-lg transition-all duration-300 font-medium"
+    style="background-color: #ef4444; color: white; padding: 0.5rem 1.5rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: all 0.3s ease-in-out; font-weight: 500;"
+    onmouseover="this.style.backgroundColor='#dc2626'; this.style.boxShadow='0 6px 8px rgba(0, 0, 0, 0.2)';"
+    onmouseout="this.style.backgroundColor='#ef4444'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1)';"
 >
     Limpar
 </button>
