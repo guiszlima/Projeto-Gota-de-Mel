@@ -28,7 +28,9 @@ class Produtos extends Model
                     break;
     
                 case 'name':
-                    $query->where('post_title', 'like', '%' . $parametroValor . '%');
+                    $query->selectRaw('post_title COLLATE utf8mb4_unicode_ci')
+                    ->where('post_title', 'like', '%' . $parametroValor . '%');
+                
                     break;
     
                 case 'sku':
