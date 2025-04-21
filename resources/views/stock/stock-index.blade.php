@@ -31,14 +31,14 @@
     >
         Pesquisar
     </button>
-
     <button 
-        type="button"
-        id="limpar"
-        class="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500 transition-all duration-300"
-    >
-        Limpar
-    </button>
+    type="button"
+    id="limpar"
+    style="background-color: #ef4444; color: white; padding: 0.5rem 1.5rem; border-radius: 1rem; transition: background-color 0.3s;"
+    class="hover:bg-red-600"
+>
+    Limpar
+</button>
 </form>
 
 
