@@ -11,8 +11,20 @@ class BarCodeMakerController extends Controller
    public function index(Request $request, Client $woocommerce)
    {
       // Recuperando o número da página atual da requisição
-     
-      return view("barcode.barcode-index");
+      $busca = $request->input('busca') ?? null;
+        $searchType = $request->input('searchType') ?? null;// nome ou sku
+        $nmbrPerPage = 10;
+    
+        // Se não tiver busca, deixa os parâmetros nulos para retornar tudo
+        $parametroNome = $busca ? $searchType : null;
+        $parametroValor = $busca;
+        
+
+        // Busca produtos com paginação
+        $products = Produtos::listProducts($parametroNome, $parametroValor, $nmbrPerPage, true);
+    
+        return view('barcode.barcode-index', compact('products', 'busca', 'searchType'));
+      
    }
 
    public function generate(Request $request , Client $woocommerce){
