@@ -82,6 +82,15 @@
         {{ $products->links() }}
     </div>
 </div>
+<script>
+    const limpar = document.getElementById('limpar');
+    const searchTerm = document.getElementById('searchTerm');
+
+    limpar.addEventListener('click', () => {
+        searchTerm.value = '';
+        window.location.href = "{{ route('barcode.index') }}";
+    });
+</script>
 </div>
 
 
