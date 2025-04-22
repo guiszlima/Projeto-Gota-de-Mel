@@ -4,7 +4,7 @@
 <x-button-back :route="route('menu')"></x-button-back>
 
 <div class="container mx-auto px-4 py-8">
-<form method="GET" action="{{ route('stock.index') }}" class="flex flex-wrap md:flex-nowrap gap-2 items-center w-full">
+<form method="GET" action="{{ route('barcode.index') }}" class="flex flex-wrap md:flex-nowrap gap-2 items-center w-full">
     <input 
         id="searchTerm" 
         name="busca"

@@ -369,7 +369,7 @@ class StockController extends Controller
             $variations = $woocommerce->get("products/{$id}/variations",[
                 'per_page' => 100,
             ]);
-    
+            
             foreach ($variations as $variation) {
                 // Busca o relatório de criação baseado no ID da variação
                 $repProd = ReportCreate::where('product_id', $variation->id)->first();
