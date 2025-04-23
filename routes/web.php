@@ -65,7 +65,11 @@ Route::middleware(['auth','check_pending'])->group(function () {
     Route::post('estoque/create-variation-product',[StockController::class,'storeVariableProduct'])->name('stock.store.var-product');
     Route::post('estoque/store', [StockController::class, 'store'])->name('stock.store');
     Route::get('estoque/{id}', [StockController::class, 'show'])->name('stock.show');
-    Route::get('estoque/delete-variation/{productId}/{variationId}', [StockController::class, 'deleteVariation'])->name('stock.delete-variation');
+    Route::get('estoque/delete-variation/{productId}/{variationId}', [StockController::class, 'deleteVariation'])
+    ->name('stock.delete-variation');
+    Route::delete('/products/{productId}/image', [ProductController::class, 'deleteProductImage'])->name('delete.product.image');
+    Route::get('estoque/delete-product-image/{productId}', [StockController::class, 'deleteProductImage'])->name('stock.delete-product-image');
+
     Route::put('estoque/update', [StockController::class, 'update'])->name('stock.update');
     Route::delete('estoque/{id}', [StockController::class, 'destroy'])->name('stock.destroy');
     Route::get('relatorio/estoque',[ReportController::class,'get'])->name('report.products');

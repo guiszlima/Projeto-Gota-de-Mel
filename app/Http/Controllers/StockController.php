@@ -365,6 +365,8 @@ class StockController extends Controller
         $parent_name = $product->name;
         $parent_permalink = $product->permalink;
         $parent_id = $product->id;
+        $parent_description = $product->description;
+        
         if (!empty($product->variations)) {
             $variations = $woocommerce->get("products/{$id}/variations",[
                 'per_page' => 100,
@@ -399,7 +401,8 @@ class StockController extends Controller
             'product' => $product,
             'parent_permalink' => $parent_permalink,
             'parent_name' => $parent_name,
-            'parent_id' => $parent_id
+            'parent_id' => $parent_id,
+            'parent_description' => $parent_description,
         ]);
     }
     
@@ -436,12 +439,13 @@ class StockController extends Controller
          $imageIds = [];
      
          // Se o nome do produto pai foi alterado, faz um PUT para atualizar
-         if ((isset($data['parent_image']) && !empty($data['parent_image'])) || $data['old_parent_name'] != $data['parent_name']) {
+         if ((isset($data['parent_image']) && !empty($data['parent_image'])) || $data['old_parent_name'] != $data['parent_name'] || $data['old_description'] != $data['description']) {
 
              try {
                 
                 $payload = [
                     'name' => $data['parent_name'],
+                    'description' => $data['description'],
                 ];
                 
                 if (isset($data['parent_image'])) {
@@ -461,6 +465,7 @@ class StockController extends Controller
                 }
           
                $responseParent =  $woocommerce->put("products/{$data['parent_id']}", $payload);
+               
                 
              } catch (\Exception $e) {
                 
@@ -585,8 +590,55 @@ class StockController extends Controller
              return back()->with('warn', 'Erro ao criar o produto favor contatar o desenvolvedor responsável');
          }
      }
- 
-    
+    public function deleteProductImage($productId, Client $woocommerce)
+    {
+        try {
+            // Primeiro, pega os dados do produto
+            $response = $woocommerce->get("products/{$productId}");
+            
+
+            // Verifica se há imagem destacada
+            if (!empty($product['images']) && isset($product['images'][0]['id'])) {
+                $imageId = $product['images'][0]['id'];
+
+                // Deleta a imagem da biblioteca de mídia
+                $woocommerce->delete("media/{$imageId}", [
+                    'query' => ['force' => true],
+                ]);
+
+                // Atualiza o produto para remover referência à imagem
+                $woocommerce->put("products/{$productId}", [
+                    'json' => [
+                        'images' => [] // remove imagens do produto
+                    ]
+                ]);
+
+                return redirect()->back()->with('success', "Imagem do produto {$productId} deletada com sucesso.");
+            } else {
+                return redirect()->back()->with('info', "Produto {$productId} não possui imagem para deletar.");
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Erro ao deletar imagem: ' . $e->getMessage());
+        }
+    }
+
+     public function deleteVariation($productId, $variationId, Client $woocommerce)
+     {
+         try {
+             
+     
+             $response = $woocommerce->delete("products/{$productId}/variations/{$variationId}", [
+                 'query' => ['force' => true], // força a exclusão
+             ]);
+     
+             
+     
+             return redirect()->back()->with('success', "Variação {$variationId} deletada com sucesso.");
+         } catch (\Exception $e) {
+             return redirect()->back()->with('error', 'Erro ao deletar variação: ' . $e->getMessage());
+         }
+     }
+
     /**
      * Remove the specified resource from storage.
      */
