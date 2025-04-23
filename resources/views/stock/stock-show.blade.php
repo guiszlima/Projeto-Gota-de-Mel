@@ -94,7 +94,15 @@ $variante = 'true'
                 <input type="text" name="name" readonly value="{{ $product->name }}"
                     class="editInput text-center text-xl font-semibold border border-gray-300 p-3 rounded w-full mb-4">
             </div>
+            <div class="flex flex-col w-full mb-8">
 
+
+    
+            
+<label for="description" class="text-gray-700 font-semibold mb-2">Descrição</label>
+<input id="description" name="description" type="text" readonly value="{{strip_tags($parent_description) }}"
+    class="editInput text-center border border-gray-300 p-3 rounded-md w-full font-semibold bg-gray-100">
+</div>
             <div class="flex flex-row justify-between w-50% space-x-10 mt-10">
                
                 <div class="flex flex-col w-full">
@@ -333,7 +341,7 @@ $className = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($targetName)));
                     <div class="flex flex-col">
                         <label for="estoque_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Estoque</label>
                         <input id="estoque_{{ $loop->index }}" name="estoque[]" type="text" readonly
-                            value="{{ $variant->estoque }}"
+                            value="{{ $variant->estoque??"" }}"
                             class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                     </div>
 
@@ -341,7 +349,7 @@ $className = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($targetName)));
                     <div class="flex flex-col">
                         <label for="estante_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Estante</label>
                         <input id="estante_{{ $loop->index }}" name="estante[]" type="number" readonly
-                            value="{{ $variant->estante }}"
+                            value="{{ $variant->estante ??"" }}"
                             class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                     </div>
 
@@ -349,7 +357,7 @@ $className = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($targetName)));
                     <div class="flex flex-col">
                         <label for="prateleira_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Prateleira</label>
                         <input id="prateleira_{{ $loop->index }}" name="prateleira[]" type="number" readonly
-                            value="{{ $variant->prateleira }}"
+                            value="{{ $variant->prateleira ??"" }}"
                             class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                     </div>
 
@@ -357,7 +365,7 @@ $className = strtolower(preg_replace('/[^a-z0-9]+/', '-', trim($targetName)));
                     <div class="flex flex-col">
                         <label for="peso_{{ $loop->index }}" class="text-gray-700 font-semibold mb-2">Peso (g)</label>
                         <input id="peso_{{ $loop->index }}" name="peso[]" type="text" readonly
-                            value="{{ number_format(floatval($variant->weight) * 1000, 0, ',', '.') }}"
+                            value="{{ number_format(floatval($variant->weight) * 1000, 0, ',', '.') ??"" }}"
                             class="editInputVar text-center border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300">
                     </div>
 

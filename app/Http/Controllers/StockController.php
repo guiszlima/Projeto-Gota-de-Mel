@@ -560,6 +560,7 @@ class StockController extends Controller
              $produto = [
                  'name' => $data['name'],
                  'sku' => $data['sku'],
+                 'description'=> $data['description'],
                  'regular_price' => (string)str_replace(',', '.', $data['price']),
                  'stock_quantity' => $data['quantity'],
                  'weight'=> (string)((float)$data['peso']/1000)??'',
