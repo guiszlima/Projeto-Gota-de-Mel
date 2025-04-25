@@ -71,7 +71,7 @@ class ReportViewSells extends Component
         $createdAt = $createdAt->startOfDay();
 
 
-        $limitDate = $createdAt->copy()->addDays(7)->endOfDay();
+        $limitDate = $createdAt->copy()->addDays(8)->endOfDay();
 
         if (now()->greaterThan($limitDate)) {
             $this->dispatch('productTooOld');
