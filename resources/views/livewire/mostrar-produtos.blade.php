@@ -95,11 +95,19 @@
             type="button" id="open_modal">
             <span class="relative z-10">Finalizar Compra</span>
         </button>
+        <div>
+    <p class="text-lg font-semibold text-green-700">
+        Preço Total: 
+        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-lg">
+            R$ {{ number_format($this->total, 2, ',', '.') }}
+        </span>
+    </p>
+</div>
         @foreach ($cart as $item)
         <div class="border border-slate-500 p-4 mr-5 mb-4 rounded-lg flex justify-between items-center">
             <div class="text-center">
                 <p class="text-lg font-bold">{{$item['name']}}</p>
-                <p class="text-sm ">{{number_format($item['value'] * $item['quantidade'], 2, ',', '.')}}</p>
+                <p class="text-sm produto-valor ">{{number_format($item['value'] * $item['quantidade'], 2, ',', '.')}}</p>
                 <p class="text-sm "> {{$item['quantidade']}}</p>
             </div>
 

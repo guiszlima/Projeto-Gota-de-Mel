@@ -185,7 +185,13 @@ public function previousPage(Client $woocommerce)
             
     
     }
-
+    public function getTotalProperty()
+    {
+        return collect($this->cart)->sum(function($item) {
+            return $item['value'] * $item['quantidade'];
+        });
+    }
+    
 
 
 
