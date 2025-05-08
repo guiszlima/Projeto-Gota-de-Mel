@@ -38,6 +38,7 @@ class ReportViewSells extends Component
     public $itensTrocarPrint = [];
     public $cont;
     public $isTrocado = false;
+    public $totalTrocado;
 
     public function applyFilters()
     {
@@ -54,6 +55,7 @@ class ReportViewSells extends Component
         $this->isTrocado = false;
         $this->itensTrocar = null;
         $this->itensTrocarPrint = [];
+        $this->totalTrocado = 0;
     }
 
     public function trocaProduct(Client $woocommerce, $groupedItems)
@@ -108,6 +110,7 @@ class ReportViewSells extends Component
         
         // Atualiza a propriedade $itensTrocar
         $this->itensTrocar = $itensTrocar;
+        
         $produtos = "";
         // Notifica o frontend que os dados estão prontos
         $this->dispatch('itens-troca-atualizados');
@@ -176,7 +179,9 @@ class ReportViewSells extends Component
 
         // Calcula o valor total da troca
         $valorTotal = $cont * $preco;
-    
+        
+        $this->totalTrocado += $valorTotal;
+        
         if ($tipo === 'product_variation') {
             
             // Busca as variações do produto pai

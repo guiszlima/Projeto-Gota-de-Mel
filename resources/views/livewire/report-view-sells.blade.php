@@ -238,7 +238,12 @@ $totalItems = count($items);
             Fechar
         </button>
         @if($itensTrocar && count($itensTrocar) > 0)
-        
+        <p class="text-lg font-semibold text-green-700">
+        Preço Total: 
+        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-lg">
+            R$ {{ number_format($totalTrocado, 2, ',', '.') }}
+        </span>
+    </p>
             <!-- Flex Container para os itens -->
             <div class="h-[400px] overflow-y-auto flex flex-wrap gap-6 justify-start">
             @foreach($itensTrocar as $item)
