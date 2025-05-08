@@ -240,7 +240,7 @@ $totalItems = count($items);
         @if($itensTrocar && count($itensTrocar) > 0)
         
             <!-- Flex Container para os itens -->
-            <div class="flex flex-wrap gap-6 justify-start">
+            <div class="flex flex-wrap gap-6 justify-start h-96 overflow-y-auto">
             @foreach($itensTrocar as $item)
             
                 <div class="flex-1 min-w-[200px] p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200">
