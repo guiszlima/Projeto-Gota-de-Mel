@@ -56,8 +56,8 @@ class PDFController extends Controller
         ])
         ->get();
  // Agrupa os resultados por ID da venda
-
-    $pdf = Pdf::loadView('pdf.template-relatorio', compact('sales','data'));
+    $totalVendasGerais = $sales->sum('total_vendido');
+    $pdf = Pdf::loadView('pdf.template-relatorio', compact('sales','totalVendasGerais'));
     return $pdf->download('sales_report.pdf');
 }
 

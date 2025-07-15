@@ -58,7 +58,19 @@
         <small>Período: {{ request('searchStartDate') ?? 'Hoje' }} até {{ request('searchEndDate') ?? 'Hoje' }}</small><br>
         <small>Gerado em: {{ now()->format('d/m/Y H:i') }}</small>
     </div>
-
+        
+    <p style="
+    background-color: #e6f4ea;     /* tom de verde claro translúcido */
+    color: #2e7d32;                /* verde escuro para o texto */
+    padding: 8px 12px;
+    border: 1px solid #a5d6a7;     /* verde intermediário para a borda */
+    border-radius: 6px;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 15px;
+">
+    Total geral vendido: R$ {{ number_format($totalVendasGerais, 2, ',', '.') }}
+</p>
     <table>
         <thead>
             <tr>
